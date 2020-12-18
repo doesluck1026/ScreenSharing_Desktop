@@ -8,24 +8,24 @@ using System.Threading.Tasks;
 
 class Communication
 {
-    private  Server server;
-    private  Client client;
-    private  readonly int HeaderLen = 7;
-    private  readonly byte StartByte = (byte)'J';
-    private  int Port = 42001;
-    private  int BufferSize = 1024 * 64;
+    private Server server;
+    private Client client;
+    private readonly int HeaderLen = 7;
+    private readonly byte StartByte = (byte)'J';
+    private int Port = 42001;
+    private int BufferSize = 1024 * 64;
 
-    public  bool isClientConnected = false;
-    public  bool isConnectedToServer = false;
-    public  long LastPackNumberReceived { get; private set; }
-    public  long LastPackNumberSent { get; private set; }
-    public  uint NumberOfPacks { get; private set; }
+    public bool isClientConnected = false;
+    public bool isConnectedToServer = false;
+    public long LastPackNumberReceived { get; private set; }
+    public long LastPackNumberSent { get; private set; }
+    public uint NumberOfPacks { get; private set; }
     private enum Functions
     {
         SendingFile = 1,
     }
 
-    public Communication ()
+    public Communication()
     {
         LastPackNumberSent = 0;
         LastPackNumberReceived = -1;
@@ -36,13 +36,13 @@ class Communication
     /// Creates a server and starts listening to port. This is used to send file to another device.
     /// </summary>
     /// <returns></returns>
-    public  string CreateServer()
+    public string CreateServer()
     {
         server = new Server(Port, BufferSize);                      /// Create server instance
         string serverIP = server.SetupServer();           /// Setup Server on default port. this Function will return device ip as string.
         return serverIP;
     }
-    public  string StartServer()
+    public string StartServer()
     {
         string hostname = server.StartListener();      /// Start Listener for possible clients.
         if (hostname != null)
@@ -60,25 +60,27 @@ class Communication
     /// <param name="data">File Pack bytes (Max 32 Kb)</param>
     /// <param name="numPackage">Index of the data pack to be sent</param>
     /// <returns>Returns Acknowledge</returns>
-    public  bool SendFilePacks(byte[] data, long numPackage)
+    public void SendFilePacks(byte[] data, long numPackage)
     {
         byte[] HeaderBytes = PrepareDataHeader(Functions.SendingFile, (uint)(data.Length + 4));     /// Prepare Data Header for given length. +4 is for to specify current package index.
         byte[] DataToSend = new byte[data.Length + 4 + HeaderLen];                                  /// Create carrier data pack
         Array.Copy(HeaderBytes, 0, DataToSend, 0, HeaderLen);                                       /// Copy Header bytes to the carrier
         Array.Copy(BitConverter.GetBytes(numPackage), 0, DataToSend, HeaderLen, sizeof(int));       /// Copy Index bytes to carrier pack
-        Array.Copy(data, 0, DataToSend, HeaderLen + 4, data.Length);                                  /// Copy given data bytes to carrier pack
-        server.SendDataToClient(DataToSend);                                                        /// Send data to client.
-        LastPackNumberSent = numPackage;                                                            /// Update Index
-        return true;//GetResponse();                                                                       /// Get the Ack from client.
+        Array.Copy(data, 0, DataToSend, HeaderLen + 4, data.Length);                                /// Copy given data bytes to carrier pack
+        isClientConnected = server.SendDataToClient(DataToSend);                                    /// Send data to client.
     }
-    public  void CloseServer()
+    public void CloseServer()
     {
         if (server == null)
             return;
         server.CloseServer();
         server = null;
     }
-    
+    public byte[] GetResponseFromClient()
+    {
+        byte[] receivedData = server.GetData();
+        return receivedData;
+    }
     #endregion
 
     #region Client Functions
@@ -133,11 +135,20 @@ class Communication
         }
     }
     
+    public void SendResponseToServer()
+    {
+        uint len = 1;
+        byte[] dataToSend = new byte[len + HeaderLen];
+        byte[] headerBytes=PrepareDataHeader(Functions.SendingFile, len);
+        headerBytes.CopyTo(dataToSend, 0);
+        dataToSend[HeaderLen] = 100;
+        client.SendDataServer(dataToSend);
+    }
     public  void CloseClient()
     {
         if (client == null)
             return;
-        client.DisconnectFromServer();
+        isConnectedToServer= !client.DisconnectFromServer();
         client = null;
     }
 

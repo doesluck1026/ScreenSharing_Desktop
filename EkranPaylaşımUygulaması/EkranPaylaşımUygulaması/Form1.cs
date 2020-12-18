@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,11 +25,14 @@ namespace EkranPaylaşımUygulaması
             InitializeComponent();
             UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
             Control.CheckForIllegalCrossThreadCalls = false;
+            
         }
 
         private void btn_Share_Click(object sender, EventArgs e)
         {
             main = new Main(Main.CommunicationTypes.Sender);
+            main.StartSharingScreen();
+            StartUiThread();
         }
 
         private void btn_Connect_Click(object sender, EventArgs e)
@@ -43,12 +47,13 @@ namespace EkranPaylaşımUygulaması
             Stopwatch stp = Stopwatch.StartNew();
             while(ui_updateEnabled)
             {
-                if (main.IsImageReceived)
+                if (main.IsImageReceived || main.IsImageSent)
                 {
                     picture_screen.Image = main.ScreenImage;
                     lbl_FPS.Text = main.FPS.ToString();
-                    lbl_TransferSpeed.Text = main.TransferSpeed.ToString("0.00") + " Mb";
+                    lbl_TransferSpeed.Text = main.TransferSpeed.ToString("0.00") + " MB";
                     main.IsImageReceived = false;
+                    main.IsImageSent = false;
                 }
                 while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;
                 stp.Restart();
@@ -77,6 +82,16 @@ namespace EkranPaylaşımUygulaması
 
                     }
                 }
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            StopUiThread();
+            if (main!=null)
+            {
+                main.CancelSharing();
+                main.StopReceiving();
             }
         }
     }
