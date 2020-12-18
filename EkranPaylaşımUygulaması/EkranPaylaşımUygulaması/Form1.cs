@@ -23,6 +23,7 @@ namespace EkranPaylaşımUygulaması
         {
             InitializeComponent();
             UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
+            Control.CheckForIllegalCrossThreadCalls = false;
         }
 
         private void btn_Share_Click(object sender, EventArgs e)
@@ -34,6 +35,7 @@ namespace EkranPaylaşımUygulaması
         {
             string ip = txt_IP.Text;
             main = new Main(Main.CommunicationTypes.Receiver);
+            main.StartReceiving(ip);
             StartUiThread();
         }
         private void UpdateUI()
@@ -41,8 +43,13 @@ namespace EkranPaylaşımUygulaması
             Stopwatch stp = Stopwatch.StartNew();
             while(ui_updateEnabled)
             {
-                picture_screen.Image = main.ScreenImage;
-                lbl_FPS.Text = main.FPS.ToString();
+                if (main.IsImageReceived)
+                {
+                    picture_screen.Image = main.ScreenImage;
+                    lbl_FPS.Text = main.FPS.ToString();
+                    lbl_TransferSpeed.Text = main.TransferSpeed.ToString("0.00") + " Mb";
+                    main.IsImageReceived = false;
+                }
                 while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;
                 stp.Restart();
             }
@@ -51,6 +58,7 @@ namespace EkranPaylaşımUygulaması
         {
             ui_updateEnabled = true;
             uiUpdateThread = new Thread(UpdateUI);
+            uiUpdateThread.Start();
         }
         private void StopUiThread()
         {

@@ -83,10 +83,25 @@ class Main
         }
     }
 
+    public double TransferSpeed
+    {
+        get
+        {
+            lock (Lck_TransferSpeed)
+                return _transferSpeed;
+        }
+        set
+        {
+            lock (Lck_TransferSpeed)
+                _transferSpeed = value;
+        }
+    }
+
     private bool _isSendingEnabled = true;
     private bool _isReceivingEnabled = true;
     private bool _isImageReceived = true;
     private Bitmap _screenImage;
+    private double _transferSpeed;
 
     private  string _URL;                          /// File Path
     private  Thread sendingThread;
@@ -100,7 +115,8 @@ class Main
     private  object Lck_FPS = new object();
     private  object Lck_ScreenImage = new object();
     private  object Lck_IsImageReceived = new object();
-
+    private  object Lck_TransferSpeed = new object();
+    
     public  string HostName
     {
 
@@ -136,6 +152,7 @@ class Main
         {
             string serverIP=Comm.CreateServer();
             Debug.WriteLine("Server IP: " + serverIP);
+            StartSharingScreen();
         }
     }
     /// <summary>
@@ -191,6 +208,7 @@ class Main
                 if(stopwatch.Elapsed.TotalSeconds>=1)
                 {
                     FPS = fpsCounter;
+                    fpsCounter = 0;
                     stopwatch.Restart();
                 }
 
@@ -222,24 +240,34 @@ class Main
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
         int fpsCounter = 0;
+        int bytesSent=0;
+        int mb = 1024 * 1024;
         while (IsReceivingEnabled)
         {
             stopwatch.Restart();
             while (Comm.isConnectedToServer)
             {
+                double t0 = stopwatch.ElapsedMilliseconds;
                 /// get image bytes
                 byte[] ImageBytes = Comm.ReceiveFilePacks();
-
+                double t1 = stopwatch.ElapsedMilliseconds;
                 /// Create image
                 ScreenImage = Screen.GetImage(ImageBytes);
                 IsImageReceived = true;
+                double t2 = stopwatch.ElapsedMilliseconds;
                 /// Calculate FPS Rate here
                 fpsCounter++;
+                bytesSent += ImageBytes.Length;
                 if (stopwatch.Elapsed.TotalSeconds >= 1)
                 {
                     FPS = fpsCounter;
+                    fpsCounter = 0;
+                    TransferSpeed = (double)bytesSent / mb;
+                    bytesSent = 0;
+                    Debug.WriteLine("FPS: " + FPS);
                     stopwatch.Restart();
                 }
+                Debug.WriteLine("receive Time: " + (t1 - t0) + "  image time: " + (t2 - t1));
             }
         }
     }

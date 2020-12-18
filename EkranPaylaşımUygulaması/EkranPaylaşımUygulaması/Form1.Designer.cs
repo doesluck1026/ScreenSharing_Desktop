@@ -36,21 +36,23 @@ namespace EkranPaylaşımUygulaması
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lbl_FPS = new System.Windows.Forms.Label();
+            this.lbl_TransferSpeed = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picture_screen)).BeginInit();
             this.SuspendLayout();
             // 
             // picture_screen
             // 
-            this.picture_screen.Location = new System.Drawing.Point(12, 12);
+            this.picture_screen.Location = new System.Drawing.Point(23, -67);
             this.picture_screen.Name = "picture_screen";
-            this.picture_screen.Size = new System.Drawing.Size(615, 568);
-            this.picture_screen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picture_screen.Size = new System.Drawing.Size(1339, 774);
+            this.picture_screen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picture_screen.TabIndex = 0;
             this.picture_screen.TabStop = false;
             // 
             // btn_Share
             // 
-            this.btn_Share.Location = new System.Drawing.Point(670, 423);
+            this.btn_Share.Location = new System.Drawing.Point(1380, 126);
             this.btn_Share.Name = "btn_Share";
             this.btn_Share.Size = new System.Drawing.Size(92, 38);
             this.btn_Share.TabIndex = 1;
@@ -60,7 +62,7 @@ namespace EkranPaylaşımUygulaması
             // 
             // btn_Connect
             // 
-            this.btn_Connect.Location = new System.Drawing.Point(670, 299);
+            this.btn_Connect.Location = new System.Drawing.Point(1380, 82);
             this.btn_Connect.Name = "btn_Connect";
             this.btn_Connect.Size = new System.Drawing.Size(92, 38);
             this.btn_Connect.TabIndex = 2;
@@ -70,16 +72,16 @@ namespace EkranPaylaşımUygulaması
             // 
             // txt_IP
             // 
-            this.txt_IP.Location = new System.Drawing.Point(674, 248);
+            this.txt_IP.Location = new System.Drawing.Point(1380, 56);
             this.txt_IP.Name = "txt_IP";
             this.txt_IP.Size = new System.Drawing.Size(92, 20);
             this.txt_IP.TabIndex = 3;
-            this.txt_IP.Text = "192.168.1.36";
+            this.txt_IP.Text = "192.168.1.37";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(648, 251);
+            this.label1.Location = new System.Drawing.Point(1354, 59);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(20, 13);
             this.label1.TabIndex = 4;
@@ -88,7 +90,7 @@ namespace EkranPaylaşımUygulaması
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(633, 12);
+            this.label2.Location = new System.Drawing.Point(1379, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(30, 13);
             this.label2.TabIndex = 5;
@@ -97,17 +99,37 @@ namespace EkranPaylaşımUygulaması
             // lbl_FPS
             // 
             this.lbl_FPS.AutoSize = true;
-            this.lbl_FPS.Location = new System.Drawing.Point(667, 12);
+            this.lbl_FPS.Location = new System.Drawing.Point(1413, 9);
             this.lbl_FPS.Name = "lbl_FPS";
             this.lbl_FPS.Size = new System.Drawing.Size(13, 13);
             this.lbl_FPS.TabIndex = 6;
             this.lbl_FPS.Text = "0";
             // 
+            // lbl_TransferSpeed
+            // 
+            this.lbl_TransferSpeed.AutoSize = true;
+            this.lbl_TransferSpeed.Location = new System.Drawing.Point(1415, 31);
+            this.lbl_TransferSpeed.Name = "lbl_TransferSpeed";
+            this.lbl_TransferSpeed.Size = new System.Drawing.Size(13, 13);
+            this.lbl_TransferSpeed.TabIndex = 8;
+            this.lbl_TransferSpeed.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(1377, 31);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(39, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "speed:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 592);
+            this.ClientSize = new System.Drawing.Size(1520, 842);
+            this.Controls.Add(this.lbl_TransferSpeed);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.lbl_FPS);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -132,6 +154,8 @@ namespace EkranPaylaşımUygulaması
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lbl_FPS;
+        private System.Windows.Forms.Label lbl_TransferSpeed;
+        private System.Windows.Forms.Label label4;
     }
 }
 

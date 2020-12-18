@@ -12,7 +12,7 @@ class Communication
     private  Client client;
     private  readonly int HeaderLen = 7;
     private  readonly byte StartByte = (byte)'J';
-    private  int Port = 41001;
+    private  int Port = 42001;
     private  int BufferSize = 1024 * 64;
 
     public  bool isClientConnected = false;
@@ -115,18 +115,9 @@ class Communication
             {
                 uint dataLen = BitConverter.ToUInt32(receivedData, 3);              /// Get the length of the data bytes (index bytes are included to this number)
                 uint packIndex = BitConverter.ToUInt32(receivedData, HeaderLen);    /// Get the index of data pack
-                if (packIndex == (LastPackNumberReceived + 1))                        /// Check if the index is correct
-                {
-                    LastPackNumberReceived = packIndex;                             /// update the index
-                    byte[] dataPack = new byte[dataLen - 4];                              /// Create data pack variable to store file bytes 
-                    Array.Copy(receivedData, HeaderLen + 4, dataPack, 0, dataLen - 4);      /// Copy array to data packs byte
-                    return dataPack;
-                }
-                else
-                {
-                    Debug.WriteLine("Index of the last package was incorrect. Do something about it!");
-                    return null;
-                }
+                byte[] dataPack = new byte[dataLen - 4];                              /// Create data pack variable to store file bytes 
+                Array.Copy(receivedData, HeaderLen + 4, dataPack, 0, dataLen - 4);      /// Copy array to data packs byte
+                return dataPack;
                 /// return data pack
             }
             else
