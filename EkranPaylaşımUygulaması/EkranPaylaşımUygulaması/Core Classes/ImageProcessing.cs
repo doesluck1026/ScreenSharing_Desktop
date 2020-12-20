@@ -17,9 +17,10 @@ class ImageProcessing
     public  static byte[] GetImageBytes()
     {
         var originalImage = GetScreenShot();
-        //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
-        //var resizedImage= img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
-        return ImageToByteArray(originalImage);
+        Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
+        img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0));
+        var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
+        return ImageToByteArray(resizedImage.Bitmap);
     }
     private static Bitmap GetScreenShot()
     {
