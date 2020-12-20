@@ -254,3 +254,4 @@ D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPay
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.csproj.CopyComplete
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.exe
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.pdb
+D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.csprojAssemblyReference.cache
