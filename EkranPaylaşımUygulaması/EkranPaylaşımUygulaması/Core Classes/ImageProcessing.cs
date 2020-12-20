@@ -11,54 +11,125 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Emgu.CV.Structure;
 using Emgu.CV;
-
+using ScreenCapturerNS;
 class ImageProcessing
 {
-    public  static byte[] GetImageBytes()
-    {
-        var originalImage = GetScreenShot();
-        Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
-        img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0));
-        var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
-        return ImageToByteArray(resizedImage.Bitmap);
-    }
-    private static Bitmap GetScreenShot()
-    {
-        try
+    #region Variables
 
+    private static Image<Bgr, byte> ScreenImage
+    {
+        get
         {
-            Rectangle bounds= Screen.PrimaryScreen.Bounds;
-            CursorPosition = Cursor.Position;
-            bounds.Width = 1920;
-            bounds.Height = 1080;
-            var result = new Bitmap(bounds.Width, bounds.Height);
-            using (var g = Graphics.FromImage(result))
-            {
-                g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-            }
-            return result;
+            lock (lck_ScreenImage)
+                return _screenImage;
         }
-        catch (Exception ex)
+        set
         {
-            Debug.WriteLine("ScreenShot Error: "+ex.Message);
-
+            lock (lck_ScreenImage)
+                _screenImage = value;
         }
-        return null;
     }
-    public  static Point CursorPosition
+    private static Image<Bgr, byte> _screenImage = null;
+
+
+
+    private static object lck_ScreenImage = new object();
+
+
+    public static void StartGettingFrame()
+    {
+        ScreenCapturer.StartCapture();
+        ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
+        ScreenCapturer.OnCaptureStop += ScreenCapturer_OnCaptureStop;
+    }
+
+    private static void ScreenCapturer_OnCaptureStop(object sender, OnCaptureStopEventArgs e)
+    {
+       Debug.WriteLine("Exception in capture: "+ e.Exception.ToString());
+        ScreenCapturer.StartCapture();
+    }
+
+    private static void ScreenCapturer_OnScreenUpdated(object sender, OnScreenUpdatedEventArgs e)
+    {
+        lock(lck_ScreenImage)
+            _screenImage = new Image<Bgr, byte>(e.Bitmap);
+
+        
+        // ScreenImage.Save("C:\\Users\\CDS_Software02\\Desktop\\image.jpg");
+    }
+
+
+    public static void StopGettingFrames()
+    {
+        ScreenCapturer.StopCapture();
+    }
+    public static Point CursorPosition
     {
         get;
         protected set;
     }
-    public static byte[] ImageToByteArray(Image img)
+
+    #endregion
+
+    public static byte[] GetScreenBytes()
+    {
+        Stopwatch stp = Stopwatch.StartNew();
+        Image<Bgr, byte> img = GetScreenShot();
+        double t1 = stp.Elapsed.TotalMilliseconds;
+        //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
+        img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0));
+        //var g = Graphics.FromImage(img.Bitmap);
+        //Rectangle cursorBounds = new Rectangle(CursorPosition, Cursor.Current.Size);
+        //Cursors.Default.Draw(g, cursorBounds);
+        double t2 = stp.Elapsed.TotalMilliseconds;
+        var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
+        double t3 = stp.Elapsed.TotalMilliseconds;
+        byte[] imageBytes= ImageToByteArray(img.Bitmap);
+        double t4 = stp.Elapsed.TotalMilliseconds;
+         Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
+        return imageBytes;
+    }
+    private static Image<Bgr,byte> GetScreenShot()
+    {
+        try
+
+        {
+            CursorPosition = Cursor.Position;
+            //Rectangle cursorBounds = new Rectangle(CursorPosition, Cursor.Current.Size);
+            //if (ScreenImage == null)
+            //{
+            //    Rectangle bounds = Screen.PrimaryScreen.Bounds;
+            //    bounds.Width = 1920;
+            //    bounds.Height = 1080;
+            //    var result = new Bitmap(bounds.Width, bounds.Height);
+            //    var g = Graphics.FromImage(result);
+            //    g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
+            //    Cursors.Default.Draw(g, cursorBounds);
+            //    return result;
+            //}
+            //else
+            //{
+
+            return ScreenImage;
+           // }
+
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("ScreenShot Error: " + ex.Message);
+
+        }
+        return null;
+    }
+    public static byte[] ImageToByteArray(Bitmap img)
     {
         using (var stream = new MemoryStream())
         {
-            img.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            img.Save(stream, ImageFormat.Png);
             return stream.ToArray();
         }
     }
-    public static Bitmap GetImage(byte[] imageBytes)
+    public static Bitmap ImageFromByteArray(byte[] imageBytes)
     {
         Bitmap bmp;
         using (var ms = new MemoryStream(imageBytes))
@@ -67,4 +138,6 @@ class ImageProcessing
         }
         return bmp;
     }
+    
+
 }

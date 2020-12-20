@@ -45,14 +45,14 @@ namespace EkranPaylaşımUygulaması
             // 
             this.picture_screen.Location = new System.Drawing.Point(10, 11);
             this.picture_screen.Name = "picture_screen";
-            this.picture_screen.Size = new System.Drawing.Size(997, 774);
+            this.picture_screen.Size = new System.Drawing.Size(960, 540);
             this.picture_screen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picture_screen.TabIndex = 0;
             this.picture_screen.TabStop = false;
             // 
             // btn_Share
             // 
-            this.btn_Share.Location = new System.Drawing.Point(1086, 128);
+            this.btn_Share.Location = new System.Drawing.Point(1009, 132);
             this.btn_Share.Name = "btn_Share";
             this.btn_Share.Size = new System.Drawing.Size(92, 38);
             this.btn_Share.TabIndex = 1;
@@ -62,7 +62,7 @@ namespace EkranPaylaşımUygulaması
             // 
             // btn_Connect
             // 
-            this.btn_Connect.Location = new System.Drawing.Point(1086, 84);
+            this.btn_Connect.Location = new System.Drawing.Point(1009, 88);
             this.btn_Connect.Name = "btn_Connect";
             this.btn_Connect.Size = new System.Drawing.Size(92, 38);
             this.btn_Connect.TabIndex = 2;
@@ -72,16 +72,16 @@ namespace EkranPaylaşımUygulaması
             // 
             // txt_IP
             // 
-            this.txt_IP.Location = new System.Drawing.Point(1086, 58);
+            this.txt_IP.Location = new System.Drawing.Point(1009, 62);
             this.txt_IP.Name = "txt_IP";
             this.txt_IP.Size = new System.Drawing.Size(92, 20);
             this.txt_IP.TabIndex = 3;
-            this.txt_IP.Text = "192.168.1.37";
+            this.txt_IP.Text = "192.168.1.36";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1060, 61);
+            this.label1.Location = new System.Drawing.Point(983, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(20, 13);
             this.label1.TabIndex = 4;
@@ -90,7 +90,7 @@ namespace EkranPaylaşımUygulaması
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(1085, 11);
+            this.label2.Location = new System.Drawing.Point(1008, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(30, 13);
             this.label2.TabIndex = 5;
@@ -99,7 +99,7 @@ namespace EkranPaylaşımUygulaması
             // lbl_FPS
             // 
             this.lbl_FPS.AutoSize = true;
-            this.lbl_FPS.Location = new System.Drawing.Point(1119, 11);
+            this.lbl_FPS.Location = new System.Drawing.Point(1042, 15);
             this.lbl_FPS.Name = "lbl_FPS";
             this.lbl_FPS.Size = new System.Drawing.Size(13, 13);
             this.lbl_FPS.TabIndex = 6;
@@ -108,7 +108,7 @@ namespace EkranPaylaşımUygulaması
             // lbl_TransferSpeed
             // 
             this.lbl_TransferSpeed.AutoSize = true;
-            this.lbl_TransferSpeed.Location = new System.Drawing.Point(1121, 32);
+            this.lbl_TransferSpeed.Location = new System.Drawing.Point(1044, 36);
             this.lbl_TransferSpeed.Name = "lbl_TransferSpeed";
             this.lbl_TransferSpeed.Size = new System.Drawing.Size(13, 13);
             this.lbl_TransferSpeed.TabIndex = 8;
@@ -117,7 +117,7 @@ namespace EkranPaylaşımUygulaması
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1083, 32);
+            this.label4.Location = new System.Drawing.Point(1006, 36);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(39, 13);
             this.label4.TabIndex = 7;
@@ -127,7 +127,7 @@ namespace EkranPaylaşımUygulaması
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1155, 687);
+            this.ClientSize = new System.Drawing.Size(1104, 559);
             this.Controls.Add(this.lbl_TransferSpeed);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.lbl_FPS);

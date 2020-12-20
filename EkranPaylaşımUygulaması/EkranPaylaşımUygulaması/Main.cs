@@ -178,7 +178,6 @@ class Main
         {
             sendingThread = new Thread(SendingCoreFcn);                             /// Start Sending File
             sendingThread.Start();
-            string Msg = "sWaitClient"; //resMng.GetString("sWaitClient", culInfo);  // "Wait for Client.";
             Debug.WriteLine("Wait for Client.");
             return true;
         }
@@ -206,21 +205,28 @@ class Main
             {
                 return;
             }
+            ImageProcessing.StartGettingFrame();
+            Thread.Sleep(500);
             stopwatch.Restart();
             while (Comm.isClientConnected)
             {
+               // double t1 = stopwatch.Elapsed.TotalMilliseconds;
                 /// get image Here
                 /// 
-                byte[] imageBytes= ImageProcessing.GetImageBytes();
+                byte[] imageBytes= ImageProcessing.GetScreenBytes();
+                //double t2 = stopwatch.Elapsed.TotalMilliseconds;
 
                 /// Send image to client   here
                 /// 
                 Comm.SendFilePacks(imageBytes, 0);
+                //double t3 = stopwatch.Elapsed.TotalMilliseconds;
 
                 /// Get Response of client here
                 /// 
                 byte[] responseBytes = Comm.GetResponseFromClient();
-                if(responseBytes==null)
+                //double t4 = stopwatch.Elapsed.TotalMilliseconds;
+               // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
+                if (responseBytes==null)
                 {
                     Comm.isClientConnected = false;
                     break;
@@ -246,7 +252,8 @@ class Main
     public void CancelSharing()
     {
         IsSendingEnabled = false;
-        if(sendingThread!=null)
+        ImageProcessing.StopGettingFrames();
+        if (sendingThread!=null)
         {
             if (sendingThread.IsAlive)
             {
@@ -285,7 +292,7 @@ class Main
                 Comm.SendResponseToServer();
 
                 /// Create image
-                ScreenImage = ImageProcessing.GetImage(ImageBytes);
+                ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
                 IsImageReceived = true;
                 /// Calculate FPS Rate here
                 fpsCounter++;
