@@ -70,20 +70,20 @@ class ImageProcessing
 
     public static byte[] GetScreenBytes()
     {
-        //Stopwatch stp = Stopwatch.StartNew();
+        Stopwatch stp = Stopwatch.StartNew();
         Image<Bgr, byte> img = GetScreenShot();
-       // double t1 = stp.Elapsed.TotalMilliseconds;
+        double t1 = stp.Elapsed.TotalMilliseconds;
         //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
         img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0));
         //var g = Graphics.FromImage(img.Bitmap);
         //Rectangle cursorBounds = new Rectangle(CursorPosition, Cursor.Current.Size);
         //Cursors.Default.Draw(g, cursorBounds);
-        //double t2 = stp.Elapsed.TotalMilliseconds;
+        double t2 = stp.Elapsed.TotalMilliseconds;
         var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Cubic);
-       // double t3 = stp.Elapsed.TotalMilliseconds;
+        double t3 = stp.Elapsed.TotalMilliseconds;
         byte[] imageBytes= ImageToByteArray(resizedImage.Bitmap);
-       // double t4 = stp.Elapsed.TotalMilliseconds;
-        //Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
+        double t4 = stp.Elapsed.TotalMilliseconds;
+        Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
         return imageBytes;
     }
     private static Image<Bgr,byte> GetScreenShot()
