@@ -93,7 +93,6 @@
     <Compile Include="Core Classes\Communication Classes\Communication.cs" />
     <Compile Include="Core Classes\Communication Classes\Server.cs" />
     <Compile Include="Core Classes\ImageProcessing.cs" />
-    <Compile Include="Core Classes\ScreenStateLogger.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

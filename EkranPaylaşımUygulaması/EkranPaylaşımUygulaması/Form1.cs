@@ -20,8 +20,8 @@ namespace EkranPaylaşımUygulaması
         private int UI_UpdateFrequency = 40;        /// Hz
         private double UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
-        private double FormWidth;
-        private double FormHeigth;
+        private int FormWidth;
+        private int FormHeigth;
         public Form1()
         {
             InitializeComponent();
@@ -29,7 +29,6 @@ namespace EkranPaylaşımUygulaması
             Control.CheckForIllegalCrossThreadCalls = false;
             FormWidth = this.Width;
             FormHeigth = this.Height;
-            Debug.WriteLine("FormWidth:" + FormWidth + " FormHeigth:" + FormHeigth);
         }
 
         private void btn_Share_Click(object sender, EventArgs e)
@@ -61,11 +60,11 @@ namespace EkranPaylaşımUygulaması
                 }
                 if(FormHeigth != this.Height || FormWidth!=this.Width)
                 {
-                    picture_screen.Width = (int)((double)this.Width / FormWidth);
-                    picture_screen.Height = (int)((double)this.Height / FormHeigth);
+                    picture_screen.Width = this.Width - pnl_Control.Width;
+                    picture_screen.Height = this.Height;
+                    pnl_Control.Location = new Point(Math.Min(Math.Max(pnl_Control.Location.X+this.Width-FormWidth,0),this.Width-pnl_Control.Width),pnl_Control.Location.Y);
                     FormWidth = this.Width;
                     FormHeigth = this.Height;
-                    Debug.WriteLine("FormWidth:" + FormWidth + " FormHeigth:" + FormHeigth);
 
                 }
                 while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;

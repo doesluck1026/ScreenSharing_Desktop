@@ -242,7 +242,6 @@ class Main
                     fpsCounter = 0;
                     TransferSpeed = (double)bytesSent / mb;
                     bytesSent = 0;
-                    Debug.WriteLine("FPS: " + FPS);
                     stopwatch.Restart();
                 }
                 IsImageSent = true;
@@ -258,6 +257,7 @@ class Main
             if (sendingThread.IsAlive)
             {
                 sendingThread.Abort();
+                sendingThread = null;
                 Comm.CloseServer();
             }
         }

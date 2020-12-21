@@ -255,3 +255,4 @@ D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPay
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.exe
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.pdb
 D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\obj\Debug\EkranPaylaşımUygulaması.csprojAssemblyReference.cache
+D:\Projelerim\Github\Ekran Paylaşım Uygulaması\ScreenSharing_Desktop\EkranPaylaşımUygulaması\EkranPaylaşımUygulaması\bin\Debug\EkranPaylaşımUygulaması.pdb
