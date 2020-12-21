@@ -81,7 +81,7 @@ class ImageProcessing
         //double t2 = stp.Elapsed.TotalMilliseconds;
         var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Cubic);
        // double t3 = stp.Elapsed.TotalMilliseconds;
-        byte[] imageBytes= ImageToByteArray(img.Bitmap);
+        byte[] imageBytes= ImageToByteArray(resizedImage.Bitmap);
        // double t4 = stp.Elapsed.TotalMilliseconds;
         //Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
         return imageBytes;
