@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{9B829627-6997-4E11-9C68-DF9BB1DAA3B4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>EkranPaylaşımUygulaması</RootNamespace>
-    <AssemblyName>EkranPaylaşımUygulaması</AssemblyName>
+    <RootNamespace>ScreenSharingApp</RootNamespace>
+    <AssemblyName>ScreenSharingApp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -113,6 +113,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
