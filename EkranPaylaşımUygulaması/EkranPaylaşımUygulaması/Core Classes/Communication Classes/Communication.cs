@@ -62,7 +62,7 @@ class Communication
     /// <returns>Returns Acknowledge</returns>
     public void SendFilePacks(byte[] data, long numPackage)
     {
-        byte[] HeaderBytes = PrepareDataHeader(Functions.SendingFile, (uint)(data.Length + 4));     /// Prepare Data Header for given length. +4 is for to specify current package index.
+        byte[] HeaderBytes = PrepareDataHeader(Functions.SendingFile, (data.Length + 4));     /// Prepare Data Header for given length. +4 is for to specify current package index.
         byte[] DataToSend = new byte[data.Length + 4 + HeaderLen];                                  /// Create carrier data pack
         Array.Copy(HeaderBytes, 0, DataToSend, 0, HeaderLen);                                       /// Copy Header bytes to the carrier
         Array.Copy(BitConverter.GetBytes(numPackage), 0, DataToSend, HeaderLen, sizeof(int));       /// Copy Index bytes to carrier pack
@@ -79,7 +79,9 @@ class Communication
     public byte[] GetResponseFromClient()
     {
         byte[] receivedData = server.GetData();
-        return receivedData;
+        byte[] responseBytes = new byte[receivedData.Length - HeaderLen];
+        Array.Copy(receivedData, HeaderLen, responseBytes, 0, responseBytes.Length);
+        return responseBytes;
     }
     #endregion
 
@@ -115,8 +117,8 @@ class Communication
         {
             if (receivedData[1] == (byte)Functions.SendingFile)                        /// Check the function byte
             {
-                uint dataLen = BitConverter.ToUInt32(receivedData, 3);              /// Get the length of the data bytes (index bytes are included to this number)
-                uint packIndex = BitConverter.ToUInt32(receivedData, HeaderLen);    /// Get the index of data pack
+                int dataLen = BitConverter.ToInt32(receivedData, 3);              /// Get the length of the data bytes (index bytes are included to this number)
+                int packIndex = BitConverter.ToInt32(receivedData, HeaderLen);    /// Get the index of data pack
                 byte[] dataPack = new byte[dataLen - 4];                              /// Create data pack variable to store file bytes 
                 Array.Copy(receivedData, HeaderLen + 4, dataPack, 0, dataLen - 4);      /// Copy array to data packs byte
                 return dataPack;
@@ -135,13 +137,13 @@ class Communication
         }
     }
     
-    public void SendResponseToServer()
+    public void SendResponseToServer(byte[] data)
     {
-        uint len = 1;
+        int len = data.Length;
         byte[] dataToSend = new byte[len + HeaderLen];
         byte[] headerBytes=PrepareDataHeader(Functions.SendingFile, len);
         headerBytes.CopyTo(dataToSend, 0);
-        dataToSend[HeaderLen] = 100;
+        data.CopyTo(dataToSend, HeaderLen);
         client.SendDataServer(dataToSend);
     }
     public  void CloseClient()
@@ -155,7 +157,7 @@ class Communication
     #endregion
 
     #region Common Functions
-    private  byte[] PrepareDataHeader(Functions func, uint len)
+    private  byte[] PrepareDataHeader(Functions func, int len)
     {
         byte[] HeaderBytes = new byte[HeaderLen];
         HeaderBytes[0] = StartByte;
@@ -164,10 +166,22 @@ class Communication
         Array.Copy(lenBytes, 0, HeaderBytes, 3, lenBytes.Length);
         return HeaderBytes;
     }
-    private  uint CalculatePackageCount(double fileSize)
+    private  int CalculatePackageCount(double fileSize)
     {
-        uint packageCount = (uint)Math.Ceiling(fileSize / (double)Main.PackSize);
+        int packageCount = (int)Math.Ceiling(fileSize / (double)Main.PackSize);
         return packageCount;
+    }
+    public byte WriteToBit(byte value, byte index, bool data)
+    {
+        if (data)
+            value = (byte)(value | (0x01 << index));
+        else
+            value = (byte)(value & ~(0x01 << index));
+        return value;
+    }
+    public bool ReadBit(byte data, int index)
+    {
+        return ((data >> index) & 0x01) == 0x01;
     }
     #endregion
 }

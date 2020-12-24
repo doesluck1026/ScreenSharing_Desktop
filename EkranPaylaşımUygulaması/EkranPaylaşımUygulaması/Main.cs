@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -108,11 +109,26 @@ class Main
                 _transferSpeed = value;
         }
     }
+    public bool IsControlsEnabled
+    {
+        get
+        {
+            lock (Lck_IsControlsEnabled)
+                return _isControlsEnabled;
+        }
+        set
+        {
+            lock (Lck_IsControlsEnabled)
+                _isControlsEnabled = value;
+        }
+    }
+
 
     private bool _isSendingEnabled = true;
     private bool _isReceivingEnabled = true;
     private bool _isImageReceived = true;
     private bool _isImageSent = true;
+    private bool _isControlsEnabled = false;
     private Bitmap _screenImage;
     private double _transferSpeed;
 
@@ -130,7 +146,8 @@ class Main
     private  object Lck_IsImageReceived = new object();
     private  object Lck_IsImageSent = new object();
     private  object Lck_TransferSpeed = new object();
-    
+    private  object Lck_IsControlsEnabled = new object();
+
     public  string HostName
     {
 
@@ -153,7 +170,18 @@ class Main
     #endregion
     private Communication Comm;
 
-    public  enum CommunicationTypes
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+    public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+    //Mouse actions
+    private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+    private const int MOUSEEVENTF_LEFTUP = 0x04;
+    private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
+    private const int MOUSEEVENTF_RIGHTUP = 0x10;
+
+    private bool wasLeftButtonClicked = false;
+    private bool wasRightButtonClicked = false;
+    public enum CommunicationTypes
     {
         Sender,
         Receiver
@@ -183,7 +211,6 @@ class Main
         }
         catch (Exception e)
         {
-            string Msg = "sFailedClient"; // "Failed to start sending thread!";
             Debug.WriteLine("Failed to start sending thread! \n " + e.ToString());
             return false;
         }
@@ -197,6 +224,7 @@ class Main
         int fpsCounter = 0;
         int bytesSent = 0;
         int mb = 1024 * 1024;
+        FPS = 30;
         while (IsSendingEnabled)
         {
             string clientHostname = Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.
@@ -215,7 +243,6 @@ class Main
                 /// 
                 byte[] imageBytes= ImageProcessing.GetScreenBytes();
                 //double t2 = stopwatch.Elapsed.TotalMilliseconds;
-
                 /// Send image to client   here
                 /// 
                 Comm.SendFilePacks(imageBytes, 0);
@@ -224,13 +251,57 @@ class Main
                 /// Get Response of client here
                 /// 
                 byte[] responseBytes = Comm.GetResponseFromClient();
-                //double t4 = stopwatch.Elapsed.TotalMilliseconds;
-               // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
-                if (responseBytes==null)
+                if (responseBytes == null)
                 {
                     Comm.isClientConnected = false;
                     break;
                 }
+                if (Comm.ReadBit(responseBytes[0], 0))
+                {
+                    int cursor_x = responseBytes[1] | responseBytes[2] << 8;
+                    int cursor_y = responseBytes[3] | responseBytes[4] << 8;
+                    byte ControlByte = responseBytes[0];
+                    bool leftClicked = Comm.ReadBit(ControlByte, 1);
+                    bool rightClicked = Comm.ReadBit(ControlByte, 2);
+                    if(leftClicked || rightClicked)
+                    {
+                        if(leftClicked)
+                        {
+                            wasLeftButtonClicked = true;
+                            mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                        }
+                        else
+                        {
+                            if(wasLeftButtonClicked)
+                            {
+                                mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                                wasLeftButtonClicked = false;
+                            }
+                        }
+                        if (rightClicked)
+                        {
+                            wasRightButtonClicked = true;
+                            mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                        }
+                        else
+                        {
+                            if (wasRightButtonClicked)
+                            {
+                                mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                                wasRightButtonClicked = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
+                    }
+                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+
+                }
+                //double t4 = stopwatch.Elapsed.TotalMilliseconds;
+                // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
+
 
                 /// Calculate FPS Rate here
                 /// 
@@ -238,7 +309,8 @@ class Main
                 bytesSent += imageBytes.Length;
                 if (stopwatch.Elapsed.TotalSeconds >= 1)
                 {
-                    FPS = fpsCounter;
+                    FPS = (int)(FPS * 0.9 + 0.1 * fpsCounter);
+                    ImageProcessing.FPS = FPS;
                     fpsCounter = 0;
                     TransferSpeed = (double)bytesSent / mb;
                     bytesSent = 0;
@@ -289,10 +361,28 @@ class Main
             {
                 /// get image bytes
                 byte[] ImageBytes = Comm.ReceiveFilePacks();
-                Comm.SendResponseToServer();
+
+
 
                 /// Create image
                 ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
+                int len = 5;
+                byte[] data = new byte[len];
+
+                byte ControlByte = 0;
+
+                data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
+                data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
+                data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
+                data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
+
+                ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
+                ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons==System.Windows.Forms.MouseButtons.Left);
+                ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
+                //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+                data[0] = ControlByte;
+
+                Comm.SendResponseToServer(data);
                 IsImageReceived = true;
                 /// Calculate FPS Rate here
                 fpsCounter++;

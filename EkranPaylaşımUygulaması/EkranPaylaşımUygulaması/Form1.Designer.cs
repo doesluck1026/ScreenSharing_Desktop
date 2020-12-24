@@ -29,146 +29,148 @@ namespace EkranPaylaşımUygulaması
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.picture_screen = new System.Windows.Forms.PictureBox();
-            this.btn_Share = new System.Windows.Forms.Button();
-            this.btn_Connect = new System.Windows.Forms.Button();
-            this.txt_IP = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lbl_FPS = new System.Windows.Forms.Label();
-            this.lbl_TransferSpeed = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.pnl_Control = new System.Windows.Forms.Panel();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip_Connect = new System.Windows.Forms.ToolStripButton();
+            this.txt_IP = new System.Windows.Forms.ToolStripTextBox();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.lbl_FPS = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.lbl_TransferSpeed = new System.Windows.Forms.ToolStripLabel();
+            this.toolStrip_Share = new System.Windows.Forms.ToolStripButton();
+            this.tool_EnableControls = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.picture_screen)).BeginInit();
-            this.pnl_Control.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // picture_screen
             // 
-            this.picture_screen.Location = new System.Drawing.Point(1, -2);
+            this.picture_screen.Location = new System.Drawing.Point(0, 28);
             this.picture_screen.Name = "picture_screen";
-            this.picture_screen.Size = new System.Drawing.Size(976, 553);
+            this.picture_screen.Size = new System.Drawing.Size(1109, 532);
             this.picture_screen.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picture_screen.TabIndex = 0;
             this.picture_screen.TabStop = false;
             // 
-            // btn_Share
+            // toolStrip1
             // 
-            this.btn_Share.Location = new System.Drawing.Point(8, 115);
-            this.btn_Share.Name = "btn_Share";
-            this.btn_Share.Size = new System.Drawing.Size(92, 38);
-            this.btn_Share.TabIndex = 1;
-            this.btn_Share.Text = "Paylaş";
-            this.btn_Share.UseVisualStyleBackColor = true;
-            this.btn_Share.Click += new System.EventHandler(this.btn_Share_Click);
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip_Share,
+            this.toolStripSeparator1,
+            this.toolStrip_Connect,
+            this.txt_IP,
+            this.toolStripLabel1,
+            this.lbl_FPS,
+            this.toolStripLabel3,
+            this.lbl_TransferSpeed,
+            this.tool_EnableControls});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1109, 25);
+            this.toolStrip1.TabIndex = 11;
+            this.toolStrip1.Text = "toolStrip1";
             // 
-            // btn_Connect
+            // toolStrip_Connect
             // 
-            this.btn_Connect.Location = new System.Drawing.Point(8, 71);
-            this.btn_Connect.Name = "btn_Connect";
-            this.btn_Connect.Size = new System.Drawing.Size(92, 38);
-            this.btn_Connect.TabIndex = 2;
-            this.btn_Connect.Text = "Bağlan";
-            this.btn_Connect.UseVisualStyleBackColor = true;
-            this.btn_Connect.Click += new System.EventHandler(this.btn_Connect_Click);
+            this.toolStrip_Connect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStrip_Connect.Image = ((System.Drawing.Image)(resources.GetObject("toolStrip_Connect.Image")));
+            this.toolStrip_Connect.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_Connect.Name = "toolStrip_Connect";
+            this.toolStrip_Connect.Size = new System.Drawing.Size(56, 22);
+            this.toolStrip_Connect.Text = "Connect";
+            this.toolStrip_Connect.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.toolStrip_Connect.Click += new System.EventHandler(this.toolStrip_Connect_Click);
             // 
             // txt_IP
             // 
-            this.txt_IP.Location = new System.Drawing.Point(31, 45);
+            this.txt_IP.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.txt_IP.Name = "txt_IP";
-            this.txt_IP.Size = new System.Drawing.Size(86, 20);
-            this.txt_IP.TabIndex = 3;
+            this.txt_IP.Size = new System.Drawing.Size(100, 25);
             this.txt_IP.Text = "192.168.1.36";
             // 
-            // label1
+            // toolStripLabel1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 48);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(20, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "IP:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(5, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(30, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "FPS:";
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(26, 22);
+            this.toolStripLabel1.Text = "FPS";
             // 
             // lbl_FPS
             // 
-            this.lbl_FPS.AutoSize = true;
-            this.lbl_FPS.Location = new System.Drawing.Point(41, 8);
             this.lbl_FPS.Name = "lbl_FPS";
-            this.lbl_FPS.Size = new System.Drawing.Size(13, 13);
-            this.lbl_FPS.TabIndex = 6;
+            this.lbl_FPS.Size = new System.Drawing.Size(13, 22);
             this.lbl_FPS.Text = "0";
+            // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(39, 22);
+            this.toolStripLabel3.Text = "Speed";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // lbl_TransferSpeed
             // 
-            this.lbl_TransferSpeed.AutoSize = true;
-            this.lbl_TransferSpeed.Location = new System.Drawing.Point(50, 24);
             this.lbl_TransferSpeed.Name = "lbl_TransferSpeed";
-            this.lbl_TransferSpeed.Size = new System.Drawing.Size(13, 13);
-            this.lbl_TransferSpeed.TabIndex = 8;
+            this.lbl_TransferSpeed.Size = new System.Drawing.Size(13, 22);
             this.lbl_TransferSpeed.Text = "0";
             // 
-            // label4
+            // toolStrip_Share
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(5, 24);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(39, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "speed:";
+            this.toolStrip_Share.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStrip_Share.Image = ((System.Drawing.Image)(resources.GetObject("toolStrip_Share.Image")));
+            this.toolStrip_Share.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStrip_Share.Name = "toolStrip_Share";
+            this.toolStrip_Share.Size = new System.Drawing.Size(40, 22);
+            this.toolStrip_Share.Text = "Share";
+            this.toolStrip_Share.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.toolStrip_Share.Click += new System.EventHandler(this.toolStrip_Share_Click);
             // 
-            // pnl_Control
+            // tool_EnableControls
             // 
-            this.pnl_Control.Controls.Add(this.btn_Connect);
-            this.pnl_Control.Controls.Add(this.lbl_TransferSpeed);
-            this.pnl_Control.Controls.Add(this.btn_Share);
-            this.pnl_Control.Controls.Add(this.label4);
-            this.pnl_Control.Controls.Add(this.txt_IP);
-            this.pnl_Control.Controls.Add(this.lbl_FPS);
-            this.pnl_Control.Controls.Add(this.label1);
-            this.pnl_Control.Controls.Add(this.label2);
-            this.pnl_Control.Location = new System.Drawing.Point(983, 11);
-            this.pnl_Control.Name = "pnl_Control";
-            this.pnl_Control.Size = new System.Drawing.Size(123, 163);
-            this.pnl_Control.TabIndex = 9;
+            this.tool_EnableControls.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tool_EnableControls.Image = ((System.Drawing.Image)(resources.GetObject("tool_EnableControls.Image")));
+            this.tool_EnableControls.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tool_EnableControls.Name = "tool_EnableControls";
+            this.tool_EnableControls.Size = new System.Drawing.Size(91, 22);
+            this.tool_EnableControls.Text = "EnableControls";
+            this.tool_EnableControls.Click += new System.EventHandler(this.tool_EnableControls_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1109, 559);
-            this.Controls.Add(this.pnl_Control);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.picture_screen);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picture_screen)).EndInit();
-            this.pnl_Control.ResumeLayout(false);
-            this.pnl_Control.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.PictureBox picture_screen;
-        private System.Windows.Forms.Button btn_Share;
-        private System.Windows.Forms.Button btn_Connect;
-        private System.Windows.Forms.TextBox txt_IP;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label lbl_FPS;
-        private System.Windows.Forms.Label lbl_TransferSpeed;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Panel pnl_Control;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStrip_Connect;
+        private System.Windows.Forms.ToolStripTextBox txt_IP;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripLabel lbl_FPS;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripLabel lbl_TransferSpeed;
+        private System.Windows.Forms.ToolStripButton toolStrip_Share;
+        private System.Windows.Forms.ToolStripButton tool_EnableControls;
     }
 }
 

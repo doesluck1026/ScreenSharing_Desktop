@@ -30,20 +30,36 @@ namespace EkranPaylaşımUygulaması
             FormWidth = this.Width;
             FormHeigth = this.Height;
         }
-
-        private void btn_Share_Click(object sender, EventArgs e)
+        private void toolStrip_Share_Click(object sender, EventArgs e)
         {
             main = new Main(Main.CommunicationTypes.Sender);
             main.StartSharingScreen();
             StartUiThread();
         }
 
-        private void btn_Connect_Click(object sender, EventArgs e)
+        private void toolStrip_Connect_Click(object sender, EventArgs e)
         {
             string ip = txt_IP.Text;
             main = new Main(Main.CommunicationTypes.Receiver);
             main.StartReceiving(ip);
             StartUiThread();
+        }
+
+        private void tool_EnableControls_Click(object sender, EventArgs e)
+        {
+            if (main == null)
+                return;
+            if (main.IsControlsEnabled)
+            {
+                main.IsControlsEnabled = false;
+                tool_EnableControls.BackColor = Color.LightGray;
+            }
+            else
+            {
+                main.IsControlsEnabled = true;
+                tool_EnableControls.BackColor = Color.LightBlue;
+
+            }
         }
         private void UpdateUI()
         {
@@ -53,16 +69,16 @@ namespace EkranPaylaşımUygulaması
                 if (main.IsImageReceived || main.IsImageSent)
                 {
                     picture_screen.Image = main.ScreenImage;
-                    lbl_FPS.Text = main.FPS.ToString();
+                    lbl_FPS.Text = ImageProcessing.FPS.ToString();
                     lbl_TransferSpeed.Text = main.TransferSpeed.ToString("0.00") + " MB/s";
                     main.IsImageReceived = false;
                     main.IsImageSent = false;
                 }
                 if(FormHeigth != this.Height || FormWidth!=this.Width)
                 {
-                    picture_screen.Width = this.Width - pnl_Control.Width;
-                    picture_screen.Height = this.Height;
-                    pnl_Control.Location = new Point(Math.Min(Math.Max(pnl_Control.Location.X+this.Width-FormWidth,0),this.Width-pnl_Control.Width),pnl_Control.Location.Y);
+                    picture_screen.Location = new Point(0, picture_screen.Location.Y);
+                    picture_screen.Width = this.Width;
+                    picture_screen.Height = this.Height-picture_screen.Location.Y;
                     FormWidth = this.Width;
                     FormHeigth = this.Height;
 
@@ -105,6 +121,10 @@ namespace EkranPaylaşımUygulaması
                 main.CancelSharing();
                 main.StopReceiving();
             }
+            Application.Exit();
         }
+
+
+        
     }
 }
