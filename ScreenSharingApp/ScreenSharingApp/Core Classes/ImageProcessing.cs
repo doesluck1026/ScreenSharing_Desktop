@@ -73,11 +73,11 @@ class ImageProcessing
     {
         Stopwatch stp = Stopwatch.StartNew();
         Image<Bgr, byte> img = GetScreenShot();
-        //double t1 = stp.Elapsed.TotalMilliseconds;
+        double t1 = stp.Elapsed.TotalMilliseconds;
         //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
         img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0),2);
-       // double t2 = stp.Elapsed.TotalMilliseconds;
-        //double t3;
+        double t2 = stp.Elapsed.TotalMilliseconds;
+        double t3;
         byte[] imageBytes;
         if(FPS<-10)
         {
@@ -85,19 +85,19 @@ class ImageProcessing
             if (ResizeRatio == 0)
                 ResizeRatio = 0.1;
             var resizedImage = img.Resize(ResizeRatio, Emgu.CV.CvEnum.Inter.Linear);
-            //t3 = stp.Elapsed.TotalMilliseconds;
+            t3 = stp.Elapsed.TotalMilliseconds;
             imageBytes = ImageToByteArray(resizedImage.Bitmap);
         }
         else
         {
             ResizeRatio = 1;
-            // t3 = stp.Elapsed.TotalMilliseconds;
+             t3 = stp.Elapsed.TotalMilliseconds;
             var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
             imageBytes = ImageToByteArray(resizedImage.Bitmap);
         }
         //Debug.WriteLine("Resize Ratio: " + ResizeRatio);
         double t4 = stp.Elapsed.TotalMilliseconds;
-       // Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
+        Debug.WriteLine("  screenShot Time: " + t1 +" ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
         return imageBytes;
     }
     private static Image<Bgr,byte> GetScreenShot()
