@@ -361,25 +361,24 @@ class Main
             {
                 /// get image bytes
                 byte[] ImageBytes = Comm.ReceiveFilePacks();
-
-
-
                 /// Create image
                 ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
                 int len = 5;
                 byte[] data = new byte[len];
 
                 byte ControlByte = 0;
+                if (IsControlsEnabled)
+                {
+                    data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
+                    data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
+                    data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
+                    data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
 
-                data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
-                data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
-                data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
-                data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
-
-                ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
-                ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons==System.Windows.Forms.MouseButtons.Left);
-                ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
-                //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+                    ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
+                    ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left);
+                    ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
+                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+                }
                 data[0] = ControlByte;
 
                 Comm.SendResponseToServer(data);
@@ -394,6 +393,7 @@ class Main
                     TransferSpeed = (double)bytesSent / mb;
                     bytesSent = 0;
                     stopwatch.Restart();
+                    Debug.WriteLine("FPS: " + FPS);
                 }
             }
         }

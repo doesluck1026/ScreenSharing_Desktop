@@ -79,7 +79,7 @@ class ImageProcessing
        // double t2 = stp.Elapsed.TotalMilliseconds;
         //double t3;
         byte[] imageBytes;
-        if(FPS<30)
+        if(FPS<-10)
         {
             ResizeRatio = FPS / 30.0;
             if (ResizeRatio == 0)
@@ -91,8 +91,9 @@ class ImageProcessing
         else
         {
             ResizeRatio = 1;
-           // t3 = stp.Elapsed.TotalMilliseconds;
-            imageBytes = ImageToByteArray(img.Bitmap);
+            // t3 = stp.Elapsed.TotalMilliseconds;
+            var resizedImage = img.Resize(0.5, Emgu.CV.CvEnum.Inter.Linear);
+            imageBytes = ImageToByteArray(resizedImage.Bitmap);
         }
         //Debug.WriteLine("Resize Ratio: " + ResizeRatio);
         double t4 = stp.Elapsed.TotalMilliseconds;
@@ -119,11 +120,6 @@ class ImageProcessing
         using (var stream = new MemoryStream())
         {
             img.Save(stream, ImageFormat.Jpeg);
-            //var stream2 = new MemoryStream();
-            //var stream3 = new MemoryStream();
-            //img.Save(stream2, ImageFormat.Jpeg);
-            //img.Save(stream3, ImageFormat.Bmp);
-            //Debug.WriteLine("png_len: " + stream.ToArray().Length + " jpegLen: " + stream2.ToArray().Length + " bmp_len: " + stream3.ToArray().Length);
             return stream.ToArray();
         }
     }

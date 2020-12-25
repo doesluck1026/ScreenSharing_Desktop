@@ -69,7 +69,7 @@ namespace EkranPaylaşımUygulaması
                 if (main.IsImageReceived || main.IsImageSent)
                 {
                     picture_screen.Image = main.ScreenImage;
-                    lbl_FPS.Text = ImageProcessing.FPS.ToString();
+                    lbl_FPS.Text = main.FPS.ToString();
                     lbl_TransferSpeed.Text = main.TransferSpeed.ToString("0.00") + " MB/s";
                     main.IsImageReceived = false;
                     main.IsImageSent = false;
@@ -83,7 +83,7 @@ namespace EkranPaylaşımUygulaması
                     FormHeigth = this.Height;
 
                 }
-                while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;
+                while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod);
                 stp.Restart();
             }
         }
