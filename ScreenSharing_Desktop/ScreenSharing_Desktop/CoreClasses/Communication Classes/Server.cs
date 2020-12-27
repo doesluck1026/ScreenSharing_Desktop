@@ -79,12 +79,13 @@ class Server
         {
             server.Stop();
             server.Server.Close();
+            
             Debug.WriteLine("Server has been stopped");
             ServerStarted = false;
         }
         catch
         {
-            Console.WriteLine("could not close the Server ");
+            Debug.WriteLine("could not close the Server ");
         }
     }
     public bool SendDataToClient(byte[] Data)

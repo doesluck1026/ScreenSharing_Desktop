@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,12 +29,16 @@ namespace ScreenSharing_Desktop
         private int UI_UpdateFrequency = 40;        /// Hz
         private double UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
-        private int FormWidth;
-        private int FormHeigth;
+        private bool IsAutoShareEnabled = false;
+        private BagFile OptionsFile;
+        private string URL;
+        private string FileName = "Options.dat";
         public MainWindow()
         {
             InitializeComponent();
             UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
+            OptionsFile = new BagFile();
+            URL = Environment.CurrentDirectory + "\\";
         }
 
         private void btn_Share_Click(object sender, RoutedEventArgs e)
@@ -108,7 +114,44 @@ namespace ScreenSharing_Desktop
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                LoadOptions();
+                Dispatcher.Invoke(() =>
+                {
+                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
+                });
+                if(IsAutoShareEnabled)
+                {
+                    btn_Share_Click(null, null);
+                }
+            }
+            catch
+            {
 
+            }
+        }
+
+        private void chc_AutoShare_Click(object sender, RoutedEventArgs e)
+        {
+            IsAutoShareEnabled = (bool)chc_AutoShare.IsChecked;
+            SaveOptions();
+        }
+        private void LoadOptions()
+        {
+            FileStream readerFileStream = new FileStream(URL+FileName, FileMode.Open, FileAccess.Read);
+            // Reconstruct data
+            BinaryFormatter formatter = new BinaryFormatter();
+            OptionsFile = (BagFile)formatter.Deserialize(readerFileStream);
+            IsAutoShareEnabled = OptionsFile.IsAutoShareEnabled;
+        }
+        private void SaveOptions()
+        {
+            OptionsFile.IsAutoShareEnabled = IsAutoShareEnabled;
+            FileStream writerFileStream = new FileStream(URL+FileName, FileMode.Create, FileAccess.Write);
+            BinaryFormatter formatter = new BinaryFormatter();
+            formatter.Serialize(writerFileStream, OptionsFile);
+            writerFileStream.Close();
         }
     }
 }

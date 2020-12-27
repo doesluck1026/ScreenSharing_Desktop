@@ -29,6 +29,7 @@
                     <Label Content="FPS:" Foreground="White" FontSize="30" FontWeight="DemiBold" />
                     <Label x:Name="lbl_FPS" Content="30" FontSize="30" FontWeight="DemiBold" Foreground="White"/>
                 </StackPanel>
+                <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
             </StackPanel>
         </Grid>
         <StackPanel Grid.Row="1" >

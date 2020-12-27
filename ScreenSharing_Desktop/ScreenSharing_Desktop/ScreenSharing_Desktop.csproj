@@ -101,6 +101,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CoreClasses\BagFile.cs" />
     <Compile Include="CoreClasses\BitmapSourceConvert.cs" />
     <Compile Include="CoreClasses\Communication Classes\Client.cs" />
     <Compile Include="CoreClasses\Communication Classes\Communication.cs" />
