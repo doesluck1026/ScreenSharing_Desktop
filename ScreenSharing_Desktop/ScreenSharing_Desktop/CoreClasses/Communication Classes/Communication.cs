@@ -146,6 +146,8 @@ class Communication
         byte[] headerBytes = PrepareDataHeader(Functions.SendingFile, len);
         headerBytes.CopyTo(dataToSend, 0);
         data.CopyTo(dataToSend, HeaderLen);
+        if (client == null)
+            return;
         client.SendDataServer(dataToSend);
     }
     public void CloseClient()

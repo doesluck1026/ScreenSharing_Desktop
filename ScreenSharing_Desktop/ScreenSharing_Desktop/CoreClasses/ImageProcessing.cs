@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -39,20 +37,23 @@ class ImageProcessing
 
     public static void StartGettingFrame()
     {
-        ScreenCapturer.StartCapture();
         ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
         ScreenCapturer.OnCaptureStop += ScreenCapturer_OnCaptureStop;
+        ScreenCapturer.StartCapture();
+
+        ScreenCapturer.PreserveBitmap = true;
     }
 
     private static void ScreenCapturer_OnCaptureStop(object sender, OnCaptureStopEventArgs e)
     {
-        ScreenCapturer.StartCapture();
+      //  ScreenCapturer.StartCapture();
     }
 
     private static void ScreenCapturer_OnScreenUpdated(object sender, OnScreenUpdatedEventArgs e)
     {
-        lock (lck_ScreenImage)
-            _screenImage = new Image<Bgr, byte>(e.Bitmap);
+            lock (lck_ScreenImage)
+                _screenImage = new Image<Bgr, byte>(e.Bitmap);
+        
         // ScreenImage.Save("C:\\Users\\CDS_Software02\\Desktop\\image.jpg");
     }
 
@@ -70,13 +71,14 @@ class ImageProcessing
 
     public static byte[] GetScreenBytes()
     {
-        Stopwatch stp = Stopwatch.StartNew();
+        //Stopwatch stp = Stopwatch.StartNew();
         Image<Bgr, byte> img = GetScreenShot();
-        double t1 = stp.Elapsed.TotalMilliseconds;
+
+        //double t1 = stp.Elapsed.TotalMilliseconds;
         //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
-        img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0), 2);
-        double t2 = stp.Elapsed.TotalMilliseconds;
-        double t3;
+        //img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0), 2);
+       // double t2 = stp.Elapsed.TotalMilliseconds;
+       // double t3;
         byte[] imageBytes;
         if (FPS < -10)
         {
@@ -84,42 +86,48 @@ class ImageProcessing
             if (ResizeRatio == 0)
                 ResizeRatio = 0.1;
             var resizedImage = img.Resize(ResizeRatio, Emgu.CV.CvEnum.Inter.Linear);
-            t3 = stp.Elapsed.TotalMilliseconds;
+           // t3 = stp.Elapsed.TotalMilliseconds;
             imageBytes = ImageToByteArray(resizedImage.Bitmap);
         }
         else
         {
-            ResizeRatio = 1;
-            t3 = stp.Elapsed.TotalMilliseconds;
-            var resizedImage = img.Resize(1, Emgu.CV.CvEnum.Inter.Linear);
-            imageBytes = ImageToByteArray(resizedImage.Bitmap);
+           // ResizeRatio = 1;
+           // t3 = stp.Elapsed.TotalMilliseconds;
+           // var resizedImage = img.Resize(1, Emgu.CV.CvEnum.Inter.Linear);
+            imageBytes = ImageToByteArray(img.Bitmap);
         }
         //Debug.WriteLine("Resize Ratio: " + ResizeRatio);
-        double t4 = stp.Elapsed.TotalMilliseconds;
-        Debug.WriteLine("  screenShot Time: " + t1 + " ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
+        //double t4 = stp.Elapsed.TotalMilliseconds;
+        //Debug.WriteLine("  screenShot Time: " + t1 + " ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
         return imageBytes;
     }
     private static Image<Bgr, byte> GetScreenShot()
     {
         try
-
         {
-            CursorPosition = Cursor.Position;
             return ScreenImage;
         }
         catch (Exception ex)
         {
             Debug.WriteLine("ScreenShot Error: " + ex.Message);
-
         }
         return null;
     }
     public static byte[] ImageToByteArray(Bitmap img)
     {
-        using (var stream = new MemoryStream())
+        if (img == null)
+            return null;
+        try
         {
-            img.Save(stream, ImageFormat.Jpeg);
-            return stream.ToArray();
+            using (var stream = new MemoryStream())
+            {
+                img.Save(stream, ImageFormat.Jpeg);
+                return stream.ToArray();
+            }
+        }
+        catch
+        {
+            return null;
         }
     }
     public static Bitmap ImageFromByteArray(byte[] imageBytes)

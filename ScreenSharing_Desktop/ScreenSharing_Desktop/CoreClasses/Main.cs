@@ -95,7 +95,6 @@ class Main
                 _screenImage = value;
         }
     }
-
     public double TransferSpeed
     {
         get
@@ -122,16 +121,43 @@ class Main
                 _isControlsEnabled = value;
         }
     }
-
+    public bool IsConnectedToServer
+    {
+        get
+        {
+            lock (Lck_IsConnectedToServer)
+                return _isConnectedToServer;
+        }
+        set
+        {
+            lock (Lck_IsConnectedToServer)
+                _isConnectedToServer = value;
+        }
+    }
+    public CommunicationTypes CommunitionType
+    {
+        get
+        {
+            lock (Lck_CommunitionType)
+                return _communitionType;
+        }
+        set
+        {
+            lock (Lck_CommunitionType)
+                _communitionType = value;
+        }
+    }
 
     private bool _isSendingEnabled = true;
     private bool _isReceivingEnabled = true;
     private bool _isImageReceived = true;
     private bool _isImageSent = true;
     private bool _isControlsEnabled = false;
+    private bool _isConnectedToServer = false;
     private Bitmap _screenImage;
     private double _transferSpeed;
-
+    private CommunicationTypes _communitionType;
+    
     private string _URL;                          /// File Path
     private Thread sendingThread;
     private Thread receivingThread;
@@ -147,6 +173,8 @@ class Main
     private object Lck_IsImageSent = new object();
     private object Lck_TransferSpeed = new object();
     private object Lck_IsControlsEnabled = new object();
+    private object Lck_IsConnectedToServer = new object();
+    private object Lck_CommunitionType = new object();
 
     public string HostName
     {
@@ -181,6 +209,7 @@ class Main
 
     private bool wasLeftButtonClicked = false;
     private bool wasRightButtonClicked = false;
+    
     public enum CommunicationTypes
     {
         Sender,
@@ -192,9 +221,10 @@ class Main
         Comm = new Communication();
         if (communicationType == CommunicationTypes.Sender)
         {
-            string serverIP = Comm.CreateServer();
-            Debug.WriteLine("Server IP: " + serverIP);
+            HostName= Comm.CreateServer();
+            Debug.WriteLine("Server IP: " + HostName);
         }
+        this.CommunitionType = communicationType;
     }
     /// <summary>
     /// Starts sending slected file to client in another thread.
@@ -227,13 +257,13 @@ class Main
         FPS = 30;
         while (IsSendingEnabled)
         {
+            ImageProcessing.StartGettingFrame();
             string clientHostname = Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.
-            HostName = clientHostname;
             if (clientHostname == null && clientHostname == "")             /// if connection succeed
             {
                 return;
             }
-            ImageProcessing.StartGettingFrame();
+            
             Thread.Sleep(500);
             stopwatch.Restart();
             while (Comm.isClientConnected)
@@ -241,7 +271,8 @@ class Main
                 // double t1 = stopwatch.Elapsed.TotalMilliseconds;
                 /// get image Here
                 /// 
-                byte[] imageBytes = ImageProcessing.GetScreenBytes();
+                byte[] imageBytes =  ImageProcessing.GetScreenBytes();
+
                 //double t2 = stopwatch.Elapsed.TotalMilliseconds;
                 /// Send image to client   here
                 /// 
@@ -256,49 +287,49 @@ class Main
                     Comm.isClientConnected = false;
                     break;
                 }
-                if (Comm.ReadBit(responseBytes[0], 0))
-                {
-                    int cursor_x = responseBytes[1] | responseBytes[2] << 8;
-                    int cursor_y = responseBytes[3] | responseBytes[4] << 8;
-                    byte ControlByte = responseBytes[0];
-                    bool leftClicked = Comm.ReadBit(ControlByte, 1);
-                    bool rightClicked = Comm.ReadBit(ControlByte, 2);
-                    if (leftClicked || rightClicked)
-                    {
-                        if (leftClicked)
-                        {
-                            wasLeftButtonClicked = true;
-                            mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                        }
-                        else
-                        {
-                            if (wasLeftButtonClicked)
-                            {
-                                mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                                wasLeftButtonClicked = false;
-                            }
-                        }
-                        if (rightClicked)
-                        {
-                            wasRightButtonClicked = true;
-                            mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                        }
-                        else
-                        {
-                            if (wasRightButtonClicked)
-                            {
-                                mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                                wasRightButtonClicked = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
-                    }
-                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+                //if (Comm.ReadBit(responseBytes[0], 0))
+                //{
+                //int cursor_x = responseBytes[1] | responseBytes[2] << 8;
+                //int cursor_y = responseBytes[3] | responseBytes[4] << 8;
+                //byte ControlByte = responseBytes[0];
+                //bool leftClicked = Comm.ReadBit(ControlByte, 1);
+                //bool rightClicked = Comm.ReadBit(ControlByte, 2);
+                //if (leftClicked || rightClicked)
+                //{
+                //    if (leftClicked)
+                //    {
+                //        wasLeftButtonClicked = true;
+                //        mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                //    }
+                //    else
+                //    {
+                //        if (wasLeftButtonClicked)
+                //        {
+                //            mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                //            wasLeftButtonClicked = false;
+                //        }
+                //    }
+                //    if (rightClicked)
+                //    {
+                //        wasRightButtonClicked = true;
+                //        mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                //    }
+                //    else
+                //    {
+                //        if (wasRightButtonClicked)
+                //        {
+                //            mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                //            wasRightButtonClicked = false;
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
+                //}
+                //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
 
-                }
+                //}
                 //double t4 = stopwatch.Elapsed.TotalMilliseconds;
                 // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
 
@@ -336,7 +367,7 @@ class Main
     }
     public void StartReceiving(string serverIp)
     {
-        Comm.ConnectToServer(serverIp);
+        IsConnectedToServer=Comm.ConnectToServer(serverIp);
 
         try
         {
@@ -363,6 +394,8 @@ class Main
                 /// get image bytes
                 byte[] ImageBytes = Comm.ReceiveFilePacks();
                 /// Create image
+                if (ImageBytes == null)
+                    continue;
                 ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
                 int len = 5;
                 byte[] data = new byte[len];
@@ -370,14 +403,14 @@ class Main
                 byte ControlByte = 0;
                 if (IsControlsEnabled)
                 {
-                    data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
-                    data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
-                    data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
-                    data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
+                    //data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
+                    //data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
+                    //data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
+                    //data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
 
-                    ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
-                    ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left);
-                    ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
+                    //ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
+                    //ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left);
+                    //ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
                     //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
                 }
                 data[0] = ControlByte;
@@ -395,9 +428,9 @@ class Main
                     TransferSpeed = (double)bytesSent / mb;
                     bytesSent = 0;
                     stopwatch.Restart();
-                    Debug.WriteLine("FPS: " + FPS);
                 }
             }
+            IsConnectedToServer = Comm.isConnectedToServer;
         }
     }
     public void StopReceiving()
