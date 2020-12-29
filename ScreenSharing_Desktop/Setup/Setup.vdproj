@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_06CEF422CA9A4207B2EF1F56C79B732F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_107087779615445E8DBD05475543A844"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -129,13 +135,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_596CD6BC73E747189D6960BC0603CF07"
+        "MsmKey" = "8:_598463C7EC0E475082EC969F84699F8D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_598463C7EC0E475082EC969F84699F8D"
+        "MsmKey" = "8:_69E02EDEE5464D91BBFBF8117893E517"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -286,49 +292,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_38E94D938872ABA66A639CC51C9129C0"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_BD18CCEC6BA74E0487185898E6739098"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_1F7FE4597CE94DB4B604B5A00497F1D7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8480314F685E42FEB3714D5D9343397F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_202EA5211EA34403B387FD142B534343"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_C5EA60E981D247BB83FEBCF950F1582F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_49F0BAE3E4F9452B9832538AD7DDC64A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_107087779615445E8DBD05475543A844"
+        "OwnerKey" = "8:_A55548B9035D4F9DA20D535A682DC977"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -340,25 +304,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8373EEAF70804B9F86008BCC9B789FD4"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2ACB4FD3C5ED4FE5A6F7983798DB7D56"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_400B6805CCBE48AD82294B58B4C48FB7"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_15578324C7B64597B7EEC98A8987FFA8"
+        "OwnerKey" = "8:_C5EA60E981D247BB83FEBCF950F1582F"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -370,7 +316,61 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A55548B9035D4F9DA20D535A682DC977"
+        "OwnerKey" = "8:_BD18CCEC6BA74E0487185898E6739098"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8480314F685E42FEB3714D5D9343397F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8373EEAF70804B9F86008BCC9B789FD4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_49F0BAE3E4F9452B9832538AD7DDC64A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_400B6805CCBE48AD82294B58B4C48FB7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2ACB4FD3C5ED4FE5A6F7983798DB7D56"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_202EA5211EA34403B387FD142B534343"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_1F7FE4597CE94DB4B604B5A00497F1D7"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_15578324C7B64597B7EEC98A8987FFA8"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_107087779615445E8DBD05475543A844"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -431,6 +431,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_F1EA90F57E206C9D5A673CEFAA7BBB6E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_38E94D938872ABA66A639CC51C9129C0"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -528,6 +534,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_06CEF422CA9A4207B2EF1F56C79B732F"
+            {
+            "SourcePath" = "8:..\\ScreenSharing_Desktop\\bin\\Debug\\Options.dat"
+            "TargetName" = "8:Options.dat"
+            "Tag" = "8:"
+            "Folder" = "8:_6E46A81F98964F88A59DF99E5B673551"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_107087779615445E8DBD05475543A844"
             {
             "AssemblyRegister" = "3:1"
@@ -940,12 +966,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_596CD6BC73E747189D6960BC0603CF07"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_598463C7EC0E475082EC969F84699F8D"
             {
-            "SourcePath" = "8:..\\ScreenSharing_Desktop\\bin\\Debug\\Options.dat"
-            "TargetName" = "8:Options.dat"
+            "SourcePath" = "8:..\\ScreenSharing_Desktop\\bin\\Debug\\x86\\opencv_ffmpeg310.dll"
+            "TargetName" = "8:opencv_ffmpeg310.dll"
             "Tag" = "8:"
-            "Folder" = "8:_04E06D0746E14C9C8450472B9821726D"
+            "Folder" = "8:_91117780410C4947AE3E250C9C0EB64C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -960,12 +986,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_598463C7EC0E475082EC969F84699F8D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69E02EDEE5464D91BBFBF8117893E517"
             {
-            "SourcePath" = "8:..\\ScreenSharing_Desktop\\bin\\Debug\\x86\\opencv_ffmpeg310.dll"
-            "TargetName" = "8:opencv_ffmpeg310.dll"
+            "SourcePath" = "8:..\\ScreenSharing_Desktop\\bin\\Debug\\Options.dat"
+            "TargetName" = "8:Options.dat"
             "Tag" = "8:"
-            "Folder" = "8:_91117780410C4947AE3E250C9C0EB64C"
+            "Folder" = "8:_04E06D0746E14C9C8450472B9821726D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1686,19 +1712,19 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Screen Sharing App"
-        "ProductCode" = "8:{5B1C56A2-4BBE-4442-AB60-9ED3400F51F8}"
-        "PackageCode" = "8:{EDE9E599-47E2-41FC-A094-E82F9126CB3E}"
+        "ProductCode" = "8:{6DC1177C-1E00-4585-B1E9-56FE573B9539}"
+        "PackageCode" = "8:{791D85EA-1F31-4FEA-B3E9-16AF20C5F72E}"
         "UpgradeCode" = "8:{41F247D8-6B21-4D1C-9076-090500507AC9}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.3.2"
+        "InstallAllUsers" = "11:TRUE"
+        "ProductVersion" = "8:1.4.2"
         "Manufacturer" = "8:JuniorVersusBug"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Setup"
+        "Title" = "8:Screen Sharing App"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Doesluck"
         "Keywords" = "8:"

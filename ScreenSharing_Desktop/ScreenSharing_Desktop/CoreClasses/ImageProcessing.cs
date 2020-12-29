@@ -14,7 +14,7 @@ class ImageProcessing
 {
     #region Variables
     public static int FPS;
-    private static double ResizeRatio = 1;
+    private static double ResizeRatio = 0.7;
     private static Image<Bgr, byte> ScreenImage
     {
         get
@@ -40,8 +40,7 @@ class ImageProcessing
         ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
         ScreenCapturer.OnCaptureStop += ScreenCapturer_OnCaptureStop;
         ScreenCapturer.StartCapture();
-
-        ScreenCapturer.PreserveBitmap = true;
+        ScreenCapturer.SkipFirstFrame = true;
     }
 
     private static void ScreenCapturer_OnCaptureStop(object sender, OnCaptureStopEventArgs e)
@@ -59,7 +58,11 @@ class ImageProcessing
 
     public static void StopGettingFrames()
     {
-        ScreenCapturer.StopCapture();
+        while (ScreenCapturer.IsActive)
+        {
+            ScreenCapturer.StopCapture();
+            System.Threading.Thread.Sleep(50);
+        }
     }
     public static Point CursorPosition
     {
@@ -68,43 +71,49 @@ class ImageProcessing
     }
 
     #endregion
-
+    private static int ElapsedTime = 0;
     public static byte[] GetScreenBytes()
     {
-        //Stopwatch stp = Stopwatch.StartNew();
+        Stopwatch stp = Stopwatch.StartNew();
         Image<Bgr, byte> img = GetScreenShot();
-
+        if (img == null)
+            throw new Exception("ScreenShotException");
         //double t1 = stp.Elapsed.TotalMilliseconds;
         //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
-        //img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0), 2);
+        img.Draw(new CircleF(new PointF((float)CursorPosition.X, (float)CursorPosition.Y), 8), new Bgr(255, 0, 0), 2);
        // double t2 = stp.Elapsed.TotalMilliseconds;
        // double t3;
         byte[] imageBytes;
-        if (FPS < -10)
+        if (ElapsedTime > 600)
         {
-            ResizeRatio = FPS / 30.0;
-            if (ResizeRatio == 0)
-                ResizeRatio = 0.1;
-            var resizedImage = img.Resize(ResizeRatio, Emgu.CV.CvEnum.Inter.Linear);
-           // t3 = stp.Elapsed.TotalMilliseconds;
-            imageBytes = ImageToByteArray(resizedImage.Bitmap);
+            if (FPS < 26)
+            {
+                ElapsedTime = 0;
+                ResizeRatio = Math.Max(0.5, ResizeRatio * 0.99);
+            }
+            else if(FPS > 30)
+            {
+                ElapsedTime = 0;
+                ResizeRatio = Math.Min(1, ResizeRatio / 0.99);
+            }
+            Debug.WriteLine("Resizing ratio updated: " + ResizeRatio);
+
         }
-        else
-        {
-           // ResizeRatio = 1;
-           // t3 = stp.Elapsed.TotalMilliseconds;
-           // var resizedImage = img.Resize(1, Emgu.CV.CvEnum.Inter.Linear);
-            imageBytes = ImageToByteArray(img.Bitmap);
-        }
+        Image<Bgr, byte> resizedImage = img.Resize(ResizeRatio, Emgu.CV.CvEnum.Inter.Linear);
+
+        imageBytes = ImageToByteArray(resizedImage.Bitmap);
+
         //Debug.WriteLine("Resize Ratio: " + ResizeRatio);
         //double t4 = stp.Elapsed.TotalMilliseconds;
         //Debug.WriteLine("  screenShot Time: " + t1 + " ms  drawTime: " + (t2 - t1) + " ms   resizeTime: " + (t3 - t2) + " ms  byte Array Time: " + (t4 - t3) + " ms");
+        ElapsedTime += (int)stp.ElapsedMilliseconds;
         return imageBytes;
     }
     private static Image<Bgr, byte> GetScreenShot()
     {
         try
         {
+            CursorPosition = Cursor.Position;
             return ScreenImage;
         }
         catch (Exception ex)

@@ -5,36 +5,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenSharing_Desktop"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1024"
+        Title="Screen Sharing App" Height="768" Width="1024"
         Closing="Window_Closing"
         ResizeMode="CanResizeWithGrip"
         Loaded="Window_Loaded">
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="14*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="17*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,0">
 
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
-                <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="30" FontWeight="DemiBold" Foreground="White" />
-                <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="30" FontWeight="DemiBold" Foreground="White"/>
-                <TextBox x:Name="txt_IP"  Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="30" Text="192.168.1.36" TextAlignment="Center"/>
-               
-                <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Label Content="Speed:" Foreground="White" FontSize="30" FontWeight="DemiBold" />
-                    <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="30" FontWeight="DemiBold" Foreground="White"/>
-                    <Label Content="FPS:" Foreground="White" FontSize="30" FontWeight="DemiBold" />
-                    <Label x:Name="lbl_FPS" Content="30" FontSize="30" FontWeight="DemiBold" Foreground="White"/>
-                </StackPanel>
-                <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
+                <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="25" FontWeight="DemiBold" Foreground="White" />
+                <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                <TextBox x:Name="txt_IP"  Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="25" Text="192.168.1.36" TextAlignment="Center"/>
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" Width="290" >
+                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Label Content="Speed:" Foreground="White" FontSize="25" FontWeight="DemiBold" />
+                            <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Column="1" Width="130" >
+                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                            <Label Content="FPS:" Foreground="White" FontSize="25" FontWeight="DemiBold" />
+                            <Label x:Name="lbl_FPS" Content="30" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Grid.Column="2">
+                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
+                        <Label x:Name="lbl_ConnectionStatus" Width="20" Height="20" Margin="50,0,0,0" Background="Red"  />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
             </StackPanel>
         </Grid>
         <StackPanel Grid.Row="1" >
             <Image x:Name="imageBox"  />
 
         </StackPanel>
+        
     </Grid>
 </Window>

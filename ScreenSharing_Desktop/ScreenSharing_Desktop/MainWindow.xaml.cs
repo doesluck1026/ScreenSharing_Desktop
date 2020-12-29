@@ -1,21 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ScreenSharing_Desktop
 {
@@ -26,7 +15,7 @@ namespace ScreenSharing_Desktop
     {
         private Main main;
         private Thread uiUpdateThread;
-        private int UI_UpdateFrequency = 40;        /// Hz
+        private int UI_UpdateFrequency = 30;        /// Hz
         private double UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
         private bool IsAutoShareEnabled = false;
@@ -37,9 +26,6 @@ namespace ScreenSharing_Desktop
         public MainWindow()
         {
             InitializeComponent();
-            UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
-            OptionsFile = new BagFile();
-            URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\JuniorVersusBug\\ScreenSharingApp\\";
         }
 
         private void btn_Share_Click(object sender, RoutedEventArgs e)
@@ -76,15 +62,30 @@ namespace ScreenSharing_Desktop
                 {
                     if (main.IsImageReceived || main.IsImageSent)
                     {
-                        if(main.ScreenImage!=null)
+                        if (main.ScreenImage != null)
+                        {
                             imageBox.Source = BitmapSourceConvert.ToBitmapSource(main.ScreenImage);
+                        }
                         lbl_FPS.Content = main.FPS.ToString();
                         lbl_Speed.Content = main.TransferSpeed.ToString("0.00") + " MB/s";
                         main.IsImageReceived = false;
                         main.IsImageSent = false;
                     }
                     if (main.CommunitionType == Main.CommunicationTypes.Sender)
+                    {
                         txt_IP.Text = main.HostName;
+                        if(!main.IsConnectedToClient)
+                            lbl_ConnectionStatus.Background = Brushes.Red;
+                        else
+                            lbl_ConnectionStatus.Background = Brushes.Lime;
+                    }
+                    else if(main.CommunitionType == Main.CommunicationTypes.Receiver)
+                    {
+                        if (!main.IsConnectedToServer)
+                            lbl_ConnectionStatus.Background = Brushes.Red;
+                        else
+                            lbl_ConnectionStatus.Background = Brushes.Lime;
+                    }
                 });
                 while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;
                 stp.Restart();
@@ -136,7 +137,10 @@ namespace ScreenSharing_Desktop
             }
             catch
             {
-
+                Dispatcher.Invoke(() =>
+                {
+                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
+                });
             }
         }
 
@@ -147,19 +151,31 @@ namespace ScreenSharing_Desktop
         }
         private void LoadOptions()
         {
+            UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
+            OptionsFile = new BagFile();
+            URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
             FileStream readerFileStream = new FileStream(URL+FileName, FileMode.Open, FileAccess.Read);
             // Reconstruct data
             BinaryFormatter formatter = new BinaryFormatter();
             OptionsFile = (BagFile)formatter.Deserialize(readerFileStream);
+            readerFileStream.Close();
             IsAutoShareEnabled = OptionsFile.IsAutoShareEnabled;
         }
         private void SaveOptions()
         {
-            OptionsFile.IsAutoShareEnabled = IsAutoShareEnabled;
-            FileStream writerFileStream = new FileStream(URL+FileName, FileMode.Create, FileAccess.Write);
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(writerFileStream, OptionsFile);
-            writerFileStream.Close();
+            try
+            {
+                OptionsFile.IsAutoShareEnabled = IsAutoShareEnabled;
+                BagFile bagFile = OptionsFile;
+                Directory.GetAccessControl(URL + FileName);
+                FileStream writerFileStream = new FileStream(URL + FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(writerFileStream, OptionsFile);
+                writerFileStream.Close();
+            }
+            catch(Exception e)
+            {
+            }
         }
         private void CloseApp()
         {
@@ -172,6 +188,7 @@ namespace ScreenSharing_Desktop
                     main.StopReceiving();
                 }
                 Application.Current.Shutdown();
+                Environment.Exit(0);
             }
             catch
             {

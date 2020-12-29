@@ -8,9 +8,9 @@ using System.Text;
 class Server
 {
     #region "Definitions"
-    private int TimeoutTime = 50;
+    private int TimeoutTime = 500;
     public int BufferSize = 1024 * 64;
-    private TcpListener server = null;
+    private TcpListener Listener = null;
     public bool ServerStarted = false;
     public int HeaderLen = 7;
     private byte StartByte = (byte)('J');
@@ -31,7 +31,7 @@ class Server
         try
         {
             Debug.WriteLine("Waiting for new connection...");
-            client = server.AcceptTcpClient();
+            client = Listener.AcceptTcpClient();
             _isClientConnected = true;
             IPEndPoint endPoint = (IPEndPoint)client.Client.RemoteEndPoint;
             IPAddress ClientIpAddress = endPoint.Address;
@@ -61,10 +61,10 @@ class Server
                     localAddr = ip;
                 }
             }
-            server = new TcpListener(localAddr, Port);
+            Listener = new TcpListener(localAddr, Port);
             Debug.WriteLine("IP: " + localAddr + " Port: " + Port);
             this.IP = localAddr.ToString();
-            server.Start();
+            Listener.Start();
             return localAddr.ToString();
         }
         catch (Exception e)
@@ -77,9 +77,9 @@ class Server
     {
         try
         {
-            server.Stop();
-            server.Server.Close();
-            
+            Listener.Stop();
+            Listener.Server.Dispose();
+            Listener.Server.Close();            
             Debug.WriteLine("Server has been stopped");
             ServerStarted = false;
         }

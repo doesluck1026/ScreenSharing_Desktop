@@ -134,6 +134,19 @@ class Main
                 _isConnectedToServer = value;
         }
     }
+    public bool IsConnectedToClient
+    {
+        get
+        {
+            lock (Lck_IsConnectedToClient)
+                return _isConnectedToClient;
+        }
+        set
+        {
+            lock (Lck_IsConnectedToClient)
+                _isConnectedToClient = value;
+        }
+    }
     public CommunicationTypes CommunitionType
     {
         get
@@ -154,6 +167,7 @@ class Main
     private bool _isImageSent = true;
     private bool _isControlsEnabled = false;
     private bool _isConnectedToServer = false;
+    private bool _isConnectedToClient = false;
     private Bitmap _screenImage;
     private double _transferSpeed;
     private CommunicationTypes _communitionType;
@@ -174,6 +188,7 @@ class Main
     private object Lck_TransferSpeed = new object();
     private object Lck_IsControlsEnabled = new object();
     private object Lck_IsConnectedToServer = new object();
+    private object Lck_IsConnectedToClient = new object();
     private object Lck_CommunitionType = new object();
 
     public string HostName
@@ -257,8 +272,9 @@ class Main
         FPS = 30;
         while (IsSendingEnabled)
         {
-            ImageProcessing.StartGettingFrame();
+            IsConnectedToClient = false;
             string clientHostname = Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.
+            ImageProcessing.StartGettingFrame();
             if (clientHostname == null && clientHostname == "")             /// if connection succeed
             {
                 return;
@@ -266,88 +282,95 @@ class Main
             
             Thread.Sleep(500);
             stopwatch.Restart();
+            IsConnectedToClient = Comm.isClientConnected;
             while (Comm.isClientConnected)
             {
-                // double t1 = stopwatch.Elapsed.TotalMilliseconds;
-                /// get image Here
-                /// 
-                byte[] imageBytes =  ImageProcessing.GetScreenBytes();
-
-                //double t2 = stopwatch.Elapsed.TotalMilliseconds;
-                /// Send image to client   here
-                /// 
-                Comm.SendFilePacks(imageBytes, 0);
-                //double t3 = stopwatch.Elapsed.TotalMilliseconds;
-
-                /// Get Response of client here
-                /// 
-                byte[] responseBytes = Comm.GetResponseFromClient();
-                if (responseBytes == null)
+                try
                 {
-                    Comm.isClientConnected = false;
-                    break;
+                    // double t1 = stopwatch.Elapsed.TotalMilliseconds;
+                    /// get image Here
+                    /// 
+                    byte[] imageBytes = ImageProcessing.GetScreenBytes();
+
+                    //double t2 = stopwatch.Elapsed.TotalMilliseconds;
+                    /// Send image to client   here
+                    /// 
+                    Comm.SendFilePacks(imageBytes, 0);
+                    //double t3 = stopwatch.Elapsed.TotalMilliseconds;
+
+                    /// Get Response of client here
+                    /// 
+                    byte[] responseBytes = Comm.GetResponseFromClient();
+                    if (responseBytes == null)
+                    {
+                        Comm.isClientConnected = false;
+                        break;
+                    }
+                    //if (Comm.ReadBit(responseBytes[0], 0))
+                    //{
+                    //int cursor_x = responseBytes[1] | responseBytes[2] << 8;
+                    //int cursor_y = responseBytes[3] | responseBytes[4] << 8;
+                    //byte ControlByte = responseBytes[0];
+                    //bool leftClicked = Comm.ReadBit(ControlByte, 1);
+                    //bool rightClicked = Comm.ReadBit(ControlByte, 2);
+                    //if (leftClicked || rightClicked)
+                    //{
+                    //    if (leftClicked)
+                    //    {
+                    //        wasLeftButtonClicked = true;
+                    //        mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                    //    }
+                    //    else
+                    //    {
+                    //        if (wasLeftButtonClicked)
+                    //        {
+                    //            mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                    //            wasLeftButtonClicked = false;
+                    //        }
+                    //    }
+                    //    if (rightClicked)
+                    //    {
+                    //        wasRightButtonClicked = true;
+                    //        mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                    //    }
+                    //    else
+                    //    {
+                    //        if (wasRightButtonClicked)
+                    //        {
+                    //            mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
+                    //            wasRightButtonClicked = false;
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
+                    //}
+                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
+
+                    //}
+                    //double t4 = stopwatch.Elapsed.TotalMilliseconds;
+                    // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
+
+
+                    /// Calculate FPS Rate here
+                    /// 
+                    fpsCounter++;
+                    bytesSent += imageBytes.Length;
+                    if (stopwatch.Elapsed.TotalSeconds >= 1)
+                    {
+                        FPS = (int)(FPS * 0.8 + 0.2 * fpsCounter);
+                        ImageProcessing.FPS = FPS;
+                        fpsCounter = 0;
+                        TransferSpeed = (double)bytesSent / mb;
+                        bytesSent = 0;
+                        stopwatch.Restart();
+                    }
+                    IsImageSent = true;
                 }
-                //if (Comm.ReadBit(responseBytes[0], 0))
-                //{
-                //int cursor_x = responseBytes[1] | responseBytes[2] << 8;
-                //int cursor_y = responseBytes[3] | responseBytes[4] << 8;
-                //byte ControlByte = responseBytes[0];
-                //bool leftClicked = Comm.ReadBit(ControlByte, 1);
-                //bool rightClicked = Comm.ReadBit(ControlByte, 2);
-                //if (leftClicked || rightClicked)
-                //{
-                //    if (leftClicked)
-                //    {
-                //        wasLeftButtonClicked = true;
-                //        mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                //    }
-                //    else
-                //    {
-                //        if (wasLeftButtonClicked)
-                //        {
-                //            mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                //            wasLeftButtonClicked = false;
-                //        }
-                //    }
-                //    if (rightClicked)
-                //    {
-                //        wasRightButtonClicked = true;
-                //        mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                //    }
-                //    else
-                //    {
-                //        if (wasRightButtonClicked)
-                //        {
-                //            mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                //            wasRightButtonClicked = false;
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
-                //}
-                //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
-
-                //}
-                //double t4 = stopwatch.Elapsed.TotalMilliseconds;
-                // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
-
-
-                /// Calculate FPS Rate here
-                /// 
-                fpsCounter++;
-                bytesSent += imageBytes.Length;
-                if (stopwatch.Elapsed.TotalSeconds >= 1)
+                catch (Exception e)
                 {
-                    FPS = (int)(FPS * 0.8 + 0.2 * fpsCounter);
-                    ImageProcessing.FPS = FPS;
-                    fpsCounter = 0;
-                    TransferSpeed = (double)bytesSent / mb;
-                    bytesSent = 0;
-                    stopwatch.Restart();
                 }
-                IsImageSent = true;
             }
         }
     }
@@ -355,13 +378,13 @@ class Main
     {
         IsSendingEnabled = false;
         ImageProcessing.StopGettingFrames();
+        Comm.CloseServer();
         if (sendingThread != null)
         {
             if (sendingThread.IsAlive)
             {
                 sendingThread.Abort();
                 sendingThread = null;
-                Comm.CloseServer();
             }
         }
     }
@@ -386,16 +409,27 @@ class Main
         int bytesSent = 0;
         int mb = 1024 * 1024;
         FPS = 30;
-        while (IsReceivingEnabled)
+        stopwatch.Restart();
+        int errorCounter = 0;
+        while (Comm.isConnectedToServer)
         {
-            stopwatch.Restart();
-            while (Comm.isConnectedToServer)
+            try
             {
                 /// get image bytes
                 byte[] ImageBytes = Comm.ReceiveFilePacks();
                 /// Create image
                 if (ImageBytes == null)
+                {
+                    errorCounter++;
+                    if(errorCounter>3)
+                    {
+                        Comm.isConnectedToServer = false;
+                        IsConnectedToServer = false;
+                        break;
+                    }
                     continue;
+                }
+                errorCounter = 0;
                 ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
                 int len = 5;
                 byte[] data = new byte[len];
@@ -422,7 +456,7 @@ class Main
                 bytesSent += ImageBytes.Length;
                 if (stopwatch.Elapsed.TotalSeconds >= 1)
                 {
-                    FPS =(int) (FPS*0.8+0.2* fpsCounter);
+                    FPS = (int)(FPS * 0.8 + 0.2 * fpsCounter);
                     ImageProcessing.FPS = FPS;
                     fpsCounter = 0;
                     TransferSpeed = (double)bytesSent / mb;
@@ -430,8 +464,11 @@ class Main
                     stopwatch.Restart();
                 }
             }
-            IsConnectedToServer = Comm.isConnectedToServer;
+            catch (Exception e)
+            {
+            }
         }
+        IsConnectedToServer = Comm.isConnectedToServer;
     }
     public void StopReceiving()
     {

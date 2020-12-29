@@ -17,7 +17,7 @@ Global
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E396699F-9E56-45A3-8A1F-57D023E402F9}.Debug|Any CPU.ActiveCfg = Debug
+		{E396699F-9E56-45A3-8A1F-57D023E402F9}.Debug|Any CPU.ActiveCfg = Release
 		{E396699F-9E56-45A3-8A1F-57D023E402F9}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
