@@ -267,7 +267,6 @@ class Main
             {
                 return;
             }
-            
             Thread.Sleep(500);
             stopwatch.Restart();
             IsConnectedToClient = Comm.isClientConnected;
@@ -377,20 +376,7 @@ class Main
                 int len = 5;
                 byte[] data = new byte[len];
 
-                byte ControlByte = 0;
-                if (IsControlsEnabled)
-                {
-                    //data[1] = (byte)((System.Windows.Forms.Cursor.Position.X) & 0xff);
-                    //data[2] = (byte)((System.Windows.Forms.Cursor.Position.X >> 8) & 0xff);
-                    //data[3] = (byte)((System.Windows.Forms.Cursor.Position.Y) & 0xff);
-                    //data[4] = (byte)((System.Windows.Forms.Cursor.Position.Y >> 8) & 0xff);
-
-                    //ControlByte = Comm.WriteToBit(ControlByte, 0, IsControlsEnabled);
-                    //ControlByte = Comm.WriteToBit(ControlByte, 1, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Left);
-                    //ControlByte = Comm.WriteToBit(ControlByte, 2, System.Windows.Forms.Control.MouseButtons == System.Windows.Forms.MouseButtons.Right);
-                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
-                }
-                data[0] = ControlByte;
+                data[0] = 0;
 
                 Comm.SendResponseToServer(data);
                 IsImageReceived = true;
@@ -409,9 +395,10 @@ class Main
             }
             catch (Exception e)
             {
+                IsConnectedToServer = Comm.isConnectedToServer;
             }
         }
-        IsConnectedToServer = Comm.isConnectedToServer;
+        IsConnectedToServer = false;
     }
     public void StopReceiving()
     {

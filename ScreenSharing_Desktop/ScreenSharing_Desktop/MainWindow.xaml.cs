@@ -30,6 +30,7 @@ namespace ScreenSharing_Desktop
 
         private void btn_Share_Click(object sender, RoutedEventArgs e)
         {
+            Reset();
             main = new Main(Main.CommunicationTypes.Sender);
             main.StartSharingScreen();
             StartUiTimer();
@@ -37,14 +38,16 @@ namespace ScreenSharing_Desktop
 
         private void btn_Connect_Click(object sender, RoutedEventArgs e)
         {
+            Reset();
             if (!IsConnectedToServer)
             {
                 string ip = txt_IP.Text;
                 main = new Main(Main.CommunicationTypes.Receiver);
                 main.StartReceiving(ip);
                 StartUiTimer();
-                IsConnectedToServer = true;
-                btn_Connect.Content = "Disconnect";
+                IsConnectedToServer = main.IsConnectedToServer;
+                if(IsConnectedToServer)
+                    btn_Connect.Content = "Disconnect";
             }
             else
             {
@@ -174,12 +177,7 @@ namespace ScreenSharing_Desktop
         {
             try
             {
-                StopUiTimer();
-                if (main != null)
-                {
-                    main.CancelSharing();
-                    main.StopReceiving();
-                }
+                StopMainThreads();
                 Application.Current.Shutdown();
                 Environment.Exit(0);
             }
@@ -201,5 +199,19 @@ namespace ScreenSharing_Desktop
                 }
             }
         }
+        private void StopMainThreads()
+        {
+            StopUiTimer();
+            if (main != null)
+            {
+                main.CancelSharing();
+                main.StopReceiving();
+            }
+        }
+        private void Reset()
+        {
+            StopMainThreads();
+        }
+
     }
 }
