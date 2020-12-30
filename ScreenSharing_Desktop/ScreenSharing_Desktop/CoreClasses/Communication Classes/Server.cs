@@ -65,7 +65,8 @@ class Server
             Debug.WriteLine("IP: " + localAddr + " Port: " + Port);
             this.IP = localAddr.ToString();
             Listener.Start();
-            return localAddr.ToString();
+            return IP;
+
         }
         catch (Exception e)
         {

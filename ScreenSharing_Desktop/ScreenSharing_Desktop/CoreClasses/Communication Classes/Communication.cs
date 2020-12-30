@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,10 @@ class Communication
     public long LastPackNumberReceived { get; private set; }
     public long LastPackNumberSent { get; private set; }
     public uint NumberOfPacks { get; private set; }
+
+    public StringListBagFile RecentServers;
+    private string URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
+    private string FileName =  "ClientsList.dat";
     private enum Functions
     {
         SendingFile = 1,
@@ -30,6 +36,7 @@ class Communication
         LastPackNumberSent = 0;
         LastPackNumberReceived = -1;
         client = new Client();
+        LoadRecentClientsList();
     }
     #region Server Functions
     /// <summary>
@@ -99,7 +106,19 @@ class Communication
     public bool ConnectToServer(string ip)
     {
         client = new Client(Port, BufferSize);
-        isConnectedToServer = client.ConnectToServer(ip);
+         string hostname=client.ConnectToServer(ip);
+        isConnectedToServer = client._isClientConnected;
+        if (hostname != null)
+        {
+            if (RecentServers != null)
+            {
+                if (RecentServers.RecentServersList.Contains(hostname) == false)
+                {
+                    RecentServers.RecentServersList.Add(hostname);
+                    SaveRecentClientsList();
+                }
+            }
+        }
         return isConnectedToServer;
     }
 
@@ -157,7 +176,38 @@ class Communication
         isConnectedToServer = !client.DisconnectFromServer();
         client = null;
     }
+    private void LoadRecentClientsList()
+    {
+        try
+        {
 
+            FileStream readerFileStream = new FileStream(URL + FileName, FileMode.Open, FileAccess.Read);
+            // Reconstruct data
+            BinaryFormatter formatter = new BinaryFormatter();
+            RecentServers = (StringListBagFile)formatter.Deserialize(readerFileStream);
+            readerFileStream.Close();
+            if(RecentServers.RecentServersList==null)
+            {
+                RecentServers.RecentServersList = new List<string>();
+                SaveRecentClientsList();
+            }
+        }
+        catch
+        {
+            RecentServers = new StringListBagFile();
+            SaveRecentClientsList();
+        }
+    }
+    private void SaveRecentClientsList()
+    {
+        var t = Task.Run(() =>
+         {
+             FileStream writerFileStream = new FileStream(URL + FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+             BinaryFormatter formatter = new BinaryFormatter();
+             formatter.Serialize(writerFileStream, RecentServers);
+             writerFileStream.Close();
+         });
+    }
     #endregion
 
     #region Common Functions

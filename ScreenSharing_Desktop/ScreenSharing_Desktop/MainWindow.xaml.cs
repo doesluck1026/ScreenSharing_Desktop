@@ -14,9 +14,9 @@ namespace ScreenSharing_Desktop
     public partial class MainWindow : Window
     {
         private Main main;
-        private Thread uiUpdateThread;
+        private Timer uiUpdateTimer;
         private int UI_UpdateFrequency = 30;        /// Hz
-        private double UI_UpdatePeriod;
+        private int UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
         private bool IsAutoShareEnabled = false;
         private BagFile OptionsFile;
@@ -32,7 +32,7 @@ namespace ScreenSharing_Desktop
         {
             main = new Main(Main.CommunicationTypes.Sender);
             main.StartSharingScreen();
-            StartUiThread();
+            StartUiTimer();
         }
 
         private void btn_Connect_Click(object sender, RoutedEventArgs e)
@@ -42,7 +42,7 @@ namespace ScreenSharing_Desktop
                 string ip = txt_IP.Text;
                 main = new Main(Main.CommunicationTypes.Receiver);
                 main.StartReceiving(ip);
-                StartUiThread();
+                StartUiTimer();
                 IsConnectedToServer = true;
                 btn_Connect.Content = "Disconnect";
             }
@@ -53,67 +53,61 @@ namespace ScreenSharing_Desktop
                 main.StopReceiving();
             }
         }
+        private void UpdateUITimer_Tick(object state)
+        {
+            if (uiUpdateTimer == null)
+                return;
+            uiUpdateTimer.Change(Timeout.Infinite, Timeout.Infinite);       /// Set timer period to infinity to avoid Server timer to call this function when this is not finished.
+            var watch = Stopwatch.StartNew();                               /// Stopwatch to measure total time spent in this function.
+            UpdateUI();
+            uiUpdateTimer.Change((int) Math.Max(0, UI_UpdatePeriod - watch.ElapsedMilliseconds), (int) (UI_UpdatePeriod));
+        }
         private void UpdateUI()
         {
-            Stopwatch stp = Stopwatch.StartNew();
-            while (ui_updateEnabled)
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (main.IsImageReceived || main.IsImageSent)
                 {
-                    if (main.IsImageReceived || main.IsImageSent)
+                    if (main.ScreenImage != null)
                     {
-                        if (main.ScreenImage != null)
-                        {
-                            imageBox.Source = BitmapSourceConvert.ToBitmapSource(main.ScreenImage);
-                        }
-                        lbl_FPS.Content = main.FPS.ToString();
-                        lbl_Speed.Content = main.TransferSpeed.ToString("0.00") + " MB/s";
-                        main.IsImageReceived = false;
-                        main.IsImageSent = false;
+                        imageBox.Source = BitmapSourceConvert.ToBitmapSource(main.ScreenImage);
                     }
-                    if (main.CommunitionType == Main.CommunicationTypes.Sender)
-                    {
-                        txt_IP.Text = main.HostName;
-                        if(!main.IsConnectedToClient)
-                            lbl_ConnectionStatus.Background = Brushes.Red;
-                        else
-                            lbl_ConnectionStatus.Background = Brushes.Lime;
-                    }
-                    else if(main.CommunitionType == Main.CommunicationTypes.Receiver)
-                    {
-                        if (!main.IsConnectedToServer)
-                            lbl_ConnectionStatus.Background = Brushes.Red;
-                        else
-                            lbl_ConnectionStatus.Background = Brushes.Lime;
-                    }
-                });
-                while (stp.Elapsed.TotalSeconds <= UI_UpdatePeriod) ;
-                stp.Restart();
-            }
+                    lbl_FPS.Content = main.FPS.ToString();
+                    lbl_Speed.Content = main.TransferSpeed.ToString("0.00") + " MB/s";
+                    main.IsImageReceived = false;
+                    main.IsImageSent = false;
+                }
+                if (main.CommunitionType == Main.CommunicationTypes.Sender)
+                {
+                    txt_IP.Text = main.HostName;
+                    if (!main.IsConnectedToClient)
+                        lbl_ConnectionStatus.Background = Brushes.Red;
+                    else
+                        lbl_ConnectionStatus.Background = Brushes.Lime;
+                }
+                else if (main.CommunitionType == Main.CommunicationTypes.Receiver)
+                {
+                    if (!main.IsConnectedToServer)
+                        lbl_ConnectionStatus.Background = Brushes.Red;
+                    else
+                        lbl_ConnectionStatus.Background = Brushes.Lime;
+                }
+            });
         }
-        private void StartUiThread()
+        private void StartUiTimer()
         {
             ui_updateEnabled = true;
-            uiUpdateThread = new Thread(UpdateUI);
-            uiUpdateThread.Start();
+            uiUpdateTimer = new Timer(UpdateUITimer_Tick,null,0, UI_UpdatePeriod);
         }
-        private void StopUiThread()
+        private void StopUiTimer()
         {
             ui_updateEnabled = false;
-            if (uiUpdateThread != null)
+            if (uiUpdateTimer != null)
             {
-                if (uiUpdateThread.IsAlive)
-                {
-                    try
-                    {
-                        uiUpdateThread.Abort();
-                        uiUpdateThread = null;
-                    }
-                    catch
-                    {
-
-                    }
-                }
+                uiUpdateTimer.Change(
+                    Timeout.Infinite,
+                    Timeout.Infinite);
+                uiUpdateTimer.Dispose();
             }
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -151,7 +145,7 @@ namespace ScreenSharing_Desktop
         }
         private void LoadOptions()
         {
-            UI_UpdatePeriod = 1.0 / UI_UpdateFrequency;
+            UI_UpdatePeriod = (int)(1000.0 / UI_UpdateFrequency);
             OptionsFile = new BagFile();
             URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
             FileStream readerFileStream = new FileStream(URL+FileName, FileMode.Open, FileAccess.Read);
@@ -167,7 +161,6 @@ namespace ScreenSharing_Desktop
             {
                 OptionsFile.IsAutoShareEnabled = IsAutoShareEnabled;
                 BagFile bagFile = OptionsFile;
-                Directory.GetAccessControl(URL + FileName);
                 FileStream writerFileStream = new FileStream(URL + FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 BinaryFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(writerFileStream, OptionsFile);
@@ -181,7 +174,7 @@ namespace ScreenSharing_Desktop
         {
             try
             {
-                StopUiThread();
+                StopUiTimer();
                 if (main != null)
                 {
                     main.CancelSharing();
@@ -193,6 +186,19 @@ namespace ScreenSharing_Desktop
             catch
             {
 
+            }
+        }
+
+        private void txt_IP_DropDownOpened(object sender, EventArgs e)
+        {
+            if (main == null)
+            {
+                main = new Main(Main.CommunicationTypes.Receiver);
+                if (main.Comm.RecentServers.RecentServersList != null)
+                {
+                    for (int i = 0; i < main.Comm.RecentServers.RecentServersList.Count; i++)
+                        txt_IP.Items.Add(main.Comm.RecentServers.RecentServersList[i]);
+                }
             }
         }
     }

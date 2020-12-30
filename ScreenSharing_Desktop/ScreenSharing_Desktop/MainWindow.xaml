@@ -21,7 +21,7 @@
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
                 <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="25" FontWeight="DemiBold" Foreground="White" />
                 <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="25" FontWeight="DemiBold" Foreground="White"/>
-                <TextBox x:Name="txt_IP"  Margin="5" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="25" Text="192.168.1.36" TextAlignment="Center"/>
+                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="25" Text="192.168.1.36"/>
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

@@ -27,16 +27,15 @@ class Client
     /// Connects to server with specified IP.
     /// </summary>
     /// <param name="IP"></param>
-    /// <returns></returns>
-    public bool ConnectToServer(string IP)
+    /// <returns>Hostname of server</returns>
+    public string ConnectToServer(string IP)
     {
-        bool success;
+        string hostname="";
         try
         {
             client = new TcpClient();           ///  create client object
             client.Connect(IP, Port);           /// Connect
             Debug.WriteLine("trying to connect + " + IP + " at Port " + Port);
-            success = true;
             _isClientConnected = true;
             client.ReceiveBufferSize = BufferSize;
             client.SendBufferSize = BufferSize;
@@ -44,10 +43,10 @@ class Client
         }
         catch
         {
-            success = false;
             Debug.WriteLine("Connection failed!");
         }
-        return success;
+        var host = Dns.GetHostEntry(IP);
+        return host.HostName ;
     }
     public bool DisconnectFromServer()
     {

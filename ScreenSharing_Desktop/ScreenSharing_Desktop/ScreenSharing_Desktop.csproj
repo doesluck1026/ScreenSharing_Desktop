@@ -108,6 +108,7 @@
     <Compile Include="CoreClasses\Communication Classes\Server.cs" />
     <Compile Include="CoreClasses\ImageProcessing.cs" />
     <Compile Include="CoreClasses\Main.cs" />
+    <Compile Include="CoreClasses\StringListBagFile.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

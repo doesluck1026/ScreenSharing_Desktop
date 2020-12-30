@@ -211,20 +211,8 @@ class Main
     }
 
     #endregion
-    private Communication Comm;
+    public Communication Comm;
 
-
-    [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-    public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-    //Mouse actions
-    private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-    private const int MOUSEEVENTF_LEFTUP = 0x04;
-    private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-    private const int MOUSEEVENTF_RIGHTUP = 0x10;
-
-    private bool wasLeftButtonClicked = false;
-    private bool wasRightButtonClicked = false;
-    
     public enum CommunicationTypes
     {
         Sender,
@@ -306,51 +294,6 @@ class Main
                         Comm.isClientConnected = false;
                         break;
                     }
-                    //if (Comm.ReadBit(responseBytes[0], 0))
-                    //{
-                    //int cursor_x = responseBytes[1] | responseBytes[2] << 8;
-                    //int cursor_y = responseBytes[3] | responseBytes[4] << 8;
-                    //byte ControlByte = responseBytes[0];
-                    //bool leftClicked = Comm.ReadBit(ControlByte, 1);
-                    //bool rightClicked = Comm.ReadBit(ControlByte, 2);
-                    //if (leftClicked || rightClicked)
-                    //{
-                    //    if (leftClicked)
-                    //    {
-                    //        wasLeftButtonClicked = true;
-                    //        mouse_event(MOUSEEVENTF_LEFTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                    //    }
-                    //    else
-                    //    {
-                    //        if (wasLeftButtonClicked)
-                    //        {
-                    //            mouse_event(MOUSEEVENTF_LEFTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                    //            wasLeftButtonClicked = false;
-                    //        }
-                    //    }
-                    //    if (rightClicked)
-                    //    {
-                    //        wasRightButtonClicked = true;
-                    //        mouse_event(MOUSEEVENTF_RIGHTDOWN, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                    //    }
-                    //    else
-                    //    {
-                    //        if (wasRightButtonClicked)
-                    //        {
-                    //            mouse_event(MOUSEEVENTF_RIGHTUP, (uint)cursor_x, (uint)cursor_y, 0, 0);
-                    //            wasRightButtonClicked = false;
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    System.Windows.Forms.Cursor.Position = new Point(cursor_x, cursor_y);
-                    //}
-                    //Debug.WriteLine("Control Byte: " + Convert.ToString(ControlByte, 2));
-
-                    //}
-                    //double t4 = stopwatch.Elapsed.TotalMilliseconds;
-                    // Debug.WriteLine("  imageTime: " + (t2 - t1) + " ms   sendingTime: " + (t3 - t2) + " ms  Response Time: " + (t4 - t3) + " ms");
 
 
                     /// Calculate FPS Rate here
