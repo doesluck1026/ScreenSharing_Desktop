@@ -84,24 +84,24 @@ class ImageProcessing
        // double t2 = stp.Elapsed.TotalMilliseconds;
        // double t3;
         byte[] imageBytes;
-        if (ElapsedTime > 600)
-        {
-            if (FPS < 26)
-            {
-                ElapsedTime = 0;
-                ResizeRatio = Math.Max(0.5, ResizeRatio * 0.99);
-            }
-            else if(FPS > 30)
-            {
-                ElapsedTime = 0;
-                ResizeRatio = Math.Min(1, ResizeRatio / 0.99);
-            }
-            Debug.WriteLine("Resizing ratio updated: " + ResizeRatio);
+        //if (ElapsedTime > 600)
+        //{
+        //    if (FPS < 26)
+        //    {
+        //        ElapsedTime = 0;
+        //        ResizeRatio = Math.Max(0.5, ResizeRatio * 0.99);
+        //    }
+        //    else if(FPS > 30)
+        //    {
+        //        ElapsedTime = 0;
+        //        ResizeRatio = Math.Min(1, ResizeRatio / 0.99);
+        //    }
+        //    Debug.WriteLine("Resizing ratio updated: " + ResizeRatio);
 
-        }
-        Image<Bgr, byte> resizedImage = img.Resize(ResizeRatio, Emgu.CV.CvEnum.Inter.Linear);
+        //}
+        //Image<Bgr, byte> resizedImage = img.Resize(1, Emgu.CV.CvEnum.Inter.Linear);
 
-        imageBytes = ImageToByteArray(resizedImage.Bitmap);
+        imageBytes = ImageToByteArray(img.Bitmap);
 
         //Debug.WriteLine("Resize Ratio: " + ResizeRatio);
         //double t4 = stp.Elapsed.TotalMilliseconds;
