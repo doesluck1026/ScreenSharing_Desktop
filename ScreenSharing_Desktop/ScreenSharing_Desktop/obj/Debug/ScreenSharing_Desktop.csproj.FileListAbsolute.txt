@@ -48,3 +48,4 @@ D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Deskto
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.csproj.CopyComplete
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.exe
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.pdb
+D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.csprojAssemblyReference.cache
