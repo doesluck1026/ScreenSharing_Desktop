@@ -261,12 +261,8 @@ class Main
         while (IsSendingEnabled)
         {
             IsConnectedToClient = false;
-            string clientHostname = Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.
+            Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.          
             ImageProcessing.StartGettingFrame();
-            if (clientHostname == null && clientHostname == "")             /// if connection succeed
-            {
-                return;
-            }
             Thread.Sleep(500);
             stopwatch.Restart();
             IsConnectedToClient = Comm.isClientConnected;
@@ -282,7 +278,7 @@ class Main
                     //double t2 = stopwatch.Elapsed.TotalMilliseconds;
                     /// Send image to client   here
                     /// 
-                    Comm.SendFilePacks(imageBytes, 0);
+                    Comm.SendFilePacks(imageBytes);
                     //double t3 = stopwatch.Elapsed.TotalMilliseconds;
 
                     /// Get Response of client here
