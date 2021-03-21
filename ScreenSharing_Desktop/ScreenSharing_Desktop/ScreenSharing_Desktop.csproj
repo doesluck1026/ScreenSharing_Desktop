@@ -101,14 +101,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CoreClasses\BagFile.cs" />
+    <Compile Include="CoreClasses\Parameters\BagFile.cs" />
     <Compile Include="CoreClasses\BitmapSourceConvert.cs" />
     <Compile Include="CoreClasses\Communication Classes\Client.cs" />
     <Compile Include="CoreClasses\Communication Classes\Communication.cs" />
     <Compile Include="CoreClasses\Communication Classes\Server.cs" />
     <Compile Include="CoreClasses\ImageProcessing.cs" />
     <Compile Include="CoreClasses\Main.cs" />
-    <Compile Include="CoreClasses\StringListBagFile.cs" />
+    <Compile Include="CoreClasses\Parameters\Parameters.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -154,6 +154,7 @@
   <ItemGroup>
     <Resource Include="iconfinder_video-television_24605.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

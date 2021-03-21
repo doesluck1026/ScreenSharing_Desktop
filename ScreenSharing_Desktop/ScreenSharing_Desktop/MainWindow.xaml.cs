@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace ScreenSharing_Desktop
@@ -24,10 +21,6 @@ namespace ScreenSharing_Desktop
         private int UI_UpdateFrequency = 30;        /// Hz
         private int UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
-        private bool IsAutoShareEnabled = false;
-        private BagFile OptionsFile;
-        private string URL;
-        private string FileName = "Options.dat";
         private bool IsConnectedToServer = false;
         public MainWindow()
         {
@@ -162,8 +155,8 @@ namespace ScreenSharing_Desktop
         private void btn_Share_Click(object sender, RoutedEventArgs e)
         {
             Reset();
-            main = new Main(Main.CommunicationTypes.Sender);
-            main.StartSharingScreen();
+            Main.InitCommunication(Main.CommunicationTypes.Sender);
+            Main.StartSharingScreen();
             StartUiTimer();
         }
 
@@ -173,10 +166,10 @@ namespace ScreenSharing_Desktop
             if (!IsConnectedToServer)
             {
                 string ip = txt_IP.Text;
-                main = new Main(Main.CommunicationTypes.Receiver);
-                main.StartReceiving(ip);
+                Main.InitCommunication(Main.CommunicationTypes.Receiver);
+                Main.StartReceiving(ip);
                 StartUiTimer();
-                IsConnectedToServer = main.IsConnectedToServer;
+                IsConnectedToServer = Main.IsConnectedToServer;
                 if(IsConnectedToServer)
                     btn_Connect.Content = "Disconnect";
             }
@@ -184,7 +177,7 @@ namespace ScreenSharing_Desktop
             {
                 IsConnectedToServer = false;
                 btn_Connect.Content = "Connect";
-                main.StopReceiving();
+                Main.StopReceiving();
             }
         }
         private void UpdateUITimer_Tick(object state)
@@ -200,28 +193,28 @@ namespace ScreenSharing_Desktop
         {
             Dispatcher.Invoke(() =>
             {
-                if (main.IsImageReceived || main.IsImageSent)
+                if (Main.IsImageReceived || Main.IsImageSent)
                 {
-                    if (main.ScreenImage != null)
+                    if (Main.ScreenImage != null)
                     {
-                        imageBox.Source = BitmapSourceConvert.ToBitmapSource(main.ScreenImage);
+                        imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
                     }
-                    lbl_FPS.Content = main.FPS.ToString();
-                    lbl_Speed.Content = main.TransferSpeed.ToString("0.00") + " MB/s";
-                    main.IsImageReceived = false;
-                    main.IsImageSent = false;
+                    lbl_FPS.Content = Main.FPS.ToString();
+                    lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
+                    Main.IsImageReceived = false;
+                    Main.IsImageSent = false;
                 }
-                if (main.CommunitionType == Main.CommunicationTypes.Sender)
+                if (Main.CommunitionType == Main.CommunicationTypes.Sender)
                 {
-                    txt_IP.Text = main.HostName;
-                    if (!main.IsConnectedToClient)
+                    txt_IP.Text = Main.HostName;
+                    if (!Main.IsConnectedToClient)
                         lbl_ConnectionStatus.Background = Brushes.Red;
                     else
                         lbl_ConnectionStatus.Background = Brushes.Lime;
                 }
-                else if (main.CommunitionType == Main.CommunicationTypes.Receiver)
+                else if (Main.CommunitionType == Main.CommunicationTypes.Receiver)
                 {
-                    if (!main.IsConnectedToServer)
+                    if (!Main.IsConnectedToServer)
                         lbl_ConnectionStatus.Background = Brushes.Red;
                     else
                         lbl_ConnectionStatus.Background = Brushes.Lime;
@@ -260,9 +253,9 @@ namespace ScreenSharing_Desktop
                 LoadOptions();
                 Dispatcher.Invoke(() =>
                 {
-                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
+                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
                 });
-                if(IsAutoShareEnabled)
+                if(Parameters.IsAutoShareEnabled)
                 {
                     Task.Run(() =>
                     {
@@ -276,7 +269,7 @@ namespace ScreenSharing_Desktop
             {
                 Dispatcher.Invoke(() =>
                 {
-                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
+                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
                 });
             }
             //Ping_all();
@@ -285,35 +278,13 @@ namespace ScreenSharing_Desktop
 
         private void chc_AutoShare_Click(object sender, RoutedEventArgs e)
         {
-            IsAutoShareEnabled = (bool)chc_AutoShare.IsChecked;
-            SaveOptions();
+            Parameters.IsAutoShareEnabled = (bool)chc_AutoShare.IsChecked;
+            Parameters.Save();
         }
         private void LoadOptions()
         {
             UI_UpdatePeriod = (int)(1000.0 / UI_UpdateFrequency);
-            OptionsFile = new BagFile();
-            URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
-            FileStream readerFileStream = new FileStream(URL+FileName, FileMode.Open, FileAccess.Read);
-            // Reconstruct data
-            BinaryFormatter formatter = new BinaryFormatter();
-            OptionsFile = (BagFile)formatter.Deserialize(readerFileStream);
-            readerFileStream.Close();
-            IsAutoShareEnabled = OptionsFile.IsAutoShareEnabled;
-        }
-        private void SaveOptions()
-        {
-            try
-            {
-                OptionsFile.IsAutoShareEnabled = IsAutoShareEnabled;
-                BagFile bagFile = OptionsFile;
-                FileStream writerFileStream = new FileStream(URL + FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(writerFileStream, OptionsFile);
-                writerFileStream.Close();
-            }
-            catch(Exception e)
-            {
-            }
+            Parameters.Init();
         }
         private void CloseApp()
         {
@@ -331,14 +302,10 @@ namespace ScreenSharing_Desktop
 
         private void txt_IP_DropDownOpened(object sender, EventArgs e)
         {
-            if (main == null)
+            if (Parameters.RecentServersList != null)
             {
-                main = new Main(Main.CommunicationTypes.Receiver);
-                if (main.Comm.RecentServers.RecentServersList != null)
-                {
-                    for (int i = 0; i < main.Comm.RecentServers.RecentServersList.Count; i++)
-                        txt_IP.Items.Add(main.Comm.RecentServers.RecentServersList[i]);
-                }
+                for (int i = 0; i < Parameters.RecentServersList.Count; i++)
+                    txt_IP.Items.Add(Parameters.RecentServersList[i]);
             }
         }
         private void StopMainThreads()
@@ -346,8 +313,8 @@ namespace ScreenSharing_Desktop
             StopUiTimer();
             if (main != null)
             {
-                main.CancelSharing();
-                main.StopReceiving();
+                Main.CancelSharing();
+                Main.StopReceiving();
             }
         }
         private void Reset()

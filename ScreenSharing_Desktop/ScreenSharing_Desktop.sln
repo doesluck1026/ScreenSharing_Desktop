@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenSharing_Desktop", "ScreenSharing_Desktop\ScreenSharing_Desktop.csproj", "{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{E396699F-9E56-45A3-8A1F-57D023E402F9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,8 +15,6 @@ Global
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E396699F-9E56-45A3-8A1F-57D023E402F9}.Debug|Any CPU.ActiveCfg = Release
-		{E396699F-9E56-45A3-8A1F-57D023E402F9}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

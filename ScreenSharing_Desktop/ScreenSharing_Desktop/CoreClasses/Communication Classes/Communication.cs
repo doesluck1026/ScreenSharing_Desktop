@@ -45,11 +45,6 @@ class Communication
     public long LastPackNumberReceived { get; private set; }
     public long LastPackNumberSent { get; private set; }
     public uint NumberOfPacks { get; private set; }
-
-    public StringListBagFile RecentServers;
-    private string URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
-    private string FileName =  "ClientsList.dat";
-
     private bool _isClientConnected = false;
     private bool _isConnectedToServer = false;
     private object Lck_isClientConnected = new object();
@@ -64,7 +59,6 @@ class Communication
         LastPackNumberSent = 0;
         LastPackNumberReceived = -1;
         client = new Client();
-        LoadRecentClientsList();
     }
     #region Server Functions
     /// <summary>
@@ -132,12 +126,12 @@ class Communication
         isConnectedToServer = client.IsConnectedToServer;
         if (hostname != null)
         {
-            if (RecentServers != null)
+            if (Parameters.RecentServersList != null)
             {
-                if (RecentServers.RecentServersList.Contains(hostname) == false)
+                if (Parameters.RecentServersList.Contains(hostname) == false)
                 {
-                    RecentServers.RecentServersList.Add(hostname);
-                    SaveRecentClientsList();
+                    Parameters.RecentServersList.Add(hostname);
+                    Parameters.Save();
                 }
             }
         }
@@ -187,38 +181,6 @@ class Communication
             return;
         isConnectedToServer = !client.DisconnectFromServer();
         client = null;
-    }
-    private void LoadRecentClientsList()
-    {
-        try
-        {
-
-            FileStream readerFileStream = new FileStream(URL + FileName, FileMode.Open, FileAccess.Read);
-            // Reconstruct data
-            BinaryFormatter formatter = new BinaryFormatter();
-            RecentServers = (StringListBagFile)formatter.Deserialize(readerFileStream);
-            readerFileStream.Close();
-            if(RecentServers.RecentServersList==null)
-            {
-                RecentServers.RecentServersList = new List<string>();
-                SaveRecentClientsList();
-            }
-        }
-        catch
-        {
-            RecentServers = new StringListBagFile();
-            SaveRecentClientsList();
-        }
-    }
-    private void SaveRecentClientsList()
-    {
-        var t = Task.Run(() =>
-         {
-             FileStream writerFileStream = new FileStream(URL + FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-             BinaryFormatter formatter = new BinaryFormatter();
-             formatter.Serialize(writerFileStream, RecentServers);
-             writerFileStream.Close();
-         });
     }
     #endregion
 

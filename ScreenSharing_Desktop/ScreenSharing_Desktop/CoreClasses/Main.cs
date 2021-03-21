@@ -17,7 +17,7 @@ class Main
     #endregion
     #region Variables
 
-    public int FPS
+    public static int FPS
     {
         get
         {
@@ -30,7 +30,7 @@ class Main
                 fps = value;
         }
     }
-    public bool IsSendingEnabled
+    public static bool IsSendingEnabled
     {
         get
         {
@@ -43,7 +43,7 @@ class Main
                 _isSendingEnabled = value;
         }
     }
-    public bool IsReceivingEnabled
+    public static bool IsReceivingEnabled
     {
         get
         {
@@ -56,7 +56,7 @@ class Main
                 _isReceivingEnabled = value;
         }
     }
-    public bool IsImageReceived
+    public static bool IsImageReceived
     {
         get
         {
@@ -69,7 +69,7 @@ class Main
                 _isImageReceived = value;
         }
     }
-    public bool IsImageSent
+    public static bool IsImageSent
     {
         get
         {
@@ -82,7 +82,7 @@ class Main
                 _isImageSent = value;
         }
     }
-    public Bitmap ScreenImage
+    public static Bitmap ScreenImage
     {
         get
         {
@@ -95,7 +95,7 @@ class Main
                 _screenImage = value;
         }
     }
-    public double TransferSpeed
+    public static double TransferSpeed
     {
         get
         {
@@ -108,7 +108,7 @@ class Main
                 _transferSpeed = value;
         }
     }
-    public bool IsControlsEnabled
+    public static  bool IsControlsEnabled
     {
         get
         {
@@ -121,7 +121,7 @@ class Main
                 _isControlsEnabled = value;
         }
     }
-    public bool IsConnectedToServer
+    public static bool IsConnectedToServer
     {
         get
         {
@@ -134,7 +134,7 @@ class Main
                 _isConnectedToServer = value;
         }
     }
-    public bool IsConnectedToClient
+    public static bool IsConnectedToClient
     {
         get
         {
@@ -147,7 +147,7 @@ class Main
                 _isConnectedToClient = value;
         }
     }
-    public CommunicationTypes CommunitionType
+    public static CommunicationTypes CommunitionType
     {
         get
         {
@@ -161,37 +161,36 @@ class Main
         }
     }
 
-    private bool _isSendingEnabled = true;
-    private bool _isReceivingEnabled = true;
-    private bool _isImageReceived = true;
-    private bool _isImageSent = true;
-    private bool _isControlsEnabled = false;
-    private bool _isConnectedToServer = false;
-    private bool _isConnectedToClient = false;
-    private Bitmap _screenImage;
-    private double _transferSpeed;
-    private CommunicationTypes _communitionType;
-    
-    private string _URL;                          /// File Path
-    private Thread sendingThread;
-    private Thread receivingThread;
+    private static bool _isSendingEnabled = true;
+    private static bool _isReceivingEnabled = true;
+    private static bool _isImageReceived = true;
+    private static bool _isImageSent = true;
+    private static bool _isControlsEnabled = false;
+    private static bool _isConnectedToServer = false;
+    private static bool _isConnectedToClient = false;
+    private static Bitmap _screenImage;
+    private static double _transferSpeed;
+    private static CommunicationTypes _communitionType;
 
-    private string _HostName = "";
-    private int fps = 0;
-    private object HostName_Lock = new object();
-    private object Lck_IsSendingEnabled = new object();
-    private object Lck_IsReceivingEnabled = new object();
-    private object Lck_FPS = new object();
-    private object Lck_ScreenImage = new object();
-    private object Lck_IsImageReceived = new object();
-    private object Lck_IsImageSent = new object();
-    private object Lck_TransferSpeed = new object();
-    private object Lck_IsControlsEnabled = new object();
-    private object Lck_IsConnectedToServer = new object();
-    private object Lck_IsConnectedToClient = new object();
-    private object Lck_CommunitionType = new object();
+    private static Thread sendingThread;
+    private static Thread receivingThread;
 
-    public string HostName
+    private static string _HostName = "";
+    private static int fps = 0;
+    private static object HostName_Lock = new object();
+    private static object Lck_IsSendingEnabled = new object();
+    private static object Lck_IsReceivingEnabled = new object();
+    private static object Lck_FPS = new object();
+    private static object Lck_ScreenImage = new object();
+    private static object Lck_IsImageReceived = new object();
+    private static object Lck_IsImageSent = new object();
+    private static object Lck_TransferSpeed = new object();
+    private static object Lck_IsControlsEnabled = new object();
+    private static object Lck_IsConnectedToServer = new object();
+    private static object Lck_IsConnectedToClient = new object();
+    private static object Lck_CommunitionType = new object();
+
+    public static string HostName
     {
 
         get
@@ -211,7 +210,7 @@ class Main
     }
 
     #endregion
-    public Communication Comm;
+    public static Communication Comm;
 
     public enum CommunicationTypes
     {
@@ -219,21 +218,21 @@ class Main
         Receiver
     }
 
-    public Main(CommunicationTypes communicationType)
+    public static void InitCommunication(CommunicationTypes communicationType)
     {
         Comm = new Communication();
         if (communicationType == CommunicationTypes.Sender)
         {
-            HostName= Comm.CreateServer();
+            HostName = Comm.CreateServer();
             Debug.WriteLine("Server IP: " + HostName);
         }
-        this.CommunitionType = communicationType;
+        CommunitionType = communicationType;
     }
     /// <summary>
     /// Starts sending slected file to client in another thread.
     /// </summary>
     /// <returns>returns true if transfer is started</returns>
-    public bool StartSharingScreen()
+    public static bool StartSharingScreen()
     {
         try
         {
@@ -251,7 +250,7 @@ class Main
     /// <summary>
     /// This function is used in a thread to send all file bytes to client.
     /// </summary>
-    private void SendingCoreFcn()
+    private static void SendingCoreFcn()
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
         int fpsCounter = 0;
@@ -312,7 +311,7 @@ class Main
             }
         }
     }
-    public void CancelSharing()
+    public static void CancelSharing()
     {
         IsSendingEnabled = false;
         ImageProcessing.StopGettingFrames();
@@ -326,7 +325,7 @@ class Main
             }
         }
     }
-    public void StartReceiving(string serverIp)
+    public static void StartReceiving(string serverIp)
     {
         IsConnectedToServer=Comm.ConnectToServer(serverIp);
 
@@ -340,7 +339,7 @@ class Main
             Debug.WriteLine("Failed to start sending thread! \n " + e.ToString());
         }
     }
-    private void ReceivingCoreFcn()
+    private static void ReceivingCoreFcn()
     {
         Stopwatch stopwatch = Stopwatch.StartNew();
         int fpsCounter = 0;
@@ -396,7 +395,7 @@ class Main
         }
         IsConnectedToServer = false;
     }
-    public void StopReceiving()
+    public static void StopReceiving()
     {
         Comm.isConnectedToServer = false;
         Comm.CloseClient();
