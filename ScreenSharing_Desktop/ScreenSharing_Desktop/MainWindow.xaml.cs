@@ -264,7 +264,12 @@ namespace ScreenSharing_Desktop
                 });
                 if(IsAutoShareEnabled)
                 {
-                    btn_Share_Click(null, null);
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(1000);
+                        btn_Share_Click(null, null);
+                    });
+
                 }
             }
             catch
@@ -274,7 +279,7 @@ namespace ScreenSharing_Desktop
                     chc_AutoShare.IsChecked = IsAutoShareEnabled;
                 });
             }
-            Ping_all();
+            //Ping_all();
            
         }
 
