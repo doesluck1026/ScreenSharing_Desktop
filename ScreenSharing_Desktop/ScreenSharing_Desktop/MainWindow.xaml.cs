@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Squirrel;
 
 namespace ScreenSharing_Desktop
 {
@@ -25,22 +26,61 @@ namespace ScreenSharing_Desktop
         {
             InitializeComponent();
         }
-        static string NetworkGateway()
+        private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string ip = null;
-
-            foreach (NetworkInterface f in NetworkInterface.GetAllNetworkInterfaces())
+            try
             {
-                if (f.OperationalStatus == OperationalStatus.Up)
+                CheckForUpdates();
+                AddVersionNumber();
+                LoadOptions();
+                Dispatcher.Invoke(() =>
                 {
-                    foreach (GatewayIPAddressInformation d in f.GetIPProperties().GatewayAddresses)
+                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
+                });
+                if (Parameters.IsAutoShareEnabled)
+                {
+                    Task.Run(() =>
                     {
-                        ip = d.Address.ToString();
-                    }
+                        Thread.Sleep(1000);
+                        btn_Share_Click(null, null);
+                    });
+
                 }
             }
+            catch
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
+                });
+            }
+        }
+        private async void CheckForUpdates()
+        {
+            try
+            {
+                using(var mgr=await UpdateManager.GitHubUpdateManager("https://github.com/doesluck1026/ScreenSharing_Desktop"))
+                {
+                    var release = await mgr.UpdateApp();
+                }
+            }
+            catch
+            {
 
-            return ip;
+            }
+        }
+        private void AddVersionNumber()
+        {
+            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            Dispatcher.Invoke(() =>
+            {
+                this.Title += "v." + versionInfo.FileVersion;
+            });
+        }
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            CloseApp();
         }
         private void btn_Share_Click(object sender, RoutedEventArgs e)
         {
@@ -128,41 +168,6 @@ namespace ScreenSharing_Desktop
                 uiUpdateTimer = null;
             }
         }
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            CloseApp();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                LoadOptions();
-                Dispatcher.Invoke(() =>
-                {
-                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
-                });
-                if(Parameters.IsAutoShareEnabled)
-                {
-                    Task.Run(() =>
-                    {
-                        Thread.Sleep(1000);
-                        btn_Share_Click(null, null);
-                    });
-
-                }
-            }
-            catch
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
-                });
-            }
-            //Ping_all();
-           
-        }
-
         private void chc_AutoShare_Click(object sender, RoutedEventArgs e)
         {
             Parameters.IsAutoShareEnabled = (bool)chc_AutoShare.IsChecked;

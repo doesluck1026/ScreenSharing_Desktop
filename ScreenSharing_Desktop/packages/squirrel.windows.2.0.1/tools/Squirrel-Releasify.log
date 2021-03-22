@@ -1,0 +1,9 @@
+﻿[22.03.21 23:37:31] ınfo: Program: Starting Squirrel Updater: --releasify ScreenSharingApp.1.0.1.nupkg
+[22.03.21 23:37:31] ınfo: Program: Bootstrapper EXE found at:D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\packages\squirrel.windows.2.0.1\tools\Setup.exe
+[22.03.21 23:37:31] ınfo: Program: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.1.0.1.nupkg
+[22.03.21 23:37:31] ınfo: ReleasePackage: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.1.0.1.nupkg => D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-1.0.1-full.nupkg
+[22.03.21 23:37:34] ınfo: ReleasePackage: Extracting dependent packages: []
+[22.03.21 23:37:34] ınfo: ReleasePackage: Removing unnecessary data
+[22.03.21 23:37:34] ınfo: ReleasePackage: No release notes found in C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\ScreenSharingApp.nuspec
+[22.03.21 23:37:37] ınfo: Program: Building embedded zip file for Setup.exe
+[22.03.21 23:38:09] ınfo: Program: Finished Squirrel Updater
