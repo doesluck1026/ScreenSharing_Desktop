@@ -57,3 +57,51 @@
 [24.03.21 13:28:26] ınfo: DeltaPackageBuilder: \lib\net45\zh-tw\ZedGraph.resources.dll hasn't changed, writing dummy file
 [24.03.21 13:28:26] ınfo: Program: Building embedded zip file for Setup.exe
 [24.03.21 13:28:47] ınfo: Program: Finished Squirrel Updater
+[24.03.21 14:02:06] ınfo: Program: Starting Squirrel Updater: --releasify ScreenSharingApp.1.0.3.nupkg
+[24.03.21 14:02:07] ınfo: Program: Bootstrapper EXE found at:D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\packages\squirrel.windows.2.0.1\tools\Setup.exe
+[24.03.21 14:02:07] ınfo: Program: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.1.0.3.nupkg
+[24.03.21 14:02:07] ınfo: ReleasePackage: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.1.0.3.nupkg => D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-1.0.3-full.nupkg
+[24.03.21 14:02:08] ınfo: ReleasePackage: Extracting dependent packages: []
+[24.03.21 14:02:08] ınfo: ReleasePackage: Removing unnecessary data
+[24.03.21 14:02:08] ınfo: ReleasePackage: No release notes found in C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\ScreenSharingApp.nuspec
+[24.03.21 14:02:08] ınfo: DeltaPackageBuilder: Extracting .\Releases\ScreenSharingApp-1.0.2-full.nupkg and D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-1.0.3-full.nupkg into C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.MsDelta.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.PatchApi.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Emgu.CV.UI.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Emgu.CV.UI.GL.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Emgu.CV.World.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Mdb.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Pdb.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Rocks.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\NuGet.Squirrel.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\OpenTK.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\OpenTK.GLControl.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: \lib\net45\ScreenCapturer.dll hasn't changed, writing dummy file
+[24.03.21 14:02:09] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\ScreenSharing_Desktop.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\ScreenSharing_Desktop.exe
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\ScreenSharing_Desktop.exe.config hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\ScreenSharing_Desktop_ExecutionStub.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\ScreenSharing_Desktop_ExecutionStub.exe
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\SharpCompress.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.Direct3D11.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.DXGI.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\Squirrel.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\ZedGraph.dll hasn't changed, writing dummy file
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\de\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\es\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\fr\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\hu\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\it\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\ja\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\pt\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\ru\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\sk\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\sv\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\tr\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\x64\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\x86\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\zh-cn\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: DeltaPackageBuilder: \lib\net45\zh-tw\_._ not found in base package, marking as new
+[24.03.21 14:02:10] ınfo: Program: Building embedded zip file for Setup.exe
+[24.03.21 14:02:13] ınfo: Program: Finished Squirrel Updater
