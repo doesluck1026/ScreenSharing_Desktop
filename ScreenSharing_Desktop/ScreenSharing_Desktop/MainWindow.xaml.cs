@@ -94,7 +94,7 @@ namespace ScreenSharing_Desktop
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             Dispatcher.Invoke(() =>
             {
-                this.Title += "v." + versionInfo.FileVersion;
+                this.Title += "   v." + versionInfo.FileVersion;
             });
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
