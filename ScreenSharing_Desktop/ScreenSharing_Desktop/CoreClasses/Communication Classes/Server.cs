@@ -33,20 +33,7 @@ class Server
             IPAddress localAddr = null;
             if (string.IsNullOrEmpty(IP))
             {
-                //var ipAddresses = GetAllInternetworkIPs();
-                //if (ipAddresses.Length > 0)
-                //    localAddr = ipAddresses[0];
-                //else
-                {
-                    var host = Dns.GetHostEntry(Dns.GetHostName());
-                    foreach (var ip in host.AddressList)
-                    {
-                        if (ip.AddressFamily == AddressFamily.InterNetwork)
-                        {
-                            localAddr = ip;
-                        }
-                    }
-                }
+                localAddr = GetDeviceIP();
             }
             else
                 localAddr = IPAddress.Parse(IP);
@@ -257,6 +244,19 @@ class Server
                 }
             }
         return addressList.ToArray();
+    }
+    public static IPAddress GetDeviceIP()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        IPAddress localAddr=null;
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                localAddr = ip;
+            }
+        }
+        return localAddr;
     }
 }
 

@@ -41,8 +41,27 @@ namespace ScreenSharing_Desktop
                 {
                     Task.Run(() =>
                     {
-                        Thread.Sleep(1000);
+                        try
+                        {
+                        bool noIP = true;
+                        while (noIP)
+                        {
+                            var localIP = Server.GetDeviceIP();
+                            if(localIP!=null)
+                            {
+                                if(!string.Equals(localIP.ToString(), "127.0.0.0") && !string.Equals(localIP.ToString(), "127.0.0.1"))
+                                {
+                                    noIP = false;
+                                }
+                            }
+                                Thread.Sleep(500);
+                        }
                         btn_Share_Click(null, null);
+                        }
+                        catch
+                        {
+
+                        }
                     });
 
                 }

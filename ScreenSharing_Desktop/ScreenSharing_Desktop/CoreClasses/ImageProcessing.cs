@@ -148,6 +148,4 @@ class ImageProcessing
         }
         return bmp;
     }
-
-
 }
