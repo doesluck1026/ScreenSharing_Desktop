@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using Squirrel;
 
 namespace ScreenSharing_Desktop
 {
@@ -30,7 +29,6 @@ namespace ScreenSharing_Desktop
         {
             try
             {
-                CheckForUpdates();
                 AddVersionNumber();
                 LoadOptions();
                 Dispatcher.Invoke(() =>
@@ -72,20 +70,6 @@ namespace ScreenSharing_Desktop
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
                 });
-            }
-        }
-        private async void CheckForUpdates()
-        {
-            try
-            {
-                using(var mgr=await UpdateManager.GitHubUpdateManager("https://github.com/doesluck1026/ScreenSharing_Desktop"))
-                {
-                    var release = await mgr.UpdateApp();
-                }
-            }
-            catch
-            {
-
             }
         }
         private void AddVersionNumber()
