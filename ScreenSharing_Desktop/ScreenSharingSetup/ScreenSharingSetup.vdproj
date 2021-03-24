@@ -1069,8 +1069,8 @@
         "UpgradeCode" = "8:{8F66AA5B-6BDB-4AA8-8992-64E43EA316C6}"
 =======
         "ProductName" = "8:Screen Sharing App"
-        "ProductCode" = "8:{514FA9CC-353D-4FCA-B767-F7054C03481D}"
-        "PackageCode" = "8:{A48C9E4E-D19C-492A-A718-9AE3BA21596A}"
+        "ProductCode" = "8:{7C973422-6387-4665-A84F-459FC1144CD9}"
+        "PackageCode" = "8:{C51D7C3F-6262-420F-A6FD-2235B051F2B5}"
         "UpgradeCode" = "8:{41F247D8-6B21-4D1C-9076-090500507AC9}"
 >>>>>>> parent of 351cd62 (updated):ScreenSharing_Desktop/Setup/Setup.vdproj
         "AspNetVersion" = "8:2.0.50727.0"
@@ -1083,7 +1083,7 @@
         "Manufacturer" = "8:CDS_Software02"
 =======
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.4.8"
+        "ProductVersion" = "8:1.4.5"
         "Manufacturer" = "8:JuniorVersusBug"
 >>>>>>> parent of 351cd62 (updated):ScreenSharing_Desktop/Setup/Setup.vdproj
         "ARPHELPTELEPHONE" = "8:"
