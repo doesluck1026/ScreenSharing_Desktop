@@ -9,7 +9,7 @@
     <ProjectGuid>{A30CF829-EBB4-4D0A-B71C-76F8EEB0F00C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ScreenSharing_Desktop</RootNamespace>
-    <AssemblyName>ScreenSharing_Desktop</AssemblyName>
+    <AssemblyName>ScreenSharingApp</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

@@ -213,6 +213,7 @@ namespace ScreenSharing_Desktop
 
         private void txt_IP_DropDownOpened(object sender, EventArgs e)
         {
+            txt_IP.Items.Clear();
             if (Parameters.RecentServersList != null)
             {
                 for (int i = 0; i < Parameters.RecentServersList.Count; i++)
