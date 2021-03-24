@@ -1063,7 +1063,7 @@
         {
         "Name" = "8:Microsoft Visual Studio"
 <<<<<<< HEAD:ScreenSharing_Desktop/ScreenSharingSetup/ScreenSharingSetup.vdproj
-        "ProductName" = "8:ScreenSharingSetup"
+        "ProductName" = "8:Setup"
         "ProductCode" = "8:{C5B8CE4A-92E3-46CF-9893-6C0589F5FE4C}"
         "PackageCode" = "8:{F71542F2-4BEB-438F-9767-298F5FA5C6D3}"
         "UpgradeCode" = "8:{8F66AA5B-6BDB-4AA8-8992-64E43EA316C6}"
