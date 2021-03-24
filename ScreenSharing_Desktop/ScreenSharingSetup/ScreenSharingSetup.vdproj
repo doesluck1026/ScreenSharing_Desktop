@@ -1062,17 +1062,30 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
+<<<<<<< HEAD:ScreenSharing_Desktop/ScreenSharingSetup/ScreenSharingSetup.vdproj
         "ProductName" = "8:ScreenSharingSetup"
         "ProductCode" = "8:{C5B8CE4A-92E3-46CF-9893-6C0589F5FE4C}"
         "PackageCode" = "8:{F71542F2-4BEB-438F-9767-298F5FA5C6D3}"
         "UpgradeCode" = "8:{8F66AA5B-6BDB-4AA8-8992-64E43EA316C6}"
+=======
+        "ProductName" = "8:Screen Sharing App"
+        "ProductCode" = "8:{514FA9CC-353D-4FCA-B767-F7054C03481D}"
+        "PackageCode" = "8:{A48C9E4E-D19C-492A-A718-9AE3BA21596A}"
+        "UpgradeCode" = "8:{41F247D8-6B21-4D1C-9076-090500507AC9}"
+>>>>>>> parent of 351cd62 (updated):ScreenSharing_Desktop/Setup/Setup.vdproj
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
+<<<<<<< HEAD:ScreenSharing_Desktop/ScreenSharingSetup/ScreenSharingSetup.vdproj
         "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:1.0.2"
         "Manufacturer" = "8:CDS_Software02"
+=======
+        "InstallAllUsers" = "11:TRUE"
+        "ProductVersion" = "8:1.4.8"
+        "Manufacturer" = "8:JuniorVersusBug"
+>>>>>>> parent of 351cd62 (updated):ScreenSharing_Desktop/Setup/Setup.vdproj
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
         "Title" = "8:ScreenSharingSetup"

@@ -15,13 +15,10 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="17*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" >
-            <Image x:Name="imageBox"  />
 
-        </StackPanel>
         <Grid Grid.Row="0" Margin="0,0,0,0">
 
-            <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="Transparent" Opacity="0.8">
+            <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
                 <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="25" FontWeight="DemiBold" Foreground="White" />
                 <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="25" FontWeight="DemiBold" Foreground="White"/>
                 <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="25" Text="192.168.1.36"/>
@@ -45,14 +42,17 @@
                     </Grid>
                     <Grid Grid.Column="2">
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="Black" FontSize="15" FontWeight="DemiBold"/>
+                            <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
                         <Label x:Name="lbl_ConnectionStatus" Width="20" Height="20" Margin="50,0,0,0" Background="Red"  />
                         </StackPanel>
                     </Grid>
                 </Grid>
             </StackPanel>
         </Grid>
-        
+        <StackPanel Grid.Row="1" >
+            <Image x:Name="imageBox"  />
+
+        </StackPanel>
         
     </Grid>
 </Window>
