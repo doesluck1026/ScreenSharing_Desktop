@@ -54,17 +54,7 @@ class Server
             ServerStarted = true;
             IPAddress localAddr = null;
             var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-            {
-<<<<<<< HEAD
-                localAddr = GetDeviceIP();
-=======
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    localAddr = ip;
-                }
->>>>>>> parent of a47d4bf (update)
-            }
+            localAddr = GetDeviceIP();
             Listener = new TcpListener(localAddr, Port);
             Debug.WriteLine("IP: " + localAddr + " Port: " + Port);
             this.IP = localAddr.ToString();
@@ -260,7 +250,6 @@ class Server
             return null;
         }
     }
-<<<<<<< HEAD
     private byte[] PrepareDataHeader(int len)
     {
         byte[] header = new byte[5];
@@ -268,21 +257,6 @@ class Server
         byte[] lengthBytes = BitConverter.GetBytes(len);
         lengthBytes.CopyTo(header, 1);
         return header;
-    }
-    private IPAddress[] GetAllInternetworkIPs()
-    {
-        List<IPAddress> addressList = new List<IPAddress>();
-        var interfaces = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
-        foreach (var i in interfaces)
-            foreach (var ua in i.GetIPProperties().UnicastAddresses)
-            {
-                if (ua.Address.AddressFamily == AddressFamily.InterNetwork && i.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up && i.Name.Equals("Wi-Fi"))
-                {
-                    addressList.Add(ua.Address);
-                    Debug.WriteLine("name: " + i.Name + " ip: " + ua.Address + "  type: ");
-                }
-            }
-        return addressList.ToArray();
     }
     public static IPAddress GetDeviceIP()
     {
@@ -297,7 +271,5 @@ class Server
         }
         return localAddr;
     }
-=======
->>>>>>> parent of a47d4bf (update)
 }
 

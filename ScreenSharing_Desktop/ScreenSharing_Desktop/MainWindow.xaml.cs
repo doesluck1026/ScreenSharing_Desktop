@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -111,6 +107,7 @@ namespace ScreenSharing_Desktop
                 IsConnectedToServer = false;
                 btn_Connect.Content = "Connect";
                 Main.StopReceiving();
+                lbl_ConnectionStatus.Background = Brushes.Red;
             }
         }
         private void UpdateUITimer_Tick(object state)
@@ -171,43 +168,7 @@ namespace ScreenSharing_Desktop
                 uiUpdateTimer = null;
             }
         }
-<<<<<<< HEAD
-=======
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            for (int i = 0; i < list.Count; i++)
-            {
-                Debug.WriteLine("item : " + i + " : " + list[i]);
-            }
-            CloseApp();
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                LoadOptions();
-                Dispatcher.Invoke(() =>
-                {
-                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
-                });
-                if(IsAutoShareEnabled)
-                {
-                    btn_Share_Click(null, null);
-                }
-            }
-            catch
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    chc_AutoShare.IsChecked = IsAutoShareEnabled;
-                });
-            }
-            Ping_all();
-           
-        }
-
->>>>>>> parent of 351cd62 (updated)
+       
         private void chc_AutoShare_Click(object sender, RoutedEventArgs e)
         {
             Parameters.IsAutoShareEnabled = (bool)chc_AutoShare.IsChecked;

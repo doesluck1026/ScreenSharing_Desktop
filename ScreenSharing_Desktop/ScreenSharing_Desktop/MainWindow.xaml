@@ -13,10 +13,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="17*"/>
+            <RowDefinition Height="18*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,0">
+        <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8">
 
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
                 <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="25" FontWeight="DemiBold" Foreground="White" />

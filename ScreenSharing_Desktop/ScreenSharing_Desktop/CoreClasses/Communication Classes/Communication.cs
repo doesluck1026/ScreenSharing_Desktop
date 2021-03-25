@@ -21,18 +21,6 @@ class Communication
     public bool isConnectedToServer = false;
     public long LastPackNumberReceived { get; private set; }
     public long LastPackNumberSent { get; private set; }
-    public uint NumberOfPacks { get; private set; }
-<<<<<<< HEAD
-    private bool _isClientConnected = false;
-    private bool _isConnectedToServer = false;
-    private object Lck_isClientConnected = new object();
-    private object Lck_isConnectedToServer = new object();
-=======
-
-    public StringListBagFile RecentServers;
-    private string URL = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/JuniorVersusBug/ScreenSharingApp/";
-    private string FileName =  "ClientsList.dat";
->>>>>>> parent of a47d4bf (update)
     private enum Functions
     {
         SendingFile = 1,
