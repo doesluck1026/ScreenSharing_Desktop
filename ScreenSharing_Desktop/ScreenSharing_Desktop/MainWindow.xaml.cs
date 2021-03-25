@@ -37,20 +37,22 @@ namespace ScreenSharing_Desktop
                     {
                         try
                         {
-                        bool noIP = true;
-                        while (noIP)
-                        {
-                            var localIP = Server.GetDeviceIP();
-                            if(localIP!=null)
+                            bool noIP = true;
+                            while (noIP)
                             {
-                                if(!string.Equals(localIP.ToString(), "127.0.0.0") && !string.Equals(localIP.ToString(), "127.0.0.1"))
+                                var localIP = Server.GetDeviceIP();
+                                if (localIP != null)
                                 {
-                                    noIP = false;
+                                    char[] splitter = { '.' };
+                                    var ipBlocks=localIP.ToString().Split(splitter);
+                                    if (!string.Equals(localIP.ToString(), "127.0.0.0") && !string.Equals(localIP.ToString(), "127.0.0.1") && string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
+                                    {
+                                        noIP = false;
+                                    }
                                 }
-                            }
                                 Thread.Sleep(500);
-                        }
-                        btn_Share_Click(null, null);
+                            }
+                            btn_Share_Click(null, null);
                         }
                         catch
                         {
