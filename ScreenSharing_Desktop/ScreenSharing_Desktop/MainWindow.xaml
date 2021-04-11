@@ -12,16 +12,16 @@
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="18*"/>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="20*"/>
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8">
 
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
-                <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="25" FontWeight="DemiBold" Foreground="White" />
-                <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="25" FontWeight="DemiBold" Foreground="White"/>
-                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="25" Text="192.168.1.36"/>
+                <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="20" FontWeight="DemiBold" Foreground="White" />
+                <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="20" FontWeight="DemiBold" Foreground="White"/>
+                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="20" Text="192.168.1.36"/>
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -30,14 +30,14 @@
                     </Grid.ColumnDefinitions>
                     <Grid Grid.Column="0" Width="290" >
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="Speed:" Foreground="White" FontSize="25" FontWeight="DemiBold" />
-                            <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                            <Label Content="Speed:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                            <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Column="1" Width="130" >
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="FPS:" Foreground="White" FontSize="25" FontWeight="DemiBold" />
-                            <Label x:Name="lbl_FPS" Content="30" FontSize="25" FontWeight="DemiBold" Foreground="White"/>
+                            <Label Content="FPS:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                            <Label x:Name="lbl_FPS" Content="30" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
                         </StackPanel>
                     </Grid>
                     <Grid Grid.Column="2">

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using Squirrel;
 
 namespace ScreenSharing_Desktop
 {
@@ -26,6 +27,7 @@ namespace ScreenSharing_Desktop
             try
             {
                 AddVersionNumber();
+                CheckForUpdates();
                 LoadOptions();
                 Dispatcher.Invoke(() =>
                 {
@@ -45,7 +47,7 @@ namespace ScreenSharing_Desktop
                                 {
                                     char[] splitter = { '.' };
                                     var ipBlocks=localIP.ToString().Split(splitter);
-                                    if (!string.Equals(localIP.ToString(), "127.0.0.0") && !string.Equals(localIP.ToString(), "127.0.0.1") && string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
+                                    if (string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
                                     {
                                         noIP = false;
                                     }
@@ -76,8 +78,22 @@ namespace ScreenSharing_Desktop
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
             Dispatcher.Invoke(() =>
             {
-                this.Title += "   v." + versionInfo.FileVersion;
+                this.Title += $" v.{versionInfo.FileVersion}";
             });
+        }
+        private async void CheckForUpdates()
+        {
+            try
+            {
+                using (var mgr= await UpdateManager.GitHubUpdateManager("https://github.com/doesluck1026/ScreenSharing_Desktop"))
+                {
+                    var release = await mgr.UpdateApp();
+                }
+            }
+            catch ( Exception e)
+            {
+                Debug.WriteLine("Failed to check Updates: " + e.ToString());
+            }
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
