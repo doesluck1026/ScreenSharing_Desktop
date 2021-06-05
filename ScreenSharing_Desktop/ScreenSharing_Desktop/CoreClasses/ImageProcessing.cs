@@ -8,7 +8,6 @@ using ScreenCapturerNS;
 class ImageProcessing
 {
     #region Variables
-    public static int FPS;
     private static Bitmap ScreenImage
     {
         get
@@ -24,12 +23,13 @@ class ImageProcessing
     }
     private static object Lck_ScreenImage = new object();
     private static Bitmap _screenImage;
-    public static void StartGettingFrame()
+    public static void StartScreenCapturer()
     {
         ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
         ScreenCapturer.OnCaptureStop += ScreenCapturer_OnCaptureStop;
         ScreenCapturer.StartCapture();
         ScreenCapturer.SkipFirstFrame = true;
+        System.Threading.Thread.Sleep(500);
     }
 
     private static void ScreenCapturer_OnCaptureStop(object sender, OnCaptureStopEventArgs e)
@@ -43,7 +43,7 @@ class ImageProcessing
             _screenImage = e.Bitmap.Clone(new Rectangle(0,0,e.Bitmap.Size.Width, e.Bitmap.Size.Height),PixelFormat.DontCare);
     }
 
-    public static void StopGettingFrames()
+    public static void StopScreenCapturer()
     {
         while (ScreenCapturer.IsActive)
         {

@@ -42,7 +42,7 @@ namespace ScreenSharing_Desktop
                             bool noIP = true;
                             while (noIP)
                             {
-                                var localIP = Server.GetDeviceIP();
+                                var localIP = Client.GetDeviceIP();
                                 if (localIP != null)
                                 {
                                     char[] splitter = { '.' };
@@ -102,8 +102,7 @@ namespace ScreenSharing_Desktop
         private void btn_Share_Click(object sender, RoutedEventArgs e)
         {
             Reset();
-            Main.InitCommunication(Main.CommunicationTypes.Sender);
-            Main.StartSharingScreen();
+            Main.StartSharing();
             StartUiTimer();
         }
 
@@ -113,10 +112,10 @@ namespace ScreenSharing_Desktop
             if (!IsConnectedToServer)
             {
                 string ip = txt_IP.Text;
-                Main.InitCommunication(Main.CommunicationTypes.Receiver);
                 Main.StartReceiving(ip);
-                StartUiTimer();
-                IsConnectedToServer = Main.IsConnectedToServer;
+                Main.OnImageReceived += Main_OnImageReceived;
+                //StartUiTimer();
+                IsConnectedToServer = true;
                 if(IsConnectedToServer)
                     btn_Connect.Content = "Disconnect";
             }
@@ -125,9 +124,14 @@ namespace ScreenSharing_Desktop
                 IsConnectedToServer = false;
                 btn_Connect.Content = "Connect";
                 Main.StopReceiving();
-                lbl_ConnectionStatus.Background = Brushes.Red;
             }
         }
+
+        private void Main_OnImageReceived(System.Drawing.Bitmap image)
+        {
+            UpdateUI();
+        }
+
         private void UpdateUITimer_Tick(object state)
         {
             if (uiUpdateTimer == null)
@@ -141,32 +145,12 @@ namespace ScreenSharing_Desktop
         {
             Dispatcher.Invoke(() =>
             {
-                if (Main.IsImageReceived || Main.IsImageSent)
-                {
                     if (Main.ScreenImage != null)
                     {
                         imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
                     }
                     lbl_FPS.Content = Main.FPS.ToString();
                     lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
-                    Main.IsImageReceived = false;
-                    Main.IsImageSent = false;
-                }
-                if (Main.CommunitionType == Main.CommunicationTypes.Sender)
-                {
-                    txt_IP.Text = Main.HostName;
-                    if (!Main.IsConnectedToClient)
-                        lbl_ConnectionStatus.Background = Brushes.Red;
-                    else
-                        lbl_ConnectionStatus.Background = Brushes.Lime;
-                }
-                else if (Main.CommunitionType == Main.CommunicationTypes.Receiver)
-                {
-                    if (!Main.IsConnectedToServer)
-                        lbl_ConnectionStatus.Background = Brushes.Red;
-                    else
-                        lbl_ConnectionStatus.Background = Brushes.Lime;
-                }
             });
         }
         private void StartUiTimer()

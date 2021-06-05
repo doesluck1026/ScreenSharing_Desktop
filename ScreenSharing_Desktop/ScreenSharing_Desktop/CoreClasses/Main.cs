@@ -11,10 +11,14 @@ using System.Threading.Tasks;
 class Main
 {
 
+    public delegate void ImageDelegate(Bitmap image);
+    public static event ImageDelegate OnImageReceived;
+
     #region Parameters
-    public static int PackSize = 1024 * 1024 * 3;            /// this represents the maximum length of bytes to be transfered to client in one package. default is 3 MB and should be smaller than 64 kB
 
     #endregion
+
+
     #region Variables
 
     public static int FPS
@@ -28,32 +32,6 @@ class Main
         {
             lock (Lck_FPS)
                 fps = value;
-        }
-    }
-    public static bool IsSendingEnabled
-    {
-        get
-        {
-            lock (Lck_IsSendingEnabled)
-                return _isSendingEnabled;
-        }
-        set
-        {
-            lock (Lck_IsSendingEnabled)
-                _isSendingEnabled = value;
-        }
-    }
-    public static bool IsReceivingEnabled
-    {
-        get
-        {
-            lock (Lck_IsReceivingEnabled)
-                return _isReceivingEnabled;
-        }
-        set
-        {
-            lock (Lck_IsReceivingEnabled)
-                _isReceivingEnabled = value;
         }
     }
     public static bool IsImageReceived
@@ -121,32 +99,6 @@ class Main
                 _isControlsEnabled = value;
         }
     }
-    public static bool IsConnectedToServer
-    {
-        get
-        {
-            lock (Lck_IsConnectedToServer)
-                return _isConnectedToServer;
-        }
-        set
-        {
-            lock (Lck_IsConnectedToServer)
-                _isConnectedToServer = value;
-        }
-    }
-    public static bool IsConnectedToClient
-    {
-        get
-        {
-            lock (Lck_IsConnectedToClient)
-                return _isConnectedToClient;
-        }
-        set
-        {
-            lock (Lck_IsConnectedToClient)
-                _isConnectedToClient = value;
-        }
-    }
     public static CommunicationTypes CommunitionType
     {
         get
@@ -161,56 +113,41 @@ class Main
         }
     }
 
-    private static bool _isSendingEnabled = true;
-    private static bool _isReceivingEnabled = true;
+
     private static bool _isImageReceived = true;
     private static bool _isImageSent = true;
     private static bool _isControlsEnabled = false;
-    private static bool _isConnectedToServer = false;
-    private static bool _isConnectedToClient = false;
     private static Bitmap _screenImage;
     private static double _transferSpeed;
     private static CommunicationTypes _communitionType;
-
-    private static Thread sendingThread;
-    private static Thread receivingThread;
-
-    private static string _HostName = "";
     private static int fps = 0;
-    private static object HostName_Lock = new object();
-    private static object Lck_IsSendingEnabled = new object();
-    private static object Lck_IsReceivingEnabled = new object();
+
     private static object Lck_FPS = new object();
     private static object Lck_ScreenImage = new object();
     private static object Lck_IsImageReceived = new object();
     private static object Lck_IsImageSent = new object();
     private static object Lck_TransferSpeed = new object();
     private static object Lck_IsControlsEnabled = new object();
-    private static object Lck_IsConnectedToServer = new object();
-    private static object Lck_IsConnectedToClient = new object();
     private static object Lck_CommunitionType = new object();
 
-    public static string HostName
-    {
-
-        get
-        {
-            lock (HostName_Lock)
-            {
-                return _HostName;
-            }
-        }
-        set
-        {
-            lock (HostName_Lock)
-            {
-                _HostName = value;
-            }
-        }
-    }
+    private static Thread SenderThread;
 
     #endregion
-    public static Communication Comm;
+
+    #region MQ Variables
+
+    private static MQPublisher Publisher;
+    private static MQSubscriber Subscriber;
+    private static string Topic = "Screen";
+    private static int Port = 42001;
+    public static string MyIP;
+    public static string TargetIP;
+
+    private static bool IsPublisherEnabled;
+    private static Stopwatch SubStopwatch;
+    private static int TotalBytesReceived = 0;
+    private static int FpsCounter = 0;
+    #endregion
 
     public enum CommunicationTypes
     {
@@ -218,190 +155,106 @@ class Main
         Receiver
     }
 
-    public static void InitCommunication(CommunicationTypes communicationType)
-    {
-        Comm = new Communication();
-        if (communicationType == CommunicationTypes.Sender)
-        {
-            HostName = Comm.CreateServer();
-            Debug.WriteLine("Server IP: " + HostName);
-        }
-        CommunitionType = communicationType;
-    }
     /// <summary>
-    /// Starts sending slected file to client in another thread.
+    /// Initializes a MQ Publisher with defined topic at given port
     /// </summary>
-    /// <returns>returns true if transfer is started</returns>
-    public static bool StartSharingScreen()
+    public static void StartSharing()
+    {
+        MyIP = Client.GetDeviceIP();
+        Publisher = new MQPublisher(Topic, MyIP, Port);
+        ImageProcessing.StartScreenCapturer();
+        IsPublisherEnabled = true;
+        SenderThread = new Thread(PublisherCoreFcn);
+        SenderThread.Start();
+    }
+    public static void StopSharing()
     {
         try
         {
-            sendingThread = new Thread(SendingCoreFcn);                             /// Start Sending File
-            sendingThread.Start();
-            Debug.WriteLine("Wait for Client.");
-            return true;
+            IsPublisherEnabled = false;
+            SenderThread.Abort();
+            ImageProcessing.StopScreenCapturer();
+            FPS = 0;
+            TransferSpeed = 0;
         }
-        catch (Exception e)
+        catch
         {
-            Debug.WriteLine("Failed to start sending thread! \n " + e.ToString());
-            return false;
+            Debug.WriteLine("Failed to Stop Publisher");
         }
     }
-    /// <summary>
-    /// This function is used in a thread to send all file bytes to client.
-    /// </summary>
-    private static void SendingCoreFcn()
+    private static void PublisherCoreFcn()
     {
+ 
         Stopwatch stopwatch = Stopwatch.StartNew();
-        int fpsCounter = 0;
-        int bytesSent = 0;
-        int mb = 1024 * 1024;
-        FPS = 30;
-        while (IsSendingEnabled)
+        int totalBytesSent = 0;
+        while (IsPublisherEnabled)
         {
-            IsConnectedToClient = false;
-            string clientHostname = Comm.StartServer();            /// Wait for Client to connect and return the hostname of connected client.
-            ImageProcessing.StartGettingFrame();
-            if (clientHostname == null && clientHostname == "")             /// if connection succeed
+            byte[] screenBytes= ImageProcessing.GetScreenBytes();
+            if(screenBytes!=null && Publisher!=null)
             {
-                return;
-            }
-            Thread.Sleep(500);
-            stopwatch.Restart();
-            IsConnectedToClient = Comm.isClientConnected;
-            while (Comm.isClientConnected)
-            {
-                try
+                Publisher.Publish(screenBytes);
+                totalBytesSent += screenBytes.Length;
+                FpsCounter++;
+                if (stopwatch.ElapsedMilliseconds > 1000)
                 {
-                    // double t1 = stopwatch.Elapsed.TotalMilliseconds;
-                    /// get image Here
-                    /// 
-                    byte[] imageBytes = ImageProcessing.GetScreenBytes();
-
-                    //double t2 = stopwatch.Elapsed.TotalMilliseconds;
-                    /// Send image to client   here
-                    /// 
-                    Comm.SendFilePacks(imageBytes, 0);
-                    //double t3 = stopwatch.Elapsed.TotalMilliseconds;
-
-                    /// Get Response of client here
-                    /// 
-                    byte[] responseBytes = Comm.GetResponseFromClient();
-                    if (responseBytes == null)
-                    {
-                        Comm.isClientConnected = false;
-                        break;
-                    }
-
-
-                    /// Calculate FPS Rate here
-                    /// 
-                    fpsCounter++;
-                    bytesSent += imageBytes.Length;
-                    if (stopwatch.Elapsed.TotalSeconds >= 1)
-                    {
-                        FPS = (int)(FPS * 0.8 + 0.2 * fpsCounter);
-                        ImageProcessing.FPS = FPS;
-                        fpsCounter = 0;
-                        TransferSpeed = (double)bytesSent / mb;
-                        bytesSent = 0;
-                        stopwatch.Restart();
-                    }
-                    IsImageSent = true;
-                }
-                catch (Exception e)
-                {
-                }
-            }
-        }
-    }
-    public static void CancelSharing()
-    {
-        IsSendingEnabled = false;
-        ImageProcessing.StopGettingFrames();
-        Comm.CloseServer();
-        if (sendingThread != null)
-        {
-            if (sendingThread.IsAlive)
-            {
-                sendingThread.Abort();
-                sendingThread = null;
-            }
-        }
-    }
-    public static void StartReceiving(string serverIp)
-    {
-        IsConnectedToServer=Comm.ConnectToServer(serverIp);
-
-        try
-        {
-            receivingThread = new Thread(ReceivingCoreFcn);                             /// Start Sending File
-            receivingThread.Start();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine("Failed to start sending thread! \n " + e.ToString());
-        }
-    }
-    private static void ReceivingCoreFcn()
-    {
-        Stopwatch stopwatch = Stopwatch.StartNew();
-        int fpsCounter = 0;
-        int bytesSent = 0;
-        int mb = 1024 * 1024;
-        FPS = 30;
-        stopwatch.Restart();
-        int errorCounter = 0;
-        while (Comm.isConnectedToServer)
-        {
-            try
-            {
-                /// get image bytes
-                byte[] ImageBytes = Comm.ReceiveFilePacks();
-                /// Create image
-                if (ImageBytes == null)
-                {
-                    errorCounter++;
-                    if(errorCounter>3)
-                    {
-                        Comm.isConnectedToServer = false;
-                        IsConnectedToServer = false;
-                        break;
-                    }
-                    continue;
-                }
-                errorCounter = 0;
-                ScreenImage = ImageProcessing.ImageFromByteArray(ImageBytes);
-                int len = 5;
-                byte[] data = new byte[len];
-
-                data[0] = 0;
-
-                Comm.SendResponseToServer(data);
-                IsImageReceived = true;
-                /// Calculate FPS Rate here
-                fpsCounter++;
-                bytesSent += ImageBytes.Length;
-                if (stopwatch.Elapsed.TotalSeconds >= 1)
-                {
-                    FPS = (int)(FPS * 0.8 + 0.2 * fpsCounter);
-                    ImageProcessing.FPS = FPS;
-                    fpsCounter = 0;
-                    TransferSpeed = (double)bytesSent / mb;
-                    bytesSent = 0;
+                    UpdateStats(totalBytesSent, stopwatch.Elapsed.TotalSeconds);
                     stopwatch.Restart();
+                    totalBytesSent = 0;
                 }
             }
-            catch (Exception e)
+            else
             {
-                IsConnectedToServer = Comm.isConnectedToServer;
+                Debug.WriteLine("Capturer or Publisher was null. Transfer aborted!");
+                break;
             }
         }
-        IsConnectedToServer = false;
+    }
+    #region Subscriber Function
+
+    public static void StartReceiving(string ip)
+    {
+        TargetIP = ip;
+        Subscriber = new MQSubscriber(Topic, TargetIP, Port);
+        Subscriber.OnDataReceived += Subscriber_OnDataReceived;
+        SubStopwatch = Stopwatch.StartNew();
+    }
+    private static void Subscriber_OnDataReceived(byte[] data)
+    {
+        if(data!=null)
+        {
+            ScreenImage = ImageProcessing.ImageFromByteArray(data);
+            if(OnImageReceived!=null)
+                OnImageReceived(ScreenImage);
+            TotalBytesReceived += data.Length;
+            FpsCounter++;
+            if (SubStopwatch.ElapsedMilliseconds>1000)
+            {
+                UpdateStats(TotalBytesReceived,SubStopwatch.Elapsed.TotalSeconds);
+                TotalBytesReceived = 0;
+                SubStopwatch.Restart();
+            }
+        }
     }
     public static void StopReceiving()
     {
-        Comm.isConnectedToServer = false;
-        Comm.CloseClient();
+        Subscriber.Stop();
+        FPS = 0;
+        TransferSpeed = 0;
+    }
+    #endregion
+
+    private static void UpdateStats(int totalbytes,double time)
+    {
+        double mb = 1024 * 1024;
+        double totalMB = totalbytes / mb;
+        if (FPS != 0)
+            FPS = (int)(FPS * 0.9 + 0.1 * FpsCounter);
+        else
+            FPS = FpsCounter;
+        FpsCounter = 0;
+        if (TransferSpeed != 0)
+            TransferSpeed = TransferSpeed * 0.9 + 0.1 * (totalMB / time);
+        else
+            TransferSpeed = totalMB / time;
     }
 }
