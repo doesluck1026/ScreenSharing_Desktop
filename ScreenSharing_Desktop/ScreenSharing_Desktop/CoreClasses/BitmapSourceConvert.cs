@@ -26,18 +26,15 @@ public static class BitmapSourceConvert
     /// <returns>The equivalent BitmapSource</returns>
     public static BitmapSource ToBitmapSource(Bitmap image)
     {
-        using (System.Drawing.Bitmap source = image)
-        {
-            IntPtr ptr = source.GetHbitmap(); //obtain the Hbitmap
+        IntPtr ptr = image.GetHbitmap(); //obtain the Hbitmap
 
-            BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                ptr,
-                IntPtr.Zero,
-                Int32Rect.Empty,
-                System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+        BitmapSource bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+            ptr,
+            IntPtr.Zero,
+            Int32Rect.Empty,
+            System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
 
-            DeleteObject(ptr); //release the HBitmap
-            return bs;
-        }
+        DeleteObject(ptr); //release the HBitmap
+        return bs;
     }
 }

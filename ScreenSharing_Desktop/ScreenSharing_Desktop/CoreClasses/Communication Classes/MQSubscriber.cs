@@ -27,17 +27,20 @@ class MQSubscriber
     }
     public void Stop()
     {
+        Subscriber.ReceiveReady -= Subscriber_ReceiveReady;
         Poller.StopAsync();
         Subscriber.Unsubscribe(Topic);
         Subscriber.Disconnect("tcp://" + IP + ":" + Port.ToString());
-        Subscriber.Dispose();
         Poller.Dispose();
     }
     private void Subscriber_ReceiveReady(object sender, NetMQSocketEventArgs e)
     {
         var topic = Subscriber.ReceiveFrameString();
         var msg = Subscriber.ReceiveFrameBytes();
-        OnDataReceived(msg);
+        if (OnDataReceived != null)
+        {
+            OnDataReceived(msg);
+        }
     }
 }
 

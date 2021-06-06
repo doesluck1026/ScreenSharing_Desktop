@@ -14,10 +14,11 @@ namespace ScreenSharing_Desktop
     public partial class MainWindow : Window
     {
         private Timer uiUpdateTimer;
-        private int UI_UpdateFrequency = 30;        /// Hz
+        private int UI_UpdateFrequency = 40;        /// Hz
         private int UI_UpdatePeriod;
         private bool ui_updateEnabled = false;
         private bool IsConnectedToServer = false;
+        private int SelectedIndex = -1;
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +30,8 @@ namespace ScreenSharing_Desktop
                 AddVersionNumber();
                 CheckForUpdates();
                 LoadOptions();
+                NetworkScanner.PublishDevice();
+                //NetworkScanner.ScanAvailableDevices();
                 Dispatcher.Invoke(() =>
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
@@ -112,9 +115,9 @@ namespace ScreenSharing_Desktop
             if (!IsConnectedToServer)
             {
                 string ip = txt_IP.Text;
-                Main.StartReceiving(ip);
-                Main.OnImageReceived += Main_OnImageReceived;
-                //StartUiTimer();
+                //Main.StartReceiving(NetworkScanner.Devices[SelectedIndex].IP);
+                Main.StartReceiving(txt_IP.Text);
+                StartUiTimer();
                 IsConnectedToServer = true;
                 if(IsConnectedToServer)
                     btn_Connect.Content = "Disconnect";
@@ -125,11 +128,6 @@ namespace ScreenSharing_Desktop
                 btn_Connect.Content = "Connect";
                 Main.StopReceiving();
             }
-        }
-
-        private void Main_OnImageReceived(System.Drawing.Bitmap image)
-        {
-            UpdateUI();
         }
 
         private void UpdateUITimer_Tick(object state)
@@ -198,20 +196,35 @@ namespace ScreenSharing_Desktop
         private void txt_IP_DropDownOpened(object sender, EventArgs e)
         {
             txt_IP.Items.Clear();
-            if (Parameters.RecentServersList != null)
+            if (NetworkScanner.Devices != null)
             {
-                for (int i = 0; i < Parameters.RecentServersList.Count; i++)
-                    txt_IP.Items.Add(Parameters.RecentServersList[i]);
+                for (int i = 0; i < NetworkScanner.Devices.Count; i++)
+                    txt_IP.Items.Add(NetworkScanner.Devices[i].Hostname);
             }
         }
         private void StopMainThreads()
         {
             StopUiTimer();
+            NetworkScanner.StopPublishing();
         }
         private void Reset()
         {
             StopMainThreads();
         }
 
+        private void txt_IP_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            SelectedIndex = txt_IP.SelectedIndex;
+        }
+
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+           
+        }
+
+        private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+
+        }
     }
 }

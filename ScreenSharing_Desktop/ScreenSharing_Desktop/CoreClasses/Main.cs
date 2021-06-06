@@ -7,13 +7,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 class Main
 {
 
-    public delegate void ImageDelegate(Bitmap image);
-    public static event ImageDelegate OnImageReceived;
-
+    public static char KEY;
     #region Parameters
 
     #endregion
@@ -34,17 +33,17 @@ class Main
                 fps = value;
         }
     }
-    public static bool IsImageReceived
+    public static bool IsImageShowed
     {
         get
         {
-            lock (Lck_IsImageReceived)
-                return _isImageReceived;
+            lock (Lck_IsImageShowed)
+                return _isImageShowed;
         }
         set
         {
-            lock (Lck_IsImageReceived)
-                _isImageReceived = value;
+            lock (Lck_IsImageShowed)
+                _isImageShowed = value;
         }
     }
     public static bool IsImageSent
@@ -114,22 +113,23 @@ class Main
     }
 
 
-    private static bool _isImageReceived = true;
+    private static bool _isImageShowed = true;
     private static bool _isImageSent = true;
     private static bool _isControlsEnabled = false;
     private static Bitmap _screenImage;
     private static double _transferSpeed;
     private static CommunicationTypes _communitionType;
     private static int fps = 0;
+    
 
     private static object Lck_FPS = new object();
     private static object Lck_ScreenImage = new object();
-    private static object Lck_IsImageReceived = new object();
+    private static object Lck_IsImageShowed = new object();
     private static object Lck_IsImageSent = new object();
     private static object Lck_TransferSpeed = new object();
     private static object Lck_IsControlsEnabled = new object();
     private static object Lck_CommunitionType = new object();
-
+    
     private static Thread SenderThread;
 
     #endregion
@@ -138,8 +138,10 @@ class Main
 
     private static MQPublisher Publisher;
     private static MQSubscriber Subscriber;
-    private static string Topic = "Screen";
-    private static int Port = 42001;
+    private static string Topic_Screen = "Screen";
+    private static string Topic_Command = "Command";
+    public static int Port_Screen = 4112;
+    public static int Port_Command = 4113;
     public static string MyIP;
     public static string TargetIP;
 
@@ -161,7 +163,7 @@ class Main
     public static void StartSharing()
     {
         MyIP = Client.GetDeviceIP();
-        Publisher = new MQPublisher(Topic, MyIP, Port);
+        Publisher = new MQPublisher(Topic_Screen, MyIP, Port_Screen);
         ImageProcessing.StartScreenCapturer();
         IsPublisherEnabled = true;
         SenderThread = new Thread(PublisherCoreFcn);
@@ -201,6 +203,7 @@ class Main
                     stopwatch.Restart();
                     totalBytesSent = 0;
                 }
+                //Thread.Sleep(10);
             }
             else
             {
@@ -214,25 +217,29 @@ class Main
     public static void StartReceiving(string ip)
     {
         TargetIP = ip;
-        Subscriber = new MQSubscriber(Topic, TargetIP, Port);
+        Subscriber = new MQSubscriber(Topic_Screen, TargetIP, Port_Screen);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
     }
     private static void Subscriber_OnDataReceived(byte[] data)
     {
-        if(data!=null)
+        Stopwatch stp = Stopwatch.StartNew();
+        if (data != null)
         {
             ScreenImage = ImageProcessing.ImageFromByteArray(data);
-            if(OnImageReceived!=null)
-                OnImageReceived(ScreenImage);
             TotalBytesReceived += data.Length;
             FpsCounter++;
-            if (SubStopwatch.ElapsedMilliseconds>1000)
+            if (SubStopwatch.ElapsedMilliseconds >= 1000)
             {
-                UpdateStats(TotalBytesReceived,SubStopwatch.Elapsed.TotalSeconds);
+                UpdateStats(TotalBytesReceived, SubStopwatch.Elapsed.TotalSeconds);
                 TotalBytesReceived = 0;
                 SubStopwatch.Restart();
             }
+            IsImageShowed = true;
+        }
+        else
+        {
+            Debug.WriteLine("image data was null!");
         }
     }
     public static void StopReceiving()

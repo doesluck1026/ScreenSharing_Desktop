@@ -16,8 +16,8 @@ class MQPublisher
         Publisher = new PublisherSocket();
         Publisher.Bind("tcp://" + IP + ":" + Port.ToString());
         Publisher.Options.SendHighWatermark = 1;
-        Publisher.Options.Backlog = 1;
     }
+
     public void Publish(byte[] data)
     {
         Publisher.SendMoreFrame(Topic).SendFrame(data);

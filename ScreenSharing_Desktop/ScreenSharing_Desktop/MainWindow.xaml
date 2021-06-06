@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenSharing_Desktop"
         mc:Ignorable="d"
-        Title="Screen Sharing App" Height="768" Width="1024"
+        Title="Screen Sharing App" Height="868" Width="1024"
         Closing="Window_Closing"
         ResizeMode="CanResizeWithGrip"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        Keyboard.KeyDown="Window_KeyDown"
+        Keyboard.KeyUp="Window_KeyUp"
+        >
     
     <Grid>
         <Grid.RowDefinitions>
@@ -21,7 +24,13 @@
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
                 <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="20" FontWeight="DemiBold" Foreground="White" />
                 <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black" Background="Transparent" BorderThickness="1" FontWeight="DemiBold" FontSize="20" Text="192.168.1.36"/>
+                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened" 
+                          VerticalAlignment="Center" HorizontalAlignment="Center" 
+                          Foreground="Black" Background="Transparent" 
+                          BorderThickness="1" FontWeight="DemiBold" 
+                          FontSize="20" MinWidth="70"
+                          SelectionChanged="txt_IP_SelectionChanged"
+                          Text="192.168.1.37"/>
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -43,7 +52,7 @@
                     <Grid Grid.Column="2">
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
-                        <Label x:Name="lbl_ConnectionStatus" Width="20" Height="20" Margin="50,0,0,0" Background="Red"  />
+                            <CheckBox x:Name="chc_EnableControls" Content="Control Enable" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
                         </StackPanel>
                     </Grid>
                 </Grid>

@@ -8,10 +8,25 @@ using System.Threading.Tasks;
 
 class NetworkScanner
 {
+    #region Parameters
+
+    private static readonly string ScannerTopic = "DeviceInfo";
+    private static readonly int PublisherPort = 4119;
+
+    #endregion
+
+
     public delegate void ScanCompleteDelegate();
     public static event ScanCompleteDelegate OnScanCompleted;
-    public static List<string> DeviceNames = new List<string>();
-    public static List<string> DeviceIPs = new List<string>();
+    public struct DeviceHandleTypeDef
+    {
+        public string Hostname;
+        public string IP;
+        public string Port;
+    }
+
+    public static List<DeviceHandleTypeDef> Devices = new List<DeviceHandleTypeDef>();
+   
     private static int ConnectionTimeout;
     public static bool IsScanning
     {
@@ -40,22 +55,38 @@ class NetworkScanner
         }
     }
 
-    private static int[] scanProgressArr;
-    private static string DeviceIP;
-    private static readonly int PublishPort = 4119;
-    private static Server publisherServer;
+    private static string MyIP;
+    private static string MyHostName;
+
 
     private static string IPHeader;
-    public static bool IsDevicePublished = false;
+    public static bool IsPublishingEnabled
+    {
+        get
+        {
+            lock (Lck_IsDevicePublished)
+                return _isPublishingEnabled;
+        }
+        set
+        {
+            lock (Lck_IsDevicePublished)
+                _isPublishingEnabled = value;
+        }
+    }
 
     private static bool _isScanning = false;
     private static int _scanPercentage = 0;
+    private static bool _isPublishingEnabled = false;
 
     private static object Lck_IsScanning = new object();
     private static object Lck_ScanPercentage = new object();
+    private static object Lck_IsDevicePublished = new object();
 
-    private static int ScanCounter = 0;
-    public static void ScanAvailableDevices(int timeout = 200)
+
+
+    private static MQPublisher Publisher;
+
+    public static void ScanAvailableDevices(int timeout = 35)
     {
         if (IsScanning)
             return;
@@ -63,9 +94,8 @@ class NetworkScanner
         ScanPercentage = 0;
         string deviceIP, deviceHostname;
         GetDeviceAddress(out deviceIP, out deviceHostname);
-        DeviceIP = deviceIP;
-        DeviceNames.Clear();
-        DeviceIPs.Clear();
+        MyIP = deviceIP;
+        Devices.Clear();
         char[] splitter = new char[] { '.' };
         var ipStack = deviceIP.Split(splitter);
         IPHeader = "";
@@ -73,127 +103,71 @@ class NetworkScanner
         {
             IPHeader += ipStack[i] + ".";
         }
-
         IsScanning = true;
         Task.Run(() =>
         {
-            int numTasks = 8;
-            int stackSize = 256 / numTasks;
-            scanProgressArr = new int[numTasks];
-            for (int i = 0; i < numTasks; i++)
+            
+            for (int i = 0; i < 256; i++)
             {
-                ParallelScan(stackSize * i, stackSize * (i + 1), i);
+                string ip = IPHeader + i.ToString();
+                MQSubscriber subscriber = new MQSubscriber(ScannerTopic, ip, PublisherPort);
+                subscriber.OnDataReceived += Subscriber_OnDataReceived;
+                Thread.Sleep(ConnectionTimeout);
+                subscriber.OnDataReceived -= Subscriber_OnDataReceived;
+                subscriber.Stop();
+                subscriber = null;
+                ScanPercentage = (int)(i / 256.0 * 100)+1;
             }
-            Task.Run(() =>
+            IsScanning = false;
+            if(OnScanCompleted!=null)
             {
-                Stopwatch stopwatch = Stopwatch.StartNew();
-                while (true)
-                {
-                    int percentage = 0;
-                    for (int i = 0; i < numTasks; i++)
-                    {
-                        percentage += scanProgressArr[i];
-                    }
-                    percentage /= numTasks;
-                    //Debug.WriteLine("percentage: " + percentage);
-                    ScanPercentage = percentage;
-                    if (percentage >= 99 || stopwatch.Elapsed.TotalSeconds > 12)
-                        break;
-                    Thread.Sleep(50);
-                }
-                stopwatch.Stop();
-                Debug.WriteLine("scan time: " + stopwatch.Elapsed.TotalSeconds + " s");
-                if (OnScanCompleted != null)
-                    OnScanCompleted();
-                else
-                {
-                    ScanCounter++;
-                    if (ScanCounter < 3 && DeviceIPs.Count < 1)
-                        ScanAvailableDevices();
-                    else
-                        ScanCounter = 3;
-                }
-                IsScanning = false;
-            });
+                OnScanCompleted();
+            }
         });
-
+      
     }
 
-    private static void ParallelScan(int startx, int endx, int progressIndex)
+    private static void Subscriber_OnDataReceived(byte[] data)
     {
-        Task.Run(() =>
+        if (data == null)
         {
-            Stopwatch stp = Stopwatch.StartNew();
-            int progress = 0;
-            for (int i = startx; i < endx; i++)
-            {
-                try
-                {
-                    string targetIP = IPHeader + i.ToString();
-                    if (targetIP == DeviceIP)
-                        continue;
-                    GetDeviceData(targetIP);
-                    progress = (int)(((i - startx) / (double)(endx - startx - 1)) * 100.0);
-                    scanProgressArr[progressIndex] = progress;
-                }
-                catch
-                {
-
-                }
-            }
-
-        });
-    }
-    private static void GetDeviceData(string IP)
-    {
-        //Stopwatch stp = Stopwatch.StartNew();
-        var client = new Client(port: PublishPort, ip: IP);
-        string clientIP = client.ConnectToServer(ConnectionTimeout);
-        if (string.IsNullOrEmpty(clientIP))
-        {
-            //Debug.WriteLine("Connection Failed on: " + IP);
+            Debug.WriteLine("Data was null: ");
+            return;
         }
-        else
+        string msg = Encoding.UTF8.GetString(data);
+        char[] splitter = new char[] { '&' };
+        string[] msgParts = msg.Split(splitter);
+        DeviceHandleTypeDef device;
+        device.IP = msgParts[0].Substring(3);
+        device.Port = msgParts[1].Substring(5);
+        device.Hostname = msgParts[2].Substring(9);
+        if(!Devices.Contains(device))
+            Devices.Add(device);
+        Debug.WriteLine("data: " + msg);
+        for(int i=0;i<msgParts.Length;i++)
         {
-            var data = client.GetData();
-            if (data == null)
-            {
-                Debug.WriteLine("Data was null: " + IP);
-                return;
-            }
-            string msg = Encoding.UTF8.GetString(data);
-            char[] splitter = new char[] { '&' };
-            string[] msgParts = msg.Split(splitter);
-            string ip = msgParts[0].Substring(3);
-            string deviceName = msgParts[1].Substring(11);
-            DeviceNames.Add(deviceName);
-            DeviceIPs.Add(ip);
-            Debug.WriteLine("data: " + msg);
-            client.SendDataServer(Encoding.UTF8.GetBytes("Gotcha"));
-            client.DisconnectFromServer();
+            Debug.WriteLine("msgParts[" + i + "]=" + msgParts[i]);
         }
     }
     public static void PublishDevice()
     {
-        publisherServer = new Server(port: PublishPort);
-        publisherServer.SetupServer();
-        publisherServer.StartListener();
-        publisherServer.OnClientConnected += PublisherServer_OnClientConnected;
-        Debug.WriteLine("Publisher started!");
-        IsDevicePublished = true;
+        IsPublishingEnabled = true;
+        Publisher = new MQPublisher(ScannerTopic, Client.GetDeviceIP(), PublisherPort);
+        Task.Run(() =>
+        {
+            GetDeviceAddress(out MyIP, out MyHostName);
+            byte[] myID = Encoding.UTF8.GetBytes("IP:" + MyIP + "&Port:" + Main.Port_Screen + "&Hostname:" + MyHostName);
+            while (IsPublishingEnabled)
+            {
+                Publisher.Publish(myID);
+                Thread.Sleep(10);
+            }
+        });
     }
-
-    private static void PublisherServer_OnClientConnected(string clientIP)
+    public static void StopPublishing()
     {
-        Debug.WriteLine("Client IP: " + clientIP);
-        publisherServer.SendDataToClient(Encoding.UTF8.GetBytes("IP:" + DeviceIP + "&Port:"));
-
-        publisherServer.GetData();
-
-        publisherServer.CloseServer();
-        PublishDevice();
+        IsPublishingEnabled = false;
     }
-
     public static void GetDeviceAddress(out string deviceIP, out string deviceHostname)
     {
         IPAddress localAddr = null;
@@ -207,28 +181,6 @@ class NetworkScanner
         }
         deviceIP = localAddr.ToString();
         deviceHostname = host.HostName;
-        DeviceIP = localAddr.ToString();
-    }
-    public string GetHostName(string ipAddress)
-    {
-        try
-        {
-            IPHostEntry entry = Dns.GetHostEntry(ipAddress);
-            if (entry != null)
-            {
-                return entry.HostName;
-            }
-        }
-        catch (SocketException)
-        {
-            // MessageBox.Show(e.Message.ToString());
-        }
-
-        return null;
-    }
-    public string GetDeviceHostName()
-    {
-        var host = Dns.GetHostEntry(Dns.GetHostName());
-        return host.HostName;
+        MyIP = localAddr.ToString();
     }
 }
