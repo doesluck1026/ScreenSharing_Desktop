@@ -7,12 +7,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 class Main
 {
 
-    public static char KEY;
     #region Parameters
 
     #endregion
@@ -138,18 +136,17 @@ class Main
 
     private static MQPublisher Publisher;
     private static MQSubscriber Subscriber;
-    private static string Topic_Screen = "Screen";
-    private static string Topic_Command = "Command";
-    public static int Port_Screen = 4112;
-    public static int Port_Command = 4113;
+
+    private static string Topic = "Screen";
+    public static int Port = 4112;
     public static string MyIP;
     public static string TargetIP;
-
-    private static bool IsPublisherEnabled;
     private static Stopwatch SubStopwatch;
+    private static bool IsPublisherEnabled;
+    #endregion
     private static int TotalBytesReceived = 0;
     private static int FpsCounter = 0;
-    #endregion
+   
 
     public enum CommunicationTypes
     {
@@ -163,7 +160,7 @@ class Main
     public static void StartSharing()
     {
         MyIP = Client.GetDeviceIP();
-        Publisher = new MQPublisher(Topic_Screen, MyIP, Port_Screen);
+        Publisher = new MQPublisher(Topic, MyIP, Port);
         ImageProcessing.StartScreenCapturer();
         IsPublisherEnabled = true;
         SenderThread = new Thread(PublisherCoreFcn);
@@ -217,7 +214,7 @@ class Main
     public static void StartReceiving(string ip)
     {
         TargetIP = ip;
-        Subscriber = new MQSubscriber(Topic_Screen, TargetIP, Port_Screen);
+        Subscriber = new MQSubscriber(Topic, TargetIP, Port);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
     }

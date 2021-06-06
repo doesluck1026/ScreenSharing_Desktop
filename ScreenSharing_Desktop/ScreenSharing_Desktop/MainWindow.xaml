@@ -24,13 +24,15 @@
             <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
                 <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="20" FontWeight="DemiBold" Foreground="White" />
                 <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                <ComboBox x:Name ="txt_IP" IsEditable="True" DropDownOpened="txt_IP_DropDownOpened" 
+                <ComboBox x:Name ="txt_IP" IsEditable="True"
+                          DropDownOpened="txt_IP_DropDownOpened" 
                           VerticalAlignment="Center" HorizontalAlignment="Center" 
                           Foreground="Black" Background="Transparent" 
                           BorderThickness="1" FontWeight="DemiBold" 
                           FontSize="20" MinWidth="70"
                           SelectionChanged="txt_IP_SelectionChanged"
-                          Text="192.168.1.37"/>
+                          Text="192.168.1.37"
+                          MouseDoubleClick="txt_IP_MouseDoubleClick"/>
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

@@ -31,7 +31,8 @@ namespace ScreenSharing_Desktop
                 CheckForUpdates();
                 LoadOptions();
                 NetworkScanner.PublishDevice();
-                //NetworkScanner.ScanAvailableDevices();
+                NetworkScanner.ScanAvailableDevices();
+                NetworkScanner.OnScanCompleted += NetworkScanner_OnScanCompleted;
                 Dispatcher.Invoke(() =>
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
@@ -75,6 +76,15 @@ namespace ScreenSharing_Desktop
                 });
             }
         }
+
+        private void NetworkScanner_OnScanCompleted()
+        {
+            if(NetworkScanner.SubscriberDevices.Count>0)
+            {
+                RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+            }
+        }
+
         private void AddVersionNumber()
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -143,13 +153,19 @@ namespace ScreenSharing_Desktop
         {
             Dispatcher.Invoke(() =>
             {
-                    if (Main.ScreenImage != null)
-                    {
-                        imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
-                    }
-                    lbl_FPS.Content = Main.FPS.ToString();
-                    lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
+                if (Main.ScreenImage != null)
+                {
+                    imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
+                }
+                lbl_FPS.Content = Main.FPS.ToString();
+                lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
+                if (chc_EnableControls.IsChecked.Value)
+                {
+                    if (!RemoteControl.IsPublisherEnabled)
+                        RemoteControl.StartSendingCommands();
+                }
             });
+            
         }
         private void StartUiTimer()
         {
@@ -196,16 +212,16 @@ namespace ScreenSharing_Desktop
         private void txt_IP_DropDownOpened(object sender, EventArgs e)
         {
             txt_IP.Items.Clear();
-            if (NetworkScanner.Devices != null)
+            if (NetworkScanner.PublisherDevices != null)
             {
-                for (int i = 0; i < NetworkScanner.Devices.Count; i++)
-                    txt_IP.Items.Add(NetworkScanner.Devices[i].Hostname);
+                for (int i = 0; i < NetworkScanner.PublisherDevices.Count; i++)
+                    txt_IP.Items.Add(NetworkScanner.PublisherDevices[i].Hostname);
             }
+            
         }
         private void StopMainThreads()
         {
             StopUiTimer();
-            NetworkScanner.StopPublishing();
         }
         private void Reset()
         {
@@ -219,12 +235,18 @@ namespace ScreenSharing_Desktop
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-           
+            Debug.WriteLine("key: "+e.Key.ToString());
+            
         }
 
         private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
 
+        }
+
+        private void txt_IP_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            RemoteControl.Keys[0]=(byte)'A';
         }
     }
 }
