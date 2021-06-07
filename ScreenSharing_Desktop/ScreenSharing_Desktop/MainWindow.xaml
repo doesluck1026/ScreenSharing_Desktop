@@ -31,8 +31,7 @@
                           BorderThickness="1" FontWeight="DemiBold" 
                           FontSize="20" MinWidth="70"
                           SelectionChanged="txt_IP_SelectionChanged"
-                          Text="192.168.1.37"
-                          MouseDoubleClick="txt_IP_MouseDoubleClick"/>
+                          Text="192.168.1.37"/>
                 <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>

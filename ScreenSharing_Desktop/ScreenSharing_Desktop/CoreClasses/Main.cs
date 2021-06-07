@@ -159,6 +159,7 @@ class Main
     /// </summary>
     public static void StartSharing()
     {
+        CommunitionType = CommunicationTypes.Sender;
         MyIP = Client.GetDeviceIP();
         Publisher = new MQPublisher(Topic, MyIP, Port);
         ImageProcessing.StartScreenCapturer();
@@ -217,6 +218,7 @@ class Main
         Subscriber = new MQSubscriber(Topic, TargetIP, Port);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
+        CommunitionType = CommunicationTypes.Receiver;
     }
     private static void Subscriber_OnDataReceived(byte[] data)
     {

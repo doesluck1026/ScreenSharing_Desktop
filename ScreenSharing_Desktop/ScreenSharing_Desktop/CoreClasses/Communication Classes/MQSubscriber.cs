@@ -9,7 +9,6 @@ class MQSubscriber
     private int Port;
     private SubscriberSocket Subscriber;
     private NetMQPoller Poller;
-
     public delegate void DataEvent(byte[] data);
     public event DataEvent OnDataReceived;
     public MQSubscriber(string topic, string ip, int port)

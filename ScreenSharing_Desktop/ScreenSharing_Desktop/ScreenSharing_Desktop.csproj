@@ -160,6 +160,7 @@
     <Compile Include="CoreClasses\Communication Classes\MQPublisher.cs" />
     <Compile Include="CoreClasses\Communication Classes\MQSubscriber.cs" />
     <Compile Include="CoreClasses\Communication Classes\NetworkScanner.cs" />
+    <Compile Include="CoreClasses\Keyboard_Mouse.cs" />
     <Compile Include="CoreClasses\Parameters\BagFile.cs" />
     <Compile Include="CoreClasses\BitmapSourceConvert.cs" />
     <Compile Include="CoreClasses\Communication Classes\Client.cs" />

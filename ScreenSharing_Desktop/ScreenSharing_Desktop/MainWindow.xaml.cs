@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using Squirrel;
 
@@ -19,6 +20,8 @@ namespace ScreenSharing_Desktop
         private bool ui_updateEnabled = false;
         private bool IsConnectedToServer = false;
         private int SelectedIndex = -1;
+        private bool IsControlsEnabled;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -79,9 +82,12 @@ namespace ScreenSharing_Desktop
 
         private void NetworkScanner_OnScanCompleted()
         {
-            if(NetworkScanner.SubscriberDevices.Count>0)
+            if (Main.CommunitionType == Main.CommunicationTypes.Sender)
             {
-                RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+                if (NetworkScanner.SubscriberDevices.Count > 0)
+                {
+                    RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+                }
             }
         }
 
@@ -159,13 +165,25 @@ namespace ScreenSharing_Desktop
                 }
                 lbl_FPS.Content = Main.FPS.ToString();
                 lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
-                if (chc_EnableControls.IsChecked.Value)
+                IsControlsEnabled = chc_EnableControls.IsChecked.Value;
+                if (IsControlsEnabled)
                 {
-                    if (!RemoteControl.IsPublisherEnabled)
-                        RemoteControl.StartSendingCommands();
+                    if(Main.CommunitionType==Main.CommunicationTypes.Receiver)
+                    {
+                        if (!RemoteControl.IsPublisherEnabled)
+                            RemoteControl.StartSendingCommands();
+                    }
                 }
             });
-            
+
+            if (Main.CommunitionType == Main.CommunicationTypes.Sender)
+            {
+                if (NetworkScanner.SubscriberDevices.Count > 0)
+                {
+                    RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+                }
+            }
+
         }
         private void StartUiTimer()
         {
@@ -235,18 +253,16 @@ namespace ScreenSharing_Desktop
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            Debug.WriteLine("key: "+e.Key.ToString());
-            
+            RemoteControl.Keys[(byte)e.Key] = (byte)e.KeyStates;
+            //Debug.WriteLine("Keys[0]: " + RemoteControl.Keys[0] + "  (Key)Keys[0]:" + (Key)RemoteControl.Keys[0] + " (char)Key: " + (char)RemoteControl.Keys[0]+" e.key:  "+ e.Key);
+            Debug.WriteLine("e:   "+ e.KeyStates);
+
         }
 
         private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-
-        }
-
-        private void txt_IP_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            RemoteControl.Keys[0]=(byte)'A';
+            RemoteControl.Keys[(byte)e.Key] = (byte)e.KeyStates;
+            Debug.WriteLine(e.KeyStates);
         }
     }
 }

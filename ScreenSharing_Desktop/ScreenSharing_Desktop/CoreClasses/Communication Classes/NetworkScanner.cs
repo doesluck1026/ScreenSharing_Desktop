@@ -66,7 +66,7 @@ class NetworkScanner
     private static object Lck_ScanPercentage = new object();
 
     private static int ScanCounter = 0;
-    public static void ScanAvailableDevices(int timeout = 200)
+    public static void ScanAvailableDevices(int timeout = 250)
     {
         if (IsScanning)
             return;
@@ -139,8 +139,8 @@ class NetworkScanner
                 try
                 {
                     string targetIP = IPHeader + i.ToString();
-                    //if (targetIP == MyIP)
-                    //    continue;
+                    if (targetIP == MyIP)
+                        continue;
                     GetDeviceData(targetIP);
                     progress = (int)(((i - startx) / (double)(endx - startx - 1)) * 100.0);
                     scanProgressArr[progressIndex] = progress;

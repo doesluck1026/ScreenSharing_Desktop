@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 class RemoteControl
@@ -23,6 +24,9 @@ class RemoteControl
     public static bool IsPublisherEnabled;
 
     public static byte[] Keys = new byte[256];
+    private static Key[] PrevKeyStates = new Key[256];
+    private static Thread Thread_KeyBoard;
+    private static bool isDataReceived = false;
 
     /// <summary>
     /// Initializes a MQ Publisher with defined topic at given port
@@ -75,6 +79,8 @@ class RemoteControl
         Subscriber = new MQSubscriber(Topic, TargetIP, Port);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
+        Thread_KeyBoard = new Thread(Keyboard_CoreFcn);
+        Thread_KeyBoard.Start();
     }
     private static void Subscriber_OnDataReceived(byte[] data)
     {
@@ -83,8 +89,7 @@ class RemoteControl
         {
             Keys = new byte[data.Length];
             data.CopyTo(Keys,0);
-            SendKey((Key)Keys[0]);
-            Debug.WriteLine("Key: "+(char)Keys[0]);
+            isDataReceived = true;
         }
         else
         {
@@ -96,15 +101,46 @@ class RemoteControl
         Subscriber.Stop();
     }
     #endregion
-    private static void SendKey(Key key)
+    private static void Keyboard_CoreFcn()
     {
-        if (Keyboard.PrimaryDevice != null)
+        Stopwatch stp = new Stopwatch();
+        while (true)
         {
-            if (Keyboard.PrimaryDevice.ActiveSource != null)
+            if (isDataReceived)
             {
-                var e1 = new KeyEventArgs(Keyboard.PrimaryDevice, Keyboard.PrimaryDevice.ActiveSource, 0, key) { RoutedEvent = Keyboard.KeyDownEvent };
-                InputManager.Current.ProcessInput(e1);
+                isDataReceived = false;
+                Application.Current.Dispatcher.Invoke((Action)delegate
+                {
+                    for (int i = 0; i < Keys.Length; i++)
+                    {
+
+                        if (PrevKeyStates[i] != (Key)Keys[i])
+                        {
+                            if (Keys[i] == 1)
+                                Keyboard.Press((Key)i);
+                            else if (Keys[i] == 0)
+                                Keyboard.Release((Key)i);
+                            PrevKeyStates[i] = (Key)Keys[i];
+                        }
+                        else
+                        {
+                            Keyboard.Press((Key)i);
+                        }
+                    }
+                });
+                stp.Restart();
             }
+            else
+            {
+                if(stp.ElapsedMilliseconds>2000)
+                {
+                    for(int i=0;i<Keys.Length;i++)
+                    {
+                        Keys[i] = 2;
+                    }
+                }
+            }
+            Thread.Sleep(10);
         }
     }
 }
