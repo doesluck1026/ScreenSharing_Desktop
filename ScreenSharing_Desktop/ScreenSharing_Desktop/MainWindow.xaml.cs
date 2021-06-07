@@ -254,8 +254,8 @@ namespace ScreenSharing_Desktop
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             RemoteControl.Keys[(byte)e.Key] = (byte)e.KeyStates;
-            //Debug.WriteLine("Keys[0]: " + RemoteControl.Keys[0] + "  (Key)Keys[0]:" + (Key)RemoteControl.Keys[0] + " (char)Key: " + (char)RemoteControl.Keys[0]+" e.key:  "+ e.Key);
-            Debug.WriteLine("e:   "+ e.KeyStates);
+            Debug.WriteLine("Keys[0]: " + (byte)e.Key + "  (Key)Keys[0]:" + (Key)(byte)e.Key + " (char)Key: " + (char)(byte)e.Key + " e.key:  "+ e.Key);
+            //Debug.WriteLine("e:   "+ e.KeyStates);
 
         }
 
