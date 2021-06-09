@@ -75,6 +75,7 @@ class RemoteControl
 
     private static byte[] ReceivedData;
 
+    public static bool IsDataUpdated { get; set; }
 
     /// <summary>
     /// Determines whether received commands will be applied.
@@ -124,12 +125,28 @@ class RemoteControl
     {
         while(IsPublisherEnabled)
         {
-            byte[] data = new byte[LenMouseData + NumKeys];
-            Array.Copy(Keys, 0, data, 0, NumKeys);
-            byte[] mouseData = PrepareMouseData();
-            Array.Copy(mouseData, 0, data, NumKeys, LenMouseData);
-            Publisher.Publish(data);
-            Thread.Sleep(5);
+            if(IsDataUpdated)
+            {
+                IsDataUpdated = false;
+                byte[] data = new byte[LenMouseData + NumKeys];
+                Array.Copy(Keys, 0, data, 0, NumKeys);
+                byte[] mouseData = PrepareMouseData();
+                Array.Copy(mouseData, 0, data, NumKeys, LenMouseData);
+                Publisher.Publish(data);
+                for (int i = 0; i < Keys.Length; i++)
+                {
+                    Key key = (Key)i;
+                    if (key == Key.LeftAlt || key == Key.RightAlt || key == Key.LeftCtrl || key == Key.RightCtrl || key == Key.LeftShift || key == Key.RightShift)
+                    {
+                       
+                    }
+                    else
+                    {
+                        Keys[i] = 0;
+                    }
+                }
+                Thread.Sleep(5);
+            }
         }
     }
     /// <summary>
@@ -217,7 +234,8 @@ class RemoteControl
     public static void StopReceiving()
     {
         IsSubscriberEnabled = false;
-        Subscriber.Stop();
+        if (Subscriber != null)
+            Subscriber.Stop();
     }
 
     /// <summary>

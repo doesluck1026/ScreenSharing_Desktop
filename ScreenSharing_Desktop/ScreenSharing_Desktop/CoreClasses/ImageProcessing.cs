@@ -45,10 +45,13 @@ class ImageProcessing
 
     public static void StopScreenCapturer()
     {
+        Stopwatch stp = Stopwatch.StartNew();
         while (ScreenCapturer.IsActive)
         {
             ScreenCapturer.StopCapture();
             System.Threading.Thread.Sleep(50);
+            if (stp.ElapsedMilliseconds > 500)
+                break;
         }
     }
     public static Point CursorPosition

@@ -109,7 +109,7 @@ class Main
                 _isControlsEnabled = value;
         }
     }
-    public static CommunicationTypes CommunitionType
+    public static CommunicationTypes CommunicationType
     {
         get
         {
@@ -150,10 +150,14 @@ class Main
     #region MQ Variables
 
     private static MQPublisher Publisher;
+    private static MQPublisher TimeBasePublisher;
     private static MQSubscriber Subscriber;
+    private static MQSubscriber TimeBaseSubscriber;
 
     private static string Topic = "Screen";
+    private static string TimeBaseTopic = "Time";
     public static int Port = 4112;
+    public static int TimeBasePort = 4109;
     public static string MyIP;
     public static string TargetIP;
     private static Stopwatch SubStopwatch;
@@ -161,7 +165,9 @@ class Main
     #endregion
     private static int TotalBytesReceived = 0;
     private static int FpsCounter = 0;
-   
+
+    private static TimeSpan PublisherTimeBase;
+    private static TimeSpan SubscriberPreviousTime;
 
     public enum CommunicationTypes
     {
@@ -174,9 +180,10 @@ class Main
     /// </summary>
     public static void StartSharing()
     {
-        CommunitionType = CommunicationTypes.Sender;
+        CommunicationType = CommunicationTypes.Sender;
         MyIP = Client.GetDeviceIP();
         Publisher = new MQPublisher(Topic, MyIP, Port);
+        TimeBasePublisher = new MQPublisher(TimeBaseTopic, MyIP, TimeBasePort);
         ImageProcessing.StartScreenCapturer();
         IsPublisherEnabled = true;
         SenderThread = new Thread(PublisherCoreFcn);
@@ -187,8 +194,10 @@ class Main
         try
         {
             IsPublisherEnabled = false;
-            SenderThread.Abort();
             ImageProcessing.StopScreenCapturer();
+            SenderThread.Abort();
+            Publisher.Stop();
+            TimeBasePublisher.Stop();
             FPS = 0;
             TransferSpeed = 0;
         }
@@ -207,7 +216,7 @@ class Main
             byte[] screenBytes= ImageProcessing.GetScreenBytes();
             if(screenBytes!=null && Publisher!=null)
             {
-                string time = DateTime.Now.TimeOfDay.ToString();
+                string time = DateTime.UtcNow.TimeOfDay.ToString();
                 byte[] timeBytes = Encoding.ASCII.GetBytes(time);
                 byte[] data = new byte[timeBytes.Length + screenBytes.Length];
                 timeBytes.CopyTo(data, 0);
@@ -220,6 +229,9 @@ class Main
                     UpdateStats(totalBytesSent, stopwatch.Elapsed.TotalSeconds);
                     stopwatch.Restart();
                     totalBytesSent = 0;
+                    string timeBase = DateTime.UtcNow.TimeOfDay.ToString();
+                    byte[] timeBaseBytes = Encoding.ASCII.GetBytes(timeBase);
+                    TimeBasePublisher.Publish(timeBaseBytes);
                 }
             }
             else
@@ -236,9 +248,21 @@ class Main
         TargetIP = ip;
         Subscriber = new MQSubscriber(Topic, TargetIP, Port);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
+        TimeBaseSubscriber=new MQSubscriber(TimeBaseTopic, TargetIP, TimeBasePort);
+        TimeBaseSubscriber.OnDataReceived += TimeBaseSubscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
-        CommunitionType = CommunicationTypes.Receiver;
+        CommunicationType = CommunicationTypes.Receiver;
     }
+
+    private static void TimeBaseSubscriber_OnDataReceived(byte[] data)
+    {
+        if (data != null)
+        {
+            string timeString = Encoding.ASCII.GetString(data);
+            PublisherTimeBase = TimeSpan.Parse(timeString);
+        }
+    }
+
     private static void Subscriber_OnDataReceived(byte[] data)
     {
         Stopwatch stp = Stopwatch.StartNew();
@@ -248,9 +272,13 @@ class Main
             Array.Copy(data, 0, timeBytes, 0, timeBytes.Length);
             string timeString = Encoding.ASCII.GetString(timeBytes);
             TimeSpan SentTime = TimeSpan.Parse(timeString);
-            TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
-            double deltaTime = CurrentTime.TotalMilliseconds - SentTime.TotalMilliseconds;
-            Ping = Ping * 0.9 + 0.1 * deltaTime;
+            TimeSpan CurrentTime = DateTime.UtcNow.TimeOfDay;
+            PublisherTimeBase += (CurrentTime - SubscriberPreviousTime);
+            SubscriberPreviousTime = CurrentTime;
+            double deltaTime = PublisherTimeBase.TotalMilliseconds - SentTime.TotalMilliseconds;
+            if (Ping <= 0)
+                Ping = deltaTime;
+            Ping = Ping * 0.99 + 0.01 * deltaTime;
             byte[] ScreenBytes = new byte[data.Length - timeBytes.Length];
             Array.Copy(data, timeBytes.Length, ScreenBytes, 0, ScreenBytes.Length);
             ScreenImage = ImageProcessing.ImageFromByteArray(ScreenBytes);
@@ -272,6 +300,7 @@ class Main
     public static void StopReceiving()
     {
         Subscriber.Stop();
+        TimeBaseSubscriber.Stop();
         FPS = 0;
         TransferSpeed = 0;
     }

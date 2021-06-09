@@ -14,7 +14,7 @@ namespace ScreenSharing_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int MenuTimeout = 3;
+        private int MenuTimeout = 10;
 
 
         private Timer uiUpdateTimer;
@@ -117,10 +117,10 @@ namespace ScreenSharing_Desktop
         }
         private void btn_Share_Click(object sender, RoutedEventArgs e)
         {
-            if(!IsSharingStarted)
+            Reset();
+            if (!IsSharingStarted)
             {
                 IsSharingStarted = true;
-                Reset();
                 Main.StartSharing();
                 StartUiTimer();
                 imageBox.Focus();
@@ -130,10 +130,10 @@ namespace ScreenSharing_Desktop
             else
             {
                 btn_Share.Content = "Share";
+                StopUiTimer();
                 IsSharingStarted = false;
                 Main.StopSharing();
                 RemoteControl.StopReceiving();
-                StopUiTimer();
             }
         }
 
@@ -188,12 +188,12 @@ namespace ScreenSharing_Desktop
                     imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
                 }
                 lbl_FPS.Content = Main.FPS.ToString();
-                lbl_Ping.Content = ((int)Main.Ping).ToString();
+                lbl_Ping.Content = ((int)Main.Ping).ToString()+" ms";
                 lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
                 IsControlsEnabled = chc_EnableControls.IsChecked.Value;
                 if (IsControlsEnabled)
                 {
-                    if(Main.CommunitionType==Main.CommunicationTypes.Receiver)
+                    if(Main.CommunicationType==Main.CommunicationTypes.Receiver)
                     {
                         if (!RemoteControl.IsPublisherEnabled)
                             RemoteControl.StartSendingCommands();
@@ -213,8 +213,9 @@ namespace ScreenSharing_Desktop
 
             });
 
-            if (Main.CommunitionType == Main.CommunicationTypes.Sender)
+            if (Main.CommunicationType == Main.CommunicationTypes.Sender)
             {
+                RemoteControl.IsControlsEnabled = IsControlsEnabled;
                 if (!RemoteControl.IsSubscriberEnabled)
                 {
 
@@ -296,6 +297,7 @@ namespace ScreenSharing_Desktop
             if(IsControlsEnabled)
             {
                 RemoteControl.Keys[(byte)e.Key] = e.IsDown ? (byte)1 : (byte)0;
+                RemoteControl.IsDataUpdated = true;
             }
         }
 
@@ -304,6 +306,7 @@ namespace ScreenSharing_Desktop
             if (IsControlsEnabled)
             {
                 RemoteControl.Keys[(byte)e.Key] = e.IsDown ? (byte)1 : (byte)0;
+                RemoteControl.IsDataUpdated = true;
             }
         }
         private void chc_EnableControls_Click(object sender, RoutedEventArgs e)
@@ -321,8 +324,8 @@ namespace ScreenSharing_Desktop
                 var pos = e.GetPosition(imageBox);
                 double widthRatio = (double)Main.ScreenImage.Width / imageBox.ActualWidth;
                 double heigthRatio = (double)Main.ScreenImage.Height / imageBox.ActualHeight;
-                //RemoteControl.SetMousePosition(new System.Drawing.Point((int)pos.X, (int)pos.Y));
                 RemoteControl.VirtualMouse.Position = new System.Drawing.Point((int)(pos.X * widthRatio), (int)(pos.Y * heigthRatio));
+                RemoteControl.IsDataUpdated = true;
             }
         }
         private void imageBox_MouseDown(object sender, MouseButtonEventArgs e)
@@ -335,6 +338,7 @@ namespace ScreenSharing_Desktop
                     RemoteControl.VirtualMouse.RightButton = e.ButtonState;
                 if (e.ChangedButton == MouseButton.Middle)
                     RemoteControl.VirtualMouse.MiddleButton = e.ButtonState;
+                RemoteControl.IsDataUpdated = true;
             }
         }
 
@@ -348,6 +352,7 @@ namespace ScreenSharing_Desktop
                     RemoteControl.VirtualMouse.RightButton = e.ButtonState;
                 if (e.ChangedButton == MouseButton.Middle)
                     RemoteControl.VirtualMouse.MiddleButton = e.ButtonState;
+                RemoteControl.IsDataUpdated = true;
             }
         }
 
@@ -356,6 +361,7 @@ namespace ScreenSharing_Desktop
             if (IsControlsEnabled)
             {
                 RemoteControl.VirtualMouse.ScrollDelta = e.Delta;
+                RemoteControl.IsDataUpdated = true;
             }
         }
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -363,6 +369,7 @@ namespace ScreenSharing_Desktop
             if (IsControlsEnabled)
             {
                 RemoteControl.VirtualMouse.DoubleClick = true;
+                RemoteControl.IsDataUpdated = true;
             }
         }
         private void imageBox_MouseLeave(object sender, MouseEventArgs e)

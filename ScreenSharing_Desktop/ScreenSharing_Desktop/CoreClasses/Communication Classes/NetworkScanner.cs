@@ -66,7 +66,7 @@ class NetworkScanner
     private static object Lck_ScanPercentage = new object();
 
     private static int ScanCounter = 0;
-    public static void ScanAvailableDevices(int timeout = 250)
+    public static void ScanAvailableDevices(int timeout = 200)
     {
         if (IsScanning)
             return;
