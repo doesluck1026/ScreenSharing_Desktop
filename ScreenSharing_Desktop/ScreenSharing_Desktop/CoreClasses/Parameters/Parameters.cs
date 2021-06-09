@@ -6,6 +6,7 @@ class Parameters
     private static readonly string parametersPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\ScreenSharingParameters.dat";
 
     public static bool IsAutoShareEnabled { get; set; }
+    public static bool IsControlsEnabled { get; set; }
     public static List<string> RecentServersList { get; set; }
     public static bool IsUsingFirstTime { get; set; }
 
@@ -18,6 +19,7 @@ class Parameters
         {
             param.Load(parametersPath);
             IsAutoShareEnabled = param.IsAutoShareEnabled;
+            IsControlsEnabled = param.IsControlsEnabled;
             string[] serverList = new string[param.RecentServersList.Count];
             param.RecentServersList.CopyTo(serverList,0);
             RecentServersList = new List<string>(serverList);
@@ -27,6 +29,7 @@ class Parameters
         {
             IsUsingFirstTime = true;
             IsAutoShareEnabled = false;
+            IsControlsEnabled = false;
             DidInitParameters = true;
             RecentServersList = new List<string>();
             Save();
@@ -43,6 +46,7 @@ class Parameters
             }
             var param = new BagFile();
             param.IsAutoShareEnabled = IsAutoShareEnabled;
+            param.IsControlsEnabled = IsControlsEnabled;
             string[] serverList = new string[RecentServersList.Count];
             RecentServersList.CopyTo(serverList, 0);
             param.RecentServersList = new List<string>(serverList);

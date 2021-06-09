@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 class BagFile
 {
     public bool IsAutoShareEnabled;
+    public bool IsControlsEnabled;
     public List<string> RecentServersList;
 
     public void Save(string url)
@@ -24,6 +25,7 @@ class BagFile
         BinaryFormatter formatter = new BinaryFormatter();
         bagFile = (BagFile)formatter.Deserialize(readerFileStream);
         this.IsAutoShareEnabled = bagFile.IsAutoShareEnabled;
+        this.IsControlsEnabled = bagFile.IsControlsEnabled;
         this.RecentServersList = bagFile.RecentServersList;
         // Close the readerFileStream when we are done
         readerFileStream.Close();

@@ -40,12 +40,14 @@ class RemoteControl
     public static byte[] Keys = new byte[NumKeys];
     private static bool[] Keys_States = new bool[NumKeys];
     public static MouseHandleTypeDef VirtualMouse;
-    public static MouseHandleTypeDef PrevVirtualMouse;
     private static bool[] MouseButtonStates = new bool[3];
 
     private static Thread Thread_Control;
+    private static Thread Thread_Publisher;
 
     private static byte[] ReceivedData;
+
+    public static bool IsControlsEnabled;
     #endregion
 
 
@@ -60,34 +62,36 @@ class RemoteControl
         MyIP = Client.GetDeviceIP();
         Publisher = new MQPublisher(Topic, MyIP, Port);
         IsPublisherEnabled = true;
+        Thread_Publisher = new Thread(Publisher_CoreFcn);
+        Thread_Publisher.Start();
     }
     public static void StopSendingCommands()
     {
         try
         {
             IsPublisherEnabled = false;
+            if(Thread_Publisher!=null)
+            {
+                if (Thread_Publisher.IsAlive)
+                    Thread_Publisher.Abort();
+            }
         }
         catch
         {
             Debug.WriteLine("Failed to Stop Publisher");
         }
     }
-    public static void PublishCommands()
+    private static void Publisher_CoreFcn()
     {
-        if (IsPublisherEnabled)
+        while(IsPublisherEnabled)
         {
             byte[] data = new byte[LenMouseData + NumKeys];
             Array.Copy(Keys, 0, data, 0, NumKeys);
             byte[] mouseData = PrepareMouseData();
             Array.Copy(mouseData, 0, data, NumKeys, LenMouseData);
             Publisher.Publish(data);
+            Thread.Sleep(5);
         }
-    }
-    public static void SetMousePosition(System.Drawing.Point mousePos)
-    {
-        VirtualMouse.Position.X = Math.Max(VirtualMouse.Position.X + (mousePos.X - PrevVirtualMouse.Position.X), 0);
-        VirtualMouse.Position.Y = Math.Max(VirtualMouse.Position.Y + (mousePos.Y - PrevVirtualMouse.Position.Y), 0);
-        PrevVirtualMouse.Position = mousePos;
     }
     private static byte[] PrepareMouseData()
     {
@@ -126,7 +130,7 @@ class RemoteControl
     {
         while(IsSubscriberEnabled)
         {
-            if(IsDataReceived)
+            if(IsDataReceived && IsControlsEnabled)
             {
                 Keys = new byte[NumKeys];
                 byte[] mouseData = new byte[LenMouseData];
@@ -136,7 +140,7 @@ class RemoteControl
                 HandleKeyBoard(Keys);
                 HandleMouse(mouseData);
             }
-            Thread.Sleep(5);
+            Thread.Sleep(1);
         }
     }
     private static void Subscriber_OnDataReceived(byte[] data)
