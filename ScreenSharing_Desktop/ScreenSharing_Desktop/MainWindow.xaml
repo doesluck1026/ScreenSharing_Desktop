@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScreenSharing_Desktop"
         mc:Ignorable="d"
-        Title="Screen Sharing App" Height="868" Width="1024"
+        Title="Screen Sharing App" Height="1080" Width="1920"
         Closing="Window_Closing"
         ResizeMode="CanResizeWithGrip"
         Loaded="Window_Loaded"
         Keyboard.KeyDown="Window_KeyDown"
         Keyboard.KeyUp="Window_KeyUp"
+        MouseDoubleClick="Window_MouseDoubleClick"
+        WindowState="Maximized"
         >
     
     <Grid>
@@ -19,50 +21,77 @@
             <RowDefinition Height="20*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8">
+        <StackPanel Grid.Row="0" Grid.RowSpan="2" Background="Black">
+            <Image x:Name="imageBox"  Focusable="True" MouseMove="imageBox_MouseMove"
+                   MouseDown="imageBox_MouseDown"
+                   MouseUp="imageBox_MouseUp"
+                   MouseWheel="imageBox_MouseWheel" Stretch="Uniform"
+                   Height="1025"
+                   MouseLeave="imageBox_MouseLeave"
+                   />
 
-            <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray">
-                <Button x:Name="btn_Share"  Click="btn_Share_Click" Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Background="SteelBlue" FontSize="20" FontWeight="DemiBold" Foreground="White" />
-                <Button x:Name="btn_Connect"  Click="btn_Connect_Click" Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center" Background="Gray"  FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                <ComboBox x:Name ="txt_IP" IsEditable="True"
+        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8">
+                <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray"
+                        >
+                    <Button x:Name="btn_Share"  Click="btn_Share_Click" 
+                        Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" 
+                        VerticalAlignment="Center" Background="SteelBlue" 
+                        FontSize="20" FontWeight="DemiBold" Foreground="White" 
+                        Focusable="False"/>
+                    <Button x:Name="btn_Connect"  Click="btn_Connect_Click" 
+                        Content="Connect" Margin="5,0,0,0" VerticalAlignment="Center"
+                        Background="Gray"  FontSize="20" FontWeight="DemiBold" 
+                        Foreground="White" Focusable="False" />
+                    <ComboBox x:Name ="txt_IP" IsEditable="True"
                           DropDownOpened="txt_IP_DropDownOpened" 
                           VerticalAlignment="Center" HorizontalAlignment="Center" 
                           Foreground="Black" Background="Transparent" 
                           BorderThickness="1" FontWeight="DemiBold" 
                           FontSize="20" MinWidth="70"
                           SelectionChanged="txt_IP_SelectionChanged"
-                          Text="192.168.1.37"/>
-                <Grid >
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0" Width="290" >
-                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="Speed:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
-                            <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                        </StackPanel>
+                          Text="192.168.1.37"
+                         />
+                <Button x:Name="Btn_Refresh" Width="35" Height="35" Background="White"
+                        Click="Btn_Refresh_Click" Margin="15,0,0,0">
+                    <Image Source="Icons/Refresh.png" Stretch="Fill" />
+                </Button>
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0" Width="290" >
+                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Label Content="Speed:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                                <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Column="1" Width="130" >
+                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Label Content="FPS:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                                <Label x:Name="lbl_FPS" Content="30" FontSize="20" 
+                                   FontWeight="DemiBold" Foreground="White"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Column="2">
+                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <CheckBox x:Name="chc_AutoShare" Content="Auto Share" 
+                                      Click="chc_AutoShare_Click" Margin="15,0,0,0" 
+                                      VerticalAlignment="Center" Foreground="White"
+                                      FontSize="15" FontWeight="DemiBold" Focusable="False"/>
+                                <CheckBox x:Name="chc_EnableControls" 
+                                      Content="Control Enable" 
+                                      Click="chc_EnableControls_Click" 
+                                      Margin="15,0,0,0"  VerticalAlignment="Center"
+                                      Foreground="White" FontSize="15" 
+                                      FontWeight="DemiBold" Focusable="False"/>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
-                    <Grid Grid.Column="1" Width="130" >
-                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <Label Content="FPS:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
-                            <Label x:Name="lbl_FPS" Content="30" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Grid.Column="2">
-                        <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                            <CheckBox x:Name="chc_AutoShare" Content="Auto Share" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
-                            <CheckBox x:Name="chc_EnableControls" Content="Control Enable" Click="chc_AutoShare_Click" Margin="15,0,0,0"  VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="DemiBold"/>
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </StackPanel>
+                </StackPanel>
         </Grid>
-        <StackPanel Grid.Row="1" >
-            <Image x:Name="imageBox"  />
 
-        </StackPanel>
-        
     </Grid>
 </Window>

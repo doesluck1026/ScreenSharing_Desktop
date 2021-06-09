@@ -67,6 +67,7 @@ class ImageProcessing
             throw new Exception("ScreenShotException");
         //double t1 = stp.Elapsed.TotalMilliseconds;
         //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
+        
         DrawCircle(ref img);
         byte[] imageBytes;
         imageBytes = ImageToByteArray(img);

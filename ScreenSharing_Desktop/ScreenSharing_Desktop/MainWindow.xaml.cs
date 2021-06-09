@@ -14,6 +14,9 @@ namespace ScreenSharing_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
+        private int MenuTimeout = 3;
+
+
         private Timer uiUpdateTimer;
         private int UI_UpdateFrequency = 40;        /// Hz
         private int UI_UpdatePeriod;
@@ -21,7 +24,7 @@ namespace ScreenSharing_Desktop
         private bool IsConnectedToServer = false;
         private int SelectedIndex = -1;
         private bool IsControlsEnabled;
-        
+        private int MenuTimeoutCounter = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -82,13 +85,13 @@ namespace ScreenSharing_Desktop
 
         private void NetworkScanner_OnScanCompleted()
         {
-            if (Main.CommunitionType == Main.CommunicationTypes.Sender)
-            {
-                if (NetworkScanner.SubscriberDevices.Count > 0)
-                {
-                    RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
-                }
-            }
+            //if (Main.CommunitionType == Main.CommunicationTypes.Sender)
+            //{
+            //    if (NetworkScanner.SubscriberDevices.Count > 0)
+            //    {
+            //        RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+            //    }
+            //}
         }
 
         private void AddVersionNumber()
@@ -123,6 +126,9 @@ namespace ScreenSharing_Desktop
             Reset();
             Main.StartSharing();
             StartUiTimer();
+            imageBox.Focus();
+
+
         }
 
         private void btn_Connect_Click(object sender, RoutedEventArgs e)
@@ -131,19 +137,29 @@ namespace ScreenSharing_Desktop
             if (!IsConnectedToServer)
             {
                 string ip = txt_IP.Text;
-                //Main.StartReceiving(NetworkScanner.Devices[SelectedIndex].IP);
-                Main.StartReceiving(txt_IP.Text);
+                if(SelectedIndex!=-1)
+                    Main.StartReceiving(NetworkScanner.PublisherDevices[SelectedIndex].IP);
+                else
+                    Main.StartReceiving(txt_IP.Text);
                 StartUiTimer();
                 IsConnectedToServer = true;
                 if(IsConnectedToServer)
                     btn_Connect.Content = "Disconnect";
+
+                txt_IP.Focusable = false;
+                txt_IP.IsEnabled = false;
             }
             else
             {
                 IsConnectedToServer = false;
                 btn_Connect.Content = "Connect";
                 Main.StopReceiving();
+                NetworkScanner.ScanAvailableDevices();
+                txt_IP.Focusable = true;
+                txt_IP.IsEnabled = true;
+                SelectedIndex = -1;
             }
+            imageBox.Focus();
         }
 
         private void UpdateUITimer_Tick(object state)
@@ -153,6 +169,8 @@ namespace ScreenSharing_Desktop
             uiUpdateTimer.Change(Timeout.Infinite, Timeout.Infinite);       /// Set timer period to infinity to avoid Server timer to call this function when this is not finished.
             var watch = Stopwatch.StartNew();                               /// Stopwatch to measure total time spent in this function.
             UpdateUI();
+            if (uiUpdateTimer == null)
+                return;
             uiUpdateTimer.Change((int) Math.Max(0, UI_UpdatePeriod - watch.ElapsedMilliseconds), (int) (UI_UpdatePeriod));
         }
         private void UpdateUI()
@@ -174,16 +192,32 @@ namespace ScreenSharing_Desktop
                             RemoteControl.StartSendingCommands();
                     }
                 }
+                if(stc_ControlBar.IsVisible && IsConnectedToServer)
+                {
+                    if (MenuTimeoutCounter < 100000)
+                        MenuTimeoutCounter++;
+                    if (MenuTimeoutCounter > MenuTimeout * UI_UpdateFrequency)
+                    {
+                        stc_ControlBar.Visibility = Visibility.Hidden;
+                        MenuTimeoutCounter = 0;
+                    }
+                }
+               
+
             });
 
             if (Main.CommunitionType == Main.CommunicationTypes.Sender)
             {
-                if (NetworkScanner.SubscriberDevices.Count > 0)
+                if (!RemoteControl.IsSubscriberEnabled)
                 {
-                    RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+
+                    if (NetworkScanner.SubscriberDevices.Count > 0)
+                    {
+                        RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+                    }
                 }
             }
-
+            
         }
         private void StartUiTimer()
         {
@@ -250,19 +284,80 @@ namespace ScreenSharing_Desktop
         {
             SelectedIndex = txt_IP.SelectedIndex;
         }
-
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            RemoteControl.Keys[(byte)e.Key] = (byte)e.KeyStates;
-            Debug.WriteLine("Keys[0]: " + (byte)e.Key + "  (Key)Keys[0]:" + (Key)(byte)e.Key + " (char)Key: " + (char)(byte)e.Key + " e.key:  "+ e.Key);
-            //Debug.WriteLine("e:   "+ e.KeyStates);
-
+            if(IsControlsEnabled)
+            {
+                RemoteControl.Keys[(byte)e.Key] = e.IsDown ? (byte)1 : (byte)0;
+                RemoteControl.PublishCommands();
+            }
         }
 
         private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            RemoteControl.Keys[(byte)e.Key] = (byte)e.KeyStates;
-            Debug.WriteLine(e.KeyStates);
+            if (IsControlsEnabled)
+            {
+                RemoteControl.Keys[(byte)e.Key] = e.IsDown ? (byte)1 : (byte)0;
+                RemoteControl.PublishCommands();
+            }
+        }
+        private void chc_EnableControls_Click(object sender, RoutedEventArgs e)
+        {
+            IsControlsEnabled = chc_EnableControls.IsChecked.Value;
+        }
+
+        private void imageBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            var pos= e.GetPosition(imageBox);
+
+            double widthRatio = (double)Main.ScreenImage.Width / imageBox.ActualWidth;
+            double heigthRatio = (double)Main.ScreenImage.Height / imageBox.ActualHeight;
+            //RemoteControl.SetMousePosition(new System.Drawing.Point((int)pos.X, (int)pos.Y));
+            RemoteControl.VirtualMouse.Position=new System.Drawing.Point((int)(pos.X* widthRatio), (int)(pos.Y* heigthRatio));
+            RemoteControl.PublishCommands();
+        }
+        private void imageBox_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                RemoteControl.VirtualMouse.LeftButton = e.ButtonState;
+            if (e.ChangedButton == MouseButton.Right)
+                RemoteControl.VirtualMouse.RightButton = e.ButtonState;
+            if (e.ChangedButton == MouseButton.Middle)
+                RemoteControl.VirtualMouse.MiddleButton = e.ButtonState;
+            RemoteControl.PublishCommands();
+        }
+
+        private void imageBox_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                RemoteControl.VirtualMouse.LeftButton = e.ButtonState;
+            if (e.ChangedButton == MouseButton.Right)
+                RemoteControl.VirtualMouse.RightButton = e.ButtonState;
+            if (e.ChangedButton == MouseButton.Middle)
+                RemoteControl.VirtualMouse.MiddleButton = e.ButtonState;
+            RemoteControl.PublishCommands();
+        }
+
+        private void imageBox_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            RemoteControl.VirtualMouse.ScrollDelta = e.Delta;
+            RemoteControl.PublishCommands();
+        }
+
+        private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            RemoteControl.VirtualMouse.DoubleClick = true;
+            RemoteControl.PublishCommands();
+        }
+        private void imageBox_MouseLeave(object sender, MouseEventArgs e)
+        {
+            stc_ControlBar.Visibility = Visibility.Visible;
+
+        }
+
+        private void Btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            NetworkScanner.ScanAvailableDevices();
         }
     }
 }
