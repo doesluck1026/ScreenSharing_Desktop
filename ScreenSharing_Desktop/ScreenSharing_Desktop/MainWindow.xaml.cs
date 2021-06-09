@@ -14,7 +14,7 @@ namespace ScreenSharing_Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        private int MenuTimeout = 10;
+        private int MenuTimeout = 3;
 
 
         private Timer uiUpdateTimer;

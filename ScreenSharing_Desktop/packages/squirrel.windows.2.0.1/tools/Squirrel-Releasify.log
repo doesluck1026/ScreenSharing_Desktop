@@ -80,3 +80,51 @@ Dosya adı: 'AGVKitConfigurator.1.4.2.0.nupkg'
 [11.04.21 19:53:43] ınfo: DeltaPackageBuilder: \lib\net45\Squirrel.dll hasn't changed, writing dummy file
 [11.04.21 19:53:43] ınfo: Program: Building embedded zip file for Setup.exe
 [11.04.21 19:53:49] ınfo: Program: Finished Squirrel Updater
+[09.06.21 12:41:28] ınfo: Program: Starting Squirrel Updater: --releasify ScreenSharingApp.2.0.1.nupkg
+[09.06.21 12:41:28] ınfo: Program: Bootstrapper EXE found at:D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\packages\squirrel.windows.2.0.1\tools\Setup.exe
+[09.06.21 12:41:28] ınfo: Program: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.2.0.1.nupkg
+[09.06.21 12:41:28] ınfo: ReleasePackage: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.2.0.1.nupkg => D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-2.0.1-full.nupkg
+[09.06.21 12:41:28] ınfo: ReleasePackage: Extracting dependent packages: []
+[09.06.21 12:41:28] ınfo: ReleasePackage: Removing unnecessary data
+[09.06.21 12:41:28] ınfo: ReleasePackage: No release notes found in C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\ScreenSharingApp.nuspec
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: Extracting .\Releases\ScreenSharingApp-1.4.18-full.nupkg and D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-2.0.1-full.nupkg into C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\AsyncIO.dll not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\AsyncIO.pdb not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.MsDelta.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.PatchApi.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Mdb.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Mdb.pdb not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.pdb not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Pdb.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Pdb.pdb not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Rocks.dll hasn't changed, writing dummy file
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Rocks.pdb not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\NaCl.dll not found in base package, marking as new
+[09.06.21 12:41:29] ınfo: DeltaPackageBuilder: \lib\net45\NetMQ.dll not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\NuGet.Squirrel.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\NuGet.Squirrel.pdb not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\Screen Sharing App.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\Screen Sharing App.exe
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\Screen Sharing App.exe.config hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\Screen Sharing App.pdb not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\Screen Sharing App_ExecutionStub.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\Screen Sharing App_ExecutionStub.exe
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\ScreenCapturer.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\ScreenCapturer.pdb not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpCompress.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.Direct3D11.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.Direct3D11.pdb not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.DXGI.dll hasn't changed, writing dummy file
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.DXGI.pdb not found in base package, marking as new
+[09.06.21 12:41:30] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.pdb not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\Squirrel.dll hasn't changed, writing dummy file
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\Squirrel.pdb not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.Buffers.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.Memory.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.Numerics.Vectors.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.Runtime.CompilerServices.Unsafe.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.Threading.Tasks.Extensions.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: DeltaPackageBuilder: \lib\net45\System.ValueTuple.dll not found in base package, marking as new
+[09.06.21 12:41:31] ınfo: Program: Building embedded zip file for Setup.exe
+[09.06.21 12:41:33] ınfo: Program: Finished Squirrel Updater
