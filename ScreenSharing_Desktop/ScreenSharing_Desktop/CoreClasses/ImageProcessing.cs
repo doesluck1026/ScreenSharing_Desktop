@@ -34,7 +34,7 @@ class ImageProcessing
 
     private static void ScreenCapturer_OnCaptureStop(object sender, OnCaptureStopEventArgs e)
     {
-      //  ScreenCapturer.StartCapture();
+        ScreenCapturer.StartCapture();
     }
 
     private static void ScreenCapturer_OnScreenUpdated(object sender, OnScreenUpdatedEventArgs e)
@@ -65,16 +65,14 @@ class ImageProcessing
         Bitmap img = GetScreenShot();
         if (img == null)
             throw new Exception("ScreenShotException");
-        //double t1 = stp.Elapsed.TotalMilliseconds;
-        //Image<Bgr, byte> img = new Image<Bgr, byte>(originalImage);
         
-        DrawCircle(ref img);
+        DrawPointToImage(ref img);
         byte[] imageBytes;
         imageBytes = ImageToByteArray(img);
         ElapsedTime += (int)stp.ElapsedMilliseconds;
         return imageBytes;
     }
-    private static void DrawCircle(ref Bitmap bitmap)
+    private static void DrawPointToImage(ref Bitmap bitmap)
     {
         int pointHalfWidth =6;
         for(int i=-pointHalfWidth; i< pointHalfWidth; i++)
@@ -83,7 +81,7 @@ class ImageProcessing
             {
                 int posx = Math.Min(Math.Max(CursorPosition.X + i, 0), bitmap.Size.Width - 1);
                 int posy = Math.Min(Math.Max(CursorPosition.Y + j, 0), bitmap.Size.Height - 1);
-                bitmap.SetPixel(posx, posy, Color.Blue);
+                bitmap.SetPixel(posx, posy, Color.DarkGray);
             }
 
         }

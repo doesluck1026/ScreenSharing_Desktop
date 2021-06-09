@@ -31,8 +31,12 @@
                    />
 
         </StackPanel>
-        <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8">
-                <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Background="DarkSlateGray"
+        <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8"  Background="DarkSlateGray">
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel x:Name="stc_ControlBar" Orientation="Horizontal" Grid.Column="0"
                         >
                     <Button x:Name="btn_Share"  Click="btn_Share_Click" 
                         Content="Share" Margin="5,0,0,0" HorizontalAlignment="Left" 
@@ -56,41 +60,49 @@
                         Click="Btn_Refresh_Click" Margin="15,0,0,0">
                     <Image Source="Icons/Refresh.png" Stretch="Fill" />
                 </Button>
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid Grid.Column="0" Width="290" >
-                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Label Content="Speed:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
-                                <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
-                            </StackPanel>
-                        </Grid>
-                        <Grid Grid.Column="1" Width="130" >
-                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Label Content="FPS:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
-                                <Label x:Name="lbl_FPS" Content="30" FontSize="20" 
+                </StackPanel>
+            <Grid Grid.Column="1" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" >
+                    <StackPanel Orientation="Horizontal" Margin="10,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="Speed:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                        <Label x:Name="lbl_Speed" Content="2.56 MB/s" FontSize="20" FontWeight="DemiBold" Foreground="White"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="1" >
+                    <StackPanel Orientation="Horizontal" Margin="-60,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                        <Label Content="FPS:" Foreground="White" FontSize="20" FontWeight="DemiBold" />
+                        <Label x:Name="lbl_FPS" Content="30" FontSize="20" 
                                    FontWeight="DemiBold" Foreground="White"/>
-                            </StackPanel>
-                        </Grid>
-                        <Grid Grid.Column="2">
-                            <StackPanel Orientation="Horizontal" Margin="20,0,0,0" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                <CheckBox x:Name="chc_AutoShare" Content="Auto Share" 
+                        <Label Content="Ping:" Foreground="White" FontSize="20" 
+                                   FontWeight="DemiBold" Margin="5,0,0,0"/>
+                        <Label x:Name="lbl_Ping" Content="30" FontSize="20" 
+                                   FontWeight="DemiBold" Foreground="White"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Grid.Column="4" HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,10,0" VerticalAlignment="Center">
+                        <CheckBox x:Name="chc_AutoShare" Content="Auto Share" 
                                       Click="chc_AutoShare_Click" Margin="15,0,0,0" 
                                       VerticalAlignment="Center" Foreground="White"
                                       FontSize="15" FontWeight="DemiBold" Focusable="False"/>
-                                <CheckBox x:Name="chc_EnableControls" 
+                        <CheckBox x:Name="chc_EnableControls" 
                                       Content="Control Enable" 
                                       Click="chc_EnableControls_Click" 
                                       Margin="15,0,0,0"  VerticalAlignment="Center"
                                       Foreground="White" FontSize="15" 
                                       FontWeight="DemiBold" Focusable="False"/>
-                            </StackPanel>
-                        </Grid>
-                    </Grid>
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+            </Grid>
+
         </Grid>
 
     </Grid>

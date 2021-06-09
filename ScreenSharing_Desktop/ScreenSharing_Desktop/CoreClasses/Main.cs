@@ -83,6 +83,19 @@ class Main
                 _transferSpeed = value;
         }
     }
+    public static double Ping
+    {
+        get
+        {
+            lock (Lck_Ping)
+                return _ping;
+        }
+        set
+        {
+            lock (Lck_Ping)
+                _ping = value;
+        }
+    }
     public static  bool IsControlsEnabled
     {
         get
@@ -118,6 +131,7 @@ class Main
     private static double _transferSpeed;
     private static CommunicationTypes _communitionType;
     private static int fps = 0;
+    private static double _ping = 0;
     
 
     private static object Lck_FPS = new object();
@@ -127,7 +141,8 @@ class Main
     private static object Lck_TransferSpeed = new object();
     private static object Lck_IsControlsEnabled = new object();
     private static object Lck_CommunitionType = new object();
-    
+    private static object Lck_Ping = new object();
+
     private static Thread SenderThread;
 
     #endregion
@@ -192,8 +207,13 @@ class Main
             byte[] screenBytes= ImageProcessing.GetScreenBytes();
             if(screenBytes!=null && Publisher!=null)
             {
-                Publisher.Publish(screenBytes);
-                totalBytesSent += screenBytes.Length;
+                string time = DateTime.Now.TimeOfDay.ToString();
+                byte[] timeBytes = Encoding.ASCII.GetBytes(time);
+                byte[] data = new byte[timeBytes.Length + screenBytes.Length];
+                timeBytes.CopyTo(data, 0);
+                screenBytes.CopyTo(data, timeBytes.Length);
+                Publisher.Publish(data);
+                totalBytesSent += data.Length;
                 FpsCounter++;
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
@@ -201,7 +221,6 @@ class Main
                     stopwatch.Restart();
                     totalBytesSent = 0;
                 }
-                //Thread.Sleep(10);
             }
             else
             {
@@ -225,7 +244,16 @@ class Main
         Stopwatch stp = Stopwatch.StartNew();
         if (data != null)
         {
-            ScreenImage = ImageProcessing.ImageFromByteArray(data);
+            byte[] timeBytes = new byte[16];
+            Array.Copy(data, 0, timeBytes, 0, timeBytes.Length);
+            string timeString = Encoding.ASCII.GetString(timeBytes);
+            TimeSpan SentTime = TimeSpan.Parse(timeString);
+            TimeSpan CurrentTime = DateTime.Now.TimeOfDay;
+            double deltaTime = CurrentTime.TotalMilliseconds - SentTime.TotalMilliseconds;
+            Ping = Ping * 0.9 + 0.1 * deltaTime;
+            byte[] ScreenBytes = new byte[data.Length - timeBytes.Length];
+            Array.Copy(data, timeBytes.Length, ScreenBytes, 0, ScreenBytes.Length);
+            ScreenImage = ImageProcessing.ImageFromByteArray(ScreenBytes);
             TotalBytesReceived += data.Length;
             FpsCounter++;
             if (SubStopwatch.ElapsedMilliseconds >= 1000)

@@ -80,7 +80,9 @@ namespace ScreenSharing_Desktop
                 Debug.WriteLine("Failed when initializing ");
             }
         }
-
+        /// <summary>
+        /// Adds Current version number and app name at the top of main window 
+        /// </summary>
         private void AddVersionNumber()
         {
             System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -90,6 +92,11 @@ namespace ScreenSharing_Desktop
                 this.Title += $" v.{versionInfo.FileVersion}";
             });
         }
+
+        /// <summary>
+        /// Checks for updates everytime this app is started.
+        /// This method uses Squirrel nuget. Go to https://youtu.be/N_T_UOkr7ts to see my tutorial about this.
+        /// </summary>
         private async void CheckForUpdates()
         {
             try
@@ -181,6 +188,7 @@ namespace ScreenSharing_Desktop
                     imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
                 }
                 lbl_FPS.Content = Main.FPS.ToString();
+                lbl_Ping.Content = ((int)Main.Ping).ToString();
                 lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
                 IsControlsEnabled = chc_EnableControls.IsChecked.Value;
                 if (IsControlsEnabled)

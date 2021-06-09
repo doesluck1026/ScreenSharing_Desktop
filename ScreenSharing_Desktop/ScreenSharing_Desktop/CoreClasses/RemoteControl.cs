@@ -8,17 +8,45 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+
+/// <summary>
+/// This Class is used to control other device's keyboard and mouse remotely.
+/// There is a publisher that publishes control commands and a subscriber which receives those comments and apply them to computer.
+/// </summary>
 class RemoteControl
 {
     #region Parameters
+
+    /// <summary>
+    /// Port number where commands are transferred.
+    /// </summary>
     public static int Port = 4113;
+
+    /// <summary>
+    /// Topic name of transfer
+    /// </summary>
     private static string Topic = "Command";
+
+    /// <summary>
+    /// MQ Publisher and subscriber objects.
+    /// </summary>
     private static MQPublisher Publisher;
     private static MQSubscriber Subscriber;
-    private static int NumKeys = 173;
+
+    /// <summary>
+    /// Number of elements in keyboard array.
+    /// </summary>
+    private static int NumKeys = 173;  
+    /// <summary>
+    /// Number of Elements in Mouse data.
+    /// </summary>
     private static int LenMouseData = 20;
 
     #endregion
+
+    /// <summary>
+    /// This structure is used to store all mouse related parameters in one variable.
+    /// </summary>
     public struct MouseHandleTypeDef
     {
         public MouseButtonState LeftButton;
@@ -47,7 +75,11 @@ class RemoteControl
 
     private static byte[] ReceivedData;
 
-    public static bool IsControlsEnabled;
+
+    /// <summary>
+    /// Determines whether received commands will be applied.
+    /// </summary>
+    public static bool IsControlsEnabled { get; set; }
     #endregion
 
 
@@ -65,6 +97,9 @@ class RemoteControl
         Thread_Publisher = new Thread(Publisher_CoreFcn);
         Thread_Publisher.Start();
     }
+    /// <summary>
+    /// Stops Publisher and kills the related thread.
+    /// </summary>
     public static void StopSendingCommands()
     {
         try
@@ -81,6 +116,10 @@ class RemoteControl
             Debug.WriteLine("Failed to Stop Publisher");
         }
     }
+    /// <summary>
+    /// This Function runs in Publisher thread and publishes data continueously.
+    /// Calling "StopSendingCommands()" function will stop this thread.
+    /// </summary>
     private static void Publisher_CoreFcn()
     {
         while(IsPublisherEnabled)
@@ -93,6 +132,10 @@ class RemoteControl
             Thread.Sleep(5);
         }
     }
+    /// <summary>
+    /// Prepares a byte array which contains basic mouse functions according to given parameters.
+    /// </summary>
+    /// <returns>Returns a byte array</returns>
     private static byte[] PrepareMouseData()
     {
         byte[] mouseData = new byte[LenMouseData];
@@ -114,6 +157,12 @@ class RemoteControl
 
     #region Subscriber Function
 
+    /// <summary>
+    /// Starts receiving commands from publisher with given IP address.
+    /// After calling this function, an event will be thrown every time a data received.
+    /// Process this data either in a thread or in the event itself(not recommended for big data)
+    /// </summary>
+    /// <param name="ip">Ip Address of Publisher</param>
     public static void StartReceiving(string ip)
     {
         TargetIP = ip;
@@ -126,6 +175,10 @@ class RemoteControl
         }
         IsSubscriberEnabled = true;
     }
+
+    /// <summary>
+    /// Control Thread's Core Function where received data is processed.
+    /// </summary>
     private static void Control_CoreFcn()
     {
         while(IsSubscriberEnabled)
@@ -143,6 +196,11 @@ class RemoteControl
             Thread.Sleep(1);
         }
     }
+
+    /// <summary>
+    /// This event will be thrown every time a data is received from publisher.
+    /// </summary>
+    /// <param name="data">Received Byte array</param>
     private static void Subscriber_OnDataReceived(byte[] data)
     {
         if (data != null)
@@ -152,12 +210,21 @@ class RemoteControl
             IsDataReceived = true;
         }
     }
+
+    /// <summary>
+    /// Stops Receiving command from publisher.
+    /// </summary>
     public static void StopReceiving()
     {
         IsSubscriberEnabled = false;
         Subscriber.Stop();
     }
 
+    /// <summary>
+    /// Applies received commands to keyboard.
+    /// This function wont be called unless IsControlsEnabled variable is true
+    /// </summary>
+    /// <param name="Keys">a byte array that contains key states for each key. if key state is 1: key is down, if it is zero, key is up</param>
     private static void HandleKeyBoard(byte[] Keys)
     {
         for (int i = 0; i < Keys.Length; i++)
@@ -171,7 +238,7 @@ class RemoteControl
                     Keys_States[i] = true;
                 }
                 else
-                {
+                {   /// Calling Keyboard.Release Function when the key is not pressed, causes too many problems so better check if the key was pressed before.
                     if (Keys_States[i])
                     {
                         Keyboard.Release(key);
@@ -180,6 +247,7 @@ class RemoteControl
             }
             else
             {
+                /// if the related key is an ordinary key, then we can simulate a type event.
                 if (Keys[i] == 1)
                 {
                     Keyboard.Type(key);
@@ -187,6 +255,11 @@ class RemoteControl
             }
         }
     }
+    /// <summary>
+    /// Applies received commands to mouse.
+    /// This function wont be called unless IsControlsEnabled variable is true
+    /// </summary>
+    /// <param name="mouseData">a byte array that contains mouse commands</param>
     private static void HandleMouse(byte[] mouseData)
     {
         MouseHandleTypeDef mouse;
