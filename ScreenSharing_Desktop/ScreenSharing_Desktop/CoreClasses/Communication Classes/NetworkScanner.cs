@@ -12,6 +12,7 @@ class NetworkScanner
 {
     public delegate void ScanCompleteDelegate();
     public static event ScanCompleteDelegate OnScanCompleted;
+    public static event ScanCompleteDelegate OnClientConnected;
     private static int ConnectionTimeout;
 
     public struct DeviceHandleTypeDef
@@ -196,6 +197,10 @@ class NetworkScanner
         var device = AnalyzeDeviceData(data);
         SubscriberDevices.Add(device);
         publisherServer.CloseServer();
+        if(OnClientConnected!=null)
+        {
+            OnClientConnected();
+        }
         PublishDevice();
     }
 

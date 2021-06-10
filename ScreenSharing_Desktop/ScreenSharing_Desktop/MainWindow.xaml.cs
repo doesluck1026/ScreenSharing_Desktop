@@ -41,6 +41,7 @@ namespace ScreenSharing_Desktop
                 LoadOptions();
                 NetworkScanner.PublishDevice();
                 NetworkScanner.ScanAvailableDevices();
+                NetworkScanner.OnScanCompleted += NetworkScanner_OnScanCompleted;
                 Dispatcher.Invoke(() =>
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
@@ -81,6 +82,20 @@ namespace ScreenSharing_Desktop
             {
                 Debug.WriteLine("Failed when initializing ");
             }
+        }
+
+        private void NetworkScanner_OnScanCompleted()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                txt_IP.Items.Clear();
+                if (NetworkScanner.PublisherDevices != null)
+                {
+                    for (int i = 0; i < NetworkScanner.PublisherDevices.Count; i++)
+                        txt_IP.Items.Add(NetworkScanner.PublisherDevices[i].Hostname);
+                    txt_IP.SelectedIndex = 0;
+                }
+            });
         }
         /// <summary>
         /// Adds Current version number and app name at the top of main window 

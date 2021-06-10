@@ -173,3 +173,39 @@ Dosya adı: 'AGVKitConfigurator.1.4.2.0.nupkg'
 [10.06.21 12:48:33] ınfo: DeltaPackageBuilder: \lib\net45\System.ValueTuple.dll hasn't changed, writing dummy file
 [10.06.21 12:48:33] ınfo: Program: Building embedded zip file for Setup.exe
 [10.06.21 12:48:37] ınfo: Program: Finished Squirrel Updater
+[10.06.21 13:43:54] ınfo: Program: Starting Squirrel Updater: --releasify ScreenSharingApp.2.0.3.nupkg
+[10.06.21 13:43:54] ınfo: Program: Bootstrapper EXE found at:D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\packages\squirrel.windows.2.0.1\tools\Setup.exe
+[10.06.21 13:43:54] ınfo: Program: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.2.0.3.nupkg
+[10.06.21 13:43:54] ınfo: ReleasePackage: Creating release package: D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp.2.0.3.nupkg => D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-2.0.3-full.nupkg
+[10.06.21 13:43:54] ınfo: ReleasePackage: Extracting dependent packages: []
+[10.06.21 13:43:54] ınfo: ReleasePackage: Removing unnecessary data
+[10.06.21 13:43:55] ınfo: ReleasePackage: No release notes found in C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\ScreenSharingApp.nuspec
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: Extracting .\Releases\ScreenSharingApp-2.0.2-full.nupkg and D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\Releases\ScreenSharingApp-2.0.3-full.nupkg into C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\AsyncIO.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.MsDelta.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\DeltaCompressionDotNet.PatchApi.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Mdb.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Pdb.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\Mono.Cecil.Rocks.dll hasn't changed, writing dummy file
+[10.06.21 13:43:55] ınfo: DeltaPackageBuilder: \lib\net45\NaCl.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\NetMQ.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\NuGet.Squirrel.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\Screen Sharing App.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\Screen Sharing App.exe
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\Screen Sharing App.exe.config hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: Delta patching C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempa\lib\net45\Screen Sharing App_ExecutionStub.exe => C:\Users\CDS_Software02\AppData\Local\SquirrelTemp\tempb\lib\net45\Screen Sharing App_ExecutionStub.exe
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\ScreenCapturer.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\SharpCompress.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.Direct3D11.dll hasn't changed, writing dummy file
+[10.06.21 13:43:56] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\SharpDX.DXGI.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\Squirrel.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.Buffers.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.Memory.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.Numerics.Vectors.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.Runtime.CompilerServices.Unsafe.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.Threading.Tasks.Extensions.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: DeltaPackageBuilder: \lib\net45\System.ValueTuple.dll hasn't changed, writing dummy file
+[10.06.21 13:43:57] ınfo: Program: Building embedded zip file for Setup.exe
+[10.06.21 13:43:59] ınfo: Program: Finished Squirrel Updater
