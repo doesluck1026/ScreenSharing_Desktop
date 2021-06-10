@@ -27,12 +27,16 @@
                    MouseUp="imageBox_MouseUp"
                    MouseWheel="imageBox_MouseWheel" Stretch="Uniform"
                    Height="1025"
-                   MouseLeave="imageBox_MouseLeave"
                    />
 
         </StackPanel>
+        <Image x:Name="Img_OpenBar" Grid.Row="0" Width="35" Height="35" 
+               Source="Icons/smallTV.ico" MouseEnter="Img_OpenBar_MouseEnter"/>
+
         <Grid Grid.Row="0" Margin="0,0,0,0" Opacity="0.8"  
-              Background="DarkSlateGray" x:Name="stc_ControlBar">
+              Background="DarkSlateGray" x:Name="stc_ControlBar" 
+              MouseEnter="stc_ControlBar_MouseEnter"
+              MouseLeave="stc_ControlBar_MouseLeave">
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="4*"/>
@@ -104,6 +108,5 @@
             </Grid>
 
         </Grid>
-
     </Grid>
 </Window>

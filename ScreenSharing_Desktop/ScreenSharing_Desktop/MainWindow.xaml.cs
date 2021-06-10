@@ -26,6 +26,8 @@ namespace ScreenSharing_Desktop
         private int SelectedIndex = -1;
         private bool IsControlsEnabled;
         private int MenuTimeoutCounter = 0;
+        private bool IsMouseOnStackPanel = false;
+        private double ScrollCoefficient = 0.01;
         public MainWindow()
         {
             InitializeComponent();
@@ -203,7 +205,7 @@ namespace ScreenSharing_Desktop
                 {
                     if (MenuTimeoutCounter < 100000)
                         MenuTimeoutCounter++;
-                    if (MenuTimeoutCounter > MenuTimeout * UI_UpdateFrequency)
+                    if (MenuTimeoutCounter > MenuTimeout * UI_UpdateFrequency && !IsMouseOnStackPanel)
                     {
                         stc_ControlBar.Visibility = Visibility.Hidden;
                         MenuTimeoutCounter = 0;
@@ -360,7 +362,7 @@ namespace ScreenSharing_Desktop
         {
             if (IsControlsEnabled)
             {
-                RemoteControl.VirtualMouse.ScrollDelta = e.Delta;
+                RemoteControl.VirtualMouse.ScrollDelta = (int)(e.Delta* ScrollCoefficient);
                 RemoteControl.IsDataUpdated = true;
             }
         }
@@ -372,14 +374,25 @@ namespace ScreenSharing_Desktop
                 RemoteControl.IsDataUpdated = true;
             }
         }
-        private void imageBox_MouseLeave(object sender, MouseEventArgs e)
-        {
-            stc_ControlBar.Visibility = Visibility.Visible;
-        }
 
         private void Btn_Refresh_Click(object sender, RoutedEventArgs e)
         {
             NetworkScanner.ScanAvailableDevices();
+        }
+
+        private void Img_OpenBar_MouseEnter(object sender, MouseEventArgs e)
+        {
+            stc_ControlBar.Visibility = Visibility.Visible;
+        }
+
+        private void stc_ControlBar_MouseEnter(object sender, MouseEventArgs e)
+        {
+            IsMouseOnStackPanel = true;
+        }
+
+        private void stc_ControlBar_MouseLeave(object sender, MouseEventArgs e)
+        {
+            IsMouseOnStackPanel = false;
         }
     }
 }
