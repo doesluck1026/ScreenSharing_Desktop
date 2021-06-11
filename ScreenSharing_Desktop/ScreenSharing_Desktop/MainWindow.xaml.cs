@@ -19,7 +19,7 @@ namespace ScreenSharing_Desktop
     {
         private int MenuTimeout = 3;
 
-        private bool ServiceBot = false;
+        private readonly bool ServiceBot = true;
         private Timer uiUpdateTimer;
         private int UI_UpdateFrequency = 40;        /// Hz
         private int UI_UpdatePeriod;
@@ -67,11 +67,11 @@ namespace ScreenSharing_Desktop
                                     {
                                         char[] splitter = { '.' };
                                         var ipBlocks = localIP.ToString().Split(splitter);
-                                    //if (string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
-                                    //{
-                                    //    noIP = false;
-                                    //}
-                                }
+                                        if (string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
+                                        {
+                                            noIP = false;
+                                        }
+                                    }
                                     Thread.Sleep(500);
                                 }
                                 btn_Share_Click(null, null);
