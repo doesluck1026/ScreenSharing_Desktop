@@ -74,6 +74,7 @@ class RemoteControl
     private static Thread Thread_Publisher;
 
     private static byte[] ReceivedData;
+    private static object Lck_ReceivedData = new object();
 
     public static bool IsDataUpdated { get; set; }
 
@@ -202,6 +203,12 @@ class RemoteControl
         {
             if(IsDataReceived && IsControlsEnabled)
             {
+                byte[] receivedData;
+                lock(Lck_ReceivedData)
+                {
+                    receivedData = new byte[ReceivedData.Length];
+                    ReceivedData.CopyTo(receivedData, 0);
+                }
                 Keys = new byte[NumKeys];
                 byte[] mouseData = new byte[LenMouseData];
                 IsDataReceived = false;
@@ -222,8 +229,11 @@ class RemoteControl
     {
         if (data != null)
         {
-            ReceivedData = new byte[data.Length];
-            data.CopyTo(ReceivedData,0);
+            lock(Lck_ReceivedData)
+            {
+                ReceivedData = new byte[data.Length];
+                data.CopyTo(ReceivedData,0);
+            }
             IsDataReceived = true;
         }
     }

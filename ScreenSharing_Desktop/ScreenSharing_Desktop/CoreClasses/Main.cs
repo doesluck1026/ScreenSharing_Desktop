@@ -144,7 +144,29 @@ class Main
     private static object Lck_Ping = new object();
 
     private static Thread SenderThread;
+    private static Thread ReceiverThread;
 
+    private static bool IsReceiverThreadEnabled = false;
+    private static bool IsSubDataReceived
+    {
+        get
+        {
+            lock (Lck_IsSubDataReceived)
+                return _isSubDataReceived;
+        }
+        set
+        {
+            lock (Lck_IsSubDataReceived)
+                _isSubDataReceived = value;
+        }
+    }
+
+    private static byte[] SubReceivedData;
+
+    private static bool _isSubDataReceived = false;
+
+    private static object Lck_SubReceivedData = new object();
+    private static object Lck_IsSubDataReceived = new object();
     #endregion
 
     #region MQ Variables
@@ -168,6 +190,7 @@ class Main
 
     private static TimeSpan PublisherTimeBase;
     private static TimeSpan SubscriberPreviousTime;
+    private static int ScanCounter = 0;
 
     public enum CommunicationTypes
     {
@@ -252,8 +275,57 @@ class Main
         TimeBaseSubscriber.OnDataReceived += TimeBaseSubscriber_OnDataReceived;
         SubStopwatch = Stopwatch.StartNew();
         CommunicationType = CommunicationTypes.Receiver;
+        IsReceiverThreadEnabled = true;
+        ReceiverThread = new Thread(ReceiverCoreFcn);
+        ReceiverThread.Start();
     }
+    private static void ReceiverCoreFcn()
+    {
+        while(IsReceiverThreadEnabled)
+        {
+            if (IsSubDataReceived)
+            {
+                IsSubDataReceived = false;
+                Stopwatch stp = Stopwatch.StartNew();
+                byte[] timeBytes = new byte[16];
+                byte[] receivedData;
+                lock(Lck_SubReceivedData)
+                {
+                    receivedData = new byte[SubReceivedData.Length];
+                    SubReceivedData.CopyTo(receivedData, 0);
+                }
 
+                Array.Copy(receivedData, 0, timeBytes, 0, timeBytes.Length);
+                string timeString = Encoding.ASCII.GetString(timeBytes);
+                TimeSpan SentTime = TimeSpan.Parse(timeString);
+                TimeSpan CurrentTime = DateTime.UtcNow.TimeOfDay;
+                PublisherTimeBase += (CurrentTime - SubscriberPreviousTime);
+                SubscriberPreviousTime = CurrentTime;
+                double deltaTime = PublisherTimeBase.TotalMilliseconds - SentTime.TotalMilliseconds;
+                if (Ping <= 0)
+                    Ping = deltaTime;
+                Ping = Ping * 0.99 + 0.01 * deltaTime;
+                byte[] ScreenBytes = new byte[receivedData.Length - timeBytes.Length];
+                Array.Copy(receivedData, timeBytes.Length, ScreenBytes, 0, ScreenBytes.Length);
+                ScreenImage = ImageProcessing.ImageFromByteArray(ScreenBytes);
+                TotalBytesReceived += receivedData.Length;
+                FpsCounter++;
+                if (SubStopwatch.ElapsedMilliseconds >= 1000)
+                {
+                    UpdateStats(TotalBytesReceived, SubStopwatch.Elapsed.TotalSeconds);
+                    TotalBytesReceived = 0;
+                    SubStopwatch.Restart();
+                }
+                IsImageShowed = true;
+            }
+            else
+            {
+                ScanCounter++;
+              
+                Thread.Sleep(1);
+            }
+        }
+    }
     private static void TimeBaseSubscriber_OnDataReceived(byte[] data)
     {
         if (data != null)
@@ -265,32 +337,18 @@ class Main
 
     private static void Subscriber_OnDataReceived(byte[] data)
     {
-        Stopwatch stp = Stopwatch.StartNew();
         if (data != null)
         {
-            byte[] timeBytes = new byte[16];
-            Array.Copy(data, 0, timeBytes, 0, timeBytes.Length);
-            string timeString = Encoding.ASCII.GetString(timeBytes);
-            TimeSpan SentTime = TimeSpan.Parse(timeString);
-            TimeSpan CurrentTime = DateTime.UtcNow.TimeOfDay;
-            PublisherTimeBase += (CurrentTime - SubscriberPreviousTime);
-            SubscriberPreviousTime = CurrentTime;
-            double deltaTime = PublisherTimeBase.TotalMilliseconds - SentTime.TotalMilliseconds;
-            if (Ping <= 0)
-                Ping = deltaTime;
-            Ping = Ping * 0.99 + 0.01 * deltaTime;
-            byte[] ScreenBytes = new byte[data.Length - timeBytes.Length];
-            Array.Copy(data, timeBytes.Length, ScreenBytes, 0, ScreenBytes.Length);
-            ScreenImage = ImageProcessing.ImageFromByteArray(ScreenBytes);
-            TotalBytesReceived += data.Length;
-            FpsCounter++;
-            if (SubStopwatch.ElapsedMilliseconds >= 1000)
+            lock (Lck_SubReceivedData)
             {
-                UpdateStats(TotalBytesReceived, SubStopwatch.Elapsed.TotalSeconds);
-                TotalBytesReceived = 0;
-                SubStopwatch.Restart();
+                SubReceivedData = data;
             }
-            IsImageShowed = true;
+            IsSubDataReceived = true;
+            if (ScanCounter > 250)
+            {
+                NetworkScanner.ScanAvailableDevices();
+                ScanCounter = 0;
+            }
         }
         else
         {
@@ -301,6 +359,7 @@ class Main
     {
         Subscriber.Stop();
         TimeBaseSubscriber.Stop();
+        IsReceiverThreadEnabled = false;
         FPS = 0;
         TransferSpeed = 0;
     }

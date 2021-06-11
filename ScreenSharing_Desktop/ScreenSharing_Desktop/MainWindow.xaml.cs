@@ -7,6 +7,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Squirrel;
 
+
+
+
 namespace ScreenSharing_Desktop
 {
     /// <summary>
@@ -16,7 +19,7 @@ namespace ScreenSharing_Desktop
     {
         private int MenuTimeout = 3;
 
-
+        private bool ServiceBot = false;
         private Timer uiUpdateTimer;
         private int UI_UpdateFrequency = 40;        /// Hz
         private int UI_UpdatePeriod;
@@ -46,36 +49,43 @@ namespace ScreenSharing_Desktop
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
                     chc_EnableControls.IsChecked = Parameters.IsControlsEnabled;
+                    IsControlsEnabled = Parameters.IsControlsEnabled;
                 });
                 if (Parameters.IsAutoShareEnabled)
                 {
-                    Task.Run(() =>
+                    if (ServiceBot)
                     {
-                        try
+                        Task.Run(() =>
                         {
-                            bool noIP = true;
-                            while (noIP)
+                            try
                             {
-                                var localIP = Client.GetDeviceIP();
-                                if (localIP != null)
+                                bool noIP = true;
+                                while (noIP)
                                 {
-                                    char[] splitter = { '.' };
-                                    var ipBlocks = localIP.ToString().Split(splitter);
-                                    if (string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
+                                    var localIP = Client.GetDeviceIP();
+                                    if (localIP != null)
                                     {
-                                        noIP = false;
-                                    }
+                                        char[] splitter = { '.' };
+                                        var ipBlocks = localIP.ToString().Split(splitter);
+                                    //if (string.Equals(ipBlocks[0], "192") && string.Equals(ipBlocks[1], "168"))
+                                    //{
+                                    //    noIP = false;
+                                    //}
                                 }
-                                Thread.Sleep(500);
+                                    Thread.Sleep(500);
+                                }
+                                btn_Share_Click(null, null);
                             }
-                            btn_Share_Click(null, null);
-                        }
-                        catch
-                        {
+                            catch
+                            {
 
-                        }
-                    });
-
+                            }
+                        });
+                    }
+                    else
+                    {
+                        btn_Share_Click(null, null);
+                    }
                 }
             }
             catch
@@ -383,11 +393,11 @@ namespace ScreenSharing_Desktop
         }
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (IsControlsEnabled)
-            {
-                RemoteControl.VirtualMouse.DoubleClick = true;
-                RemoteControl.IsDataUpdated = true;
-            }
+            //if (IsControlsEnabled)
+            //{
+            //    RemoteControl.VirtualMouse.DoubleClick = true;
+            //    RemoteControl.IsDataUpdated = true;
+            //}
         }
 
         private void Btn_Refresh_Click(object sender, RoutedEventArgs e)
