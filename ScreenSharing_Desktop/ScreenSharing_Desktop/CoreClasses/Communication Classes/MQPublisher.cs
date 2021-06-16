@@ -27,6 +27,16 @@ class MQPublisher
     /// </summary>
     private int Port;
 
+
+    /// <summary>
+    /// High Water Mark of Publisher Socket.
+    /// Default is Set to 1000.
+    /// This Parameters determines how many memeber can be in a queue if data 
+    /// cant be received by subscriber.
+    /// Setting this value too high can result memory overflow problems
+    /// </summary>
+    private int HWM;
+
     /// <summary>
     /// Publisher Object
     /// </summary>
@@ -38,14 +48,16 @@ class MQPublisher
     /// <param name="topic">Topic Name of communication</param>
     /// <param name="ip">Your IP Address</param>
     /// <param name="port">The port You want to publish in</param>
-    public MQPublisher(string topic, string ip, int port)
+    /// <param name="hwm">High Water Mark of Publisher Socket</param>
+    public MQPublisher(string topic, string ip, int port, int hwm = 1)
     {
         this.Topic = topic;
         this.IP = ip;
         this.Port = port;
+        this.HWM = hwm;
         Publisher = new PublisherSocket();
+        Publisher.Options.SendHighWatermark = HWM;
         Publisher.Bind("tcp://" + IP + ":" + Port.ToString());
-        Publisher.Options.SendHighWatermark = 1;
     }
 
     /// <summary>
@@ -63,10 +75,13 @@ class MQPublisher
     /// </summary>
     public void Stop()
     {
-        Publisher.Unbind("tcp://" + IP + ":" + Port.ToString());
-        Publisher.Close();
-        Publisher.Dispose();
-        Publisher = null;
+        if (Publisher != null)
+        {
+            Publisher.Unbind("tcp://" + IP + ":" + Port.ToString());
+            Publisher.Close();
+            Publisher.Dispose();
+            Publisher = null;
+        }
     }
 }
 

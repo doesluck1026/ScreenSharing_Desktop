@@ -23,6 +23,7 @@ class ImageProcessing
     }
     private static object Lck_ScreenImage = new object();
     private static Bitmap _screenImage;
+    public static int Rotation = 0;
     public static void StartScreenCapturer()
     {
         ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
@@ -67,7 +68,7 @@ class ImageProcessing
         Stopwatch stp = Stopwatch.StartNew();
         Bitmap img = GetScreenShot();
         if (img == null)
-            throw new Exception("ScreenShotException");
+            return null;
         
         DrawPointToImage(ref img);
         byte[] imageBytes;
@@ -126,6 +127,12 @@ class ImageProcessing
         {
             bmp = new Bitmap(ms);
         }
+        if (Rotation == 90)
+            bmp.RotateFlip(RotateFlipType.Rotate90FlipNone);
+        else if (Rotation == 180)
+            bmp.RotateFlip(RotateFlipType.Rotate180FlipNone);
+        else if (Rotation == 270)
+            bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
         return bmp;
     }
 }

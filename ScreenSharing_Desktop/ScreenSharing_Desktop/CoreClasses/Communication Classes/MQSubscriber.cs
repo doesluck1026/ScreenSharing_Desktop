@@ -28,6 +28,15 @@ class MQSubscriber
     private int Port;
 
     /// <summary>
+    /// High Water Mark of Publisher Socket.
+    /// Default is Set to 1000.
+    /// This Parameters determines how many memeber can be in a queue if data 
+    /// cant be received by subscriber.
+    /// Setting this value too high can result memory overflow problems
+    /// </summary>
+    private int HWM;
+
+    /// <summary>
     /// MQ Subscriber Object
     /// </summary>
     private SubscriberSocket Subscriber;
@@ -54,13 +63,15 @@ class MQSubscriber
     /// <param name="topic">Topic Name of communication</param>
     /// <param name="ip">Publisher's IP Address</param>
     /// <param name="port">The port that data is published</param>
-    public MQSubscriber(string topic, string ip, int port)
+    public MQSubscriber(string topic, string ip, int port, int hwm = 1)
     {
 
         this.Topic = topic;
         this.IP = ip;
         this.Port = port;
+        this.HWM = hwm;
         Subscriber = new SubscriberSocket();
+        Subscriber.Options.ReceiveHighWatermark = HWM;
         Poller = new NetMQPoller() { Subscriber };
         Subscriber.Connect("tcp://" + IP + ":" + Port.ToString());
         Subscriber.Subscribe(Topic);
@@ -73,11 +84,19 @@ class MQSubscriber
     /// </summary>
     public void Stop()
     {
-        Subscriber.ReceiveReady -= Subscriber_ReceiveReady;
-        Poller.StopAsync();
-        Subscriber.Unsubscribe(Topic);
-        Subscriber.Disconnect("tcp://" + IP + ":" + Port.ToString());
-        Poller.Dispose();
+        if (Poller != null)
+        {
+            Poller.StopAsync();
+            Poller.Dispose();
+            Poller = null;
+        }
+        if (Subscriber != null)
+        {
+            Subscriber.ReceiveReady -= Subscriber_ReceiveReady;
+            Subscriber.Unsubscribe(Topic);
+            Subscriber.Disconnect("tcp://" + IP + ":" + Port.ToString());
+            Subscriber = null;
+        }
     }
 
     /// <summary>
@@ -90,6 +109,11 @@ class MQSubscriber
     {
         var topic = Subscriber.ReceiveFrameString();
         var msg = Subscriber.ReceiveFrameBytes();
+        if (msg == null)
+        {
+            System.Diagnostics.Debug.WriteLine("Subscriber : Received data is null! Topic:" + topic);
+            return;
+        }
         if (OnDataReceived != null)
         {
             OnDataReceived(msg);

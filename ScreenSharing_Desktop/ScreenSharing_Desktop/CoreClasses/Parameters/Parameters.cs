@@ -13,7 +13,7 @@ class Parameters
     public static bool DidInitParameters = false;
     public static void Init()
     {
-        System.Diagnostics.Debug.WriteLine(" path :::+ " + parametersPath);
+        System.Diagnostics.Debug.WriteLine(" path :+ " + parametersPath);
         var param = new BagFile();
         try
         {

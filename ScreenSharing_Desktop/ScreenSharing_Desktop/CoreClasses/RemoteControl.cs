@@ -17,6 +17,8 @@ class RemoteControl
 {
     #region Parameters
 
+    
+
     /// <summary>
     /// Port number where commands are transferred.
     /// </summary>
@@ -75,6 +77,7 @@ class RemoteControl
 
     private static byte[] ReceivedData;
     private static object Lck_ReceivedData = new object();
+    private static int TimeoutCounter = 0;
 
     public static bool IsDataUpdated { get; set; }
 
@@ -82,6 +85,8 @@ class RemoteControl
     /// Determines whether received commands will be applied.
     /// </summary>
     public static bool IsControlsEnabled { get; set; }
+
+    private static double ControllerPeriod = 0.001;
     #endregion
 
 
@@ -112,6 +117,11 @@ class RemoteControl
                 if (Thread_Publisher.IsAlive)
                     Thread_Publisher.Abort();
             }
+            if(Publisher!=null)
+            {
+                Publisher.Stop();
+                Publisher = null;
+            }
         }
         catch
         {
@@ -124,9 +134,11 @@ class RemoteControl
     /// </summary>
     private static void Publisher_CoreFcn()
     {
+        Stopwatch watch = Stopwatch.StartNew();
+        Stopwatch TimeoutWatch = Stopwatch.StartNew();
         while(IsPublisherEnabled)
         {
-            if(IsDataUpdated)
+            if (IsDataUpdated)
             {
                 IsDataUpdated = false;
                 byte[] data = new byte[LenMouseData + NumKeys];
@@ -146,8 +158,21 @@ class RemoteControl
                         Keys[i] = 0;
                     }
                 }
-                Thread.Sleep(5);
+                TimeoutWatch.Restart();
             }
+            else
+            {
+                if(TimeoutWatch.Elapsed.TotalSeconds>10)
+                {
+                    TimeoutWatch.Restart();
+                    byte[] data = Encoding.ASCII.GetBytes("ImAlive");
+                    Publisher.Publish(data);
+                    Thread.Sleep(1);
+                    Publisher.Publish(data);
+                }
+            }
+            while (watch.Elapsed.TotalSeconds <= ControllerPeriod)
+                Thread.Sleep(1);
         }
     }
     /// <summary>
@@ -199,25 +224,40 @@ class RemoteControl
     /// </summary>
     private static void Control_CoreFcn()
     {
-        while(IsSubscriberEnabled)
+        Stopwatch watch = Stopwatch.StartNew();
+        Stopwatch TimeoutWatch = Stopwatch.StartNew();
+
+        while (IsSubscriberEnabled)
         {
-            if(IsDataReceived && IsControlsEnabled)
+            if (IsDataReceived && IsControlsEnabled)
             {
                 byte[] receivedData;
-                lock(Lck_ReceivedData)
+                lock (Lck_ReceivedData)
                 {
                     receivedData = new byte[ReceivedData.Length];
                     ReceivedData.CopyTo(receivedData, 0);
                 }
+                IsDataReceived = false;
+                if (receivedData.Length <= 10)
+                    continue;
                 Keys = new byte[NumKeys];
                 byte[] mouseData = new byte[LenMouseData];
-                IsDataReceived = false;
-                Array.Copy(ReceivedData, 0, Keys, 0, Keys.Length);
-                Array.Copy(ReceivedData, NumKeys, mouseData, 0, LenMouseData);
+                Array.Copy(receivedData, 0, Keys, 0, Keys.Length);
+                Array.Copy(receivedData, NumKeys, mouseData, 0, LenMouseData);
                 HandleKeyBoard(Keys);
                 HandleMouse(mouseData);
+                TimeoutWatch.Restart();
             }
-            Thread.Sleep(1);
+            if (!IsDataReceived)
+            {
+                
+                if (TimeoutWatch.Elapsed.TotalSeconds > 20)
+                {
+                    Main.IsSubscriberTimedOut = true;
+                }
+            }
+            while (watch.Elapsed.TotalSeconds <= ControllerPeriod)
+                Thread.Sleep(1);
         }
     }
 
@@ -235,6 +275,7 @@ class RemoteControl
                 data.CopyTo(ReceivedData,0);
             }
             IsDataReceived = true;
+            TimeoutCounter = 0;
         }
     }
 
@@ -246,6 +287,7 @@ class RemoteControl
         IsSubscriberEnabled = false;
         if (Subscriber != null)
             Subscriber.Stop();
+        Subscriber = null;
     }
 
     /// <summary>

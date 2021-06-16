@@ -12,6 +12,7 @@ class Main
 {
 
     #region Parameters
+    private static int CommunicationFrequency = 60; /// Hz
 
     #endregion
 
@@ -161,12 +162,29 @@ class Main
         }
     }
 
+    public static bool IsSubscriberTimedOut
+    {
+        get
+        {
+            lock (Lck_IsSubscriberTimedOut)
+                return _isSubscriberTimedOut;
+        }
+        set
+        {
+            lock (Lck_IsSubscriberTimedOut)
+                _isSubscriberTimedOut = value;
+        }
+    }
+
     private static byte[] SubReceivedData;
 
     private static bool _isSubDataReceived = false;
-
+    private static bool _isSubscriberTimedOut = false;
+    
     private static object Lck_SubReceivedData = new object();
     private static object Lck_IsSubDataReceived = new object();
+    private static object Lck_IsSubscriberTimedOut = new object();
+    
     #endregion
 
     #region MQ Variables
@@ -191,7 +209,9 @@ class Main
     private static TimeSpan PublisherTimeBase;
     private static TimeSpan SubscriberPreviousTime;
     private static int ScanCounter = 0;
+    private static bool IsScanEnabled = false;
 
+    public static double CommunicationPeriod;
     public enum CommunicationTypes
     {
         Sender,
@@ -204,6 +224,7 @@ class Main
     public static void StartSharing()
     {
         CommunicationType = CommunicationTypes.Sender;
+        CommunicationPeriod = 1.0 / CommunicationFrequency;
         MyIP = Client.GetDeviceIP();
         Publisher = new MQPublisher(Topic, MyIP, Port);
         TimeBasePublisher = new MQPublisher(TimeBaseTopic, MyIP, TimeBasePort);
@@ -232,6 +253,7 @@ class Main
     private static void PublisherCoreFcn()
     {
  
+        Stopwatch watch = Stopwatch.StartNew();
         Stopwatch stopwatch = Stopwatch.StartNew();
         int totalBytesSent = 0;
         while (IsPublisherEnabled)
@@ -259,15 +281,24 @@ class Main
             }
             else
             {
-                Debug.WriteLine("Capturer or Publisher was null. Transfer aborted!");
-                break;
+                if(Publisher==null)
+                {
+                    Debug.WriteLine("Capturer or Publisher was null. Transfer aborted!");
+                    break;
+                }
+                
             }
+            while (watch.Elapsed.TotalSeconds <= CommunicationPeriod)
+                Thread.Sleep(1);
+            watch.Restart();
         }
+        Debug.WriteLine("While loop in Publisheer Core Fcn is broken");
     }
     #region Subscriber Function
 
     public static void StartReceiving(string ip)
     {
+        CommunicationPeriod = 1.0 / CommunicationFrequency;
         TargetIP = ip;
         Subscriber = new MQSubscriber(Topic, TargetIP, Port);
         Subscriber.OnDataReceived += Subscriber_OnDataReceived;
@@ -281,6 +312,7 @@ class Main
     }
     private static void ReceiverCoreFcn()
     {
+        Stopwatch watch = Stopwatch.StartNew();
         while(IsReceiverThreadEnabled)
         {
             if (IsSubDataReceived)
@@ -317,14 +349,22 @@ class Main
                     SubStopwatch.Restart();
                 }
                 IsImageShowed = true;
+                ScanCounter = 0;
             }
             else
             {
                 ScanCounter++;
-              
-                Thread.Sleep(1);
+                if (IsScanEnabled)
+                {
+                    NetworkScanner.ScanAvailableDevices();
+                    IsScanEnabled = false;
+                }
             }
+            while (watch.Elapsed.TotalSeconds <= CommunicationPeriod)
+                Thread.Sleep(1);
+            watch.Restart();
         }
+        Debug.WriteLine("While loop in Subscriber Core Fcn is broken");
     }
     private static void TimeBaseSubscriber_OnDataReceived(byte[] data)
     {
@@ -346,8 +386,8 @@ class Main
             IsSubDataReceived = true;
             if (ScanCounter > 250)
             {
-                NetworkScanner.ScanAvailableDevices();
                 ScanCounter = 0;
+                IsScanEnabled = false;
             }
         }
         else
@@ -357,8 +397,16 @@ class Main
     }
     public static void StopReceiving()
     {
-        Subscriber.Stop();
-        TimeBaseSubscriber.Stop();
+        if(Subscriber!=null)
+        {
+            Subscriber.Stop();
+            Subscriber = null;
+        }
+        if(TimeBaseSubscriber!=null)
+        {
+            TimeBaseSubscriber.Stop();
+            TimeBaseSubscriber = null;
+        }
         IsReceiverThreadEnabled = false;
         FPS = 0;
         TransferSpeed = 0;

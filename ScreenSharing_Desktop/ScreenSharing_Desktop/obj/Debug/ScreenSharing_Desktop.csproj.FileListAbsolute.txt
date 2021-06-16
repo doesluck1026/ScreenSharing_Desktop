@@ -39,7 +39,6 @@ D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Deskto
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\Mono.Cecil.Rocks.pdb
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\NuGet.Squirrel.pdb
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\Squirrel.pdb
-D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.csprojAssemblyReference.cache
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\AsyncIO.dll
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\NaCl.dll
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\NetMQ.dll
@@ -58,3 +57,4 @@ D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Deskto
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Debug\System.ValueTuple.xml
+D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Debug\ScreenSharing_Desktop.csprojAssemblyReference.cache

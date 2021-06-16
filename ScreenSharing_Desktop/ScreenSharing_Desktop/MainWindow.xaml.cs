@@ -19,7 +19,7 @@ namespace ScreenSharing_Desktop
     {
         private int MenuTimeout = 3;
 
-        private readonly bool ServiceBot = true;
+        //private readonly bool ServiceBot = true;
         private Timer uiUpdateTimer;
         private int UI_UpdateFrequency = 40;        /// Hz
         private int UI_UpdatePeriod;
@@ -45,6 +45,7 @@ namespace ScreenSharing_Desktop
                 NetworkScanner.PublishDevice();
                 NetworkScanner.ScanAvailableDevices();
                 NetworkScanner.OnScanCompleted += NetworkScanner_OnScanCompleted;
+                NetworkScanner.OnClientConnected += NetworkScanner_OnClientConnected;
                 Dispatcher.Invoke(() =>
                 {
                     chc_AutoShare.IsChecked = Parameters.IsAutoShareEnabled;
@@ -53,8 +54,8 @@ namespace ScreenSharing_Desktop
                 });
                 if (Parameters.IsAutoShareEnabled)
                 {
-                    if (ServiceBot)
-                    {
+                    //if (ServiceBot)
+                    //{
                         Task.Run(() =>
                         {
                             try
@@ -62,7 +63,7 @@ namespace ScreenSharing_Desktop
                                 bool noIP = true;
                                 while (noIP)
                                 {
-                                    var localIP = Client.GetDeviceIP();
+                                    var localIP = NetworkScanner.MyIP;
                                     if (localIP != null)
                                     {
                                         char[] splitter = { '.' };
@@ -76,21 +77,56 @@ namespace ScreenSharing_Desktop
                                 }
                                 btn_Share_Click(null, null);
                             }
-                            catch
+                            catch (Exception exc)
                             {
-
+                                Debug.WriteLine("Exception in loading: " + exc.ToString());
                             }
                         });
-                    }
-                    else
-                    {
-                        btn_Share_Click(null, null);
-                    }
+                    //}
+                    //else
+                    //{
+                    //    btn_Share_Click(null, null);
+                    //}
                 }
             }
             catch
             {
                 Debug.WriteLine("Failed when initializing ");
+            }
+        }
+
+        private void NetworkScanner_OnClientConnected()
+        {
+            if (Main.CommunicationType == Main.CommunicationTypes.Sender)
+            {
+
+                RemoteControl.IsControlsEnabled = IsControlsEnabled;
+                if (!RemoteControl.IsSubscriberEnabled || Main.IsSubscriberTimedOut)
+                {
+                    if (Main.IsSubscriberTimedOut)
+                    {
+                        if (RemoteControl.IsSubscriberEnabled)
+                        {
+                            RemoteControl.StopReceiving();
+                        }
+                    }
+                    if (NetworkScanner.SubscriberDevices.Count > 0)
+                    {
+                        Main.IsSubscriberTimedOut = false;
+                        RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
+                    }
+                    Dispatcher.Invoke(() =>
+                    {
+                        Led_CommandsReceived.Background = new SolidColorBrush(Color.FromRgb(255, 0, 0));
+                    });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Led_CommandsReceived.Background = new SolidColorBrush(Color.FromRgb(0, 255, 0));
+                    });
+                }
             }
         }
 
@@ -150,13 +186,19 @@ namespace ScreenSharing_Desktop
                 IsSharingStarted = true;
                 Main.StartSharing();
                 StartUiTimer();
-                imageBox.Focus();
-                btn_Share.Content = "Stop";
-                txt_IP.Text = Main.MyIP;
+                Dispatcher.Invoke(() =>
+                {
+                    imageBox.Focus();
+                    btn_Share.Content = "Stop";
+                    txt_IP.Text = Main.MyIP;
+                });
             }
             else
             {
-                btn_Share.Content = "Share";
+                Dispatcher.Invoke(() =>
+                {
+                    btn_Share.Content = "Share";
+                });
                 StopUiTimer();
                 IsSharingStarted = false;
                 Main.StopSharing();
@@ -187,6 +229,7 @@ namespace ScreenSharing_Desktop
                 IsConnectedToServer = false;
                 btn_Connect.Content = "Connect";
                 Main.StopReceiving();
+                RemoteControl.StopSendingCommands();
                 NetworkScanner.ScanAvailableDevices();
                 txt_IP.Focusable = true;
                 txt_IP.IsEnabled = true;
@@ -215,18 +258,18 @@ namespace ScreenSharing_Desktop
                     imageBox.Source = BitmapSourceConvert.ToBitmapSource(Main.ScreenImage);
                 }
                 lbl_FPS.Content = Main.FPS.ToString();
-                lbl_Ping.Content = ((int)Main.Ping).ToString()+" ms";
                 lbl_Speed.Content = Main.TransferSpeed.ToString("0.00") + " MB/s";
                 IsControlsEnabled = chc_EnableControls.IsChecked.Value;
-                if (IsControlsEnabled)
+                if (Main.CommunicationType == Main.CommunicationTypes.Receiver)
                 {
-                    if(Main.CommunicationType==Main.CommunicationTypes.Receiver)
+                    if (IsControlsEnabled)
                     {
                         if (!RemoteControl.IsPublisherEnabled)
                             RemoteControl.StartSendingCommands();
                     }
+                    lbl_Ping.Content = ((int)Main.Ping).ToString()+" ms";
                 }
-                if(stc_ControlBar.IsVisible && IsConnectedToServer)
+                if (stc_ControlBar.IsVisible && IsConnectedToServer)
                 {
                     if (MenuTimeoutCounter < 100000)
                         MenuTimeoutCounter++;
@@ -239,19 +282,6 @@ namespace ScreenSharing_Desktop
                
 
             });
-
-            if (Main.CommunicationType == Main.CommunicationTypes.Sender)
-            {
-                RemoteControl.IsControlsEnabled = IsControlsEnabled;
-                if (!RemoteControl.IsSubscriberEnabled)
-                {
-
-                    if (NetworkScanner.SubscriberDevices.Count > 0)
-                    {
-                        RemoteControl.StartReceiving(NetworkScanner.SubscriberDevices[0].IP);
-                    }
-                }
-            }
             
         }
         private void StartUiTimer()
@@ -352,6 +382,8 @@ namespace ScreenSharing_Desktop
                 double widthRatio = (double)Main.ScreenImage.Width / imageBox.ActualWidth;
                 double heigthRatio = (double)Main.ScreenImage.Height / imageBox.ActualHeight;
                 RemoteControl.VirtualMouse.Position = new System.Drawing.Point((int)(pos.X * widthRatio), (int)(pos.Y * heigthRatio));
+                //RemoteControl.VirtualMouse.Position.X = Main.ScreenImage.Width - RemoteControl.VirtualMouse.Position.X;
+                //RemoteControl.VirtualMouse.Position.Y = Main.ScreenImage.Height - RemoteControl.VirtualMouse.Position.Y;
                 RemoteControl.IsDataUpdated = true;
             }
         }
@@ -418,6 +450,11 @@ namespace ScreenSharing_Desktop
         private void stc_ControlBar_MouseLeave(object sender, MouseEventArgs e)
         {
             IsMouseOnStackPanel = false;
+        }
+
+        private void Btn_RotateImage_Click(object sender, RoutedEventArgs e)
+        {
+            ImageProcessing.Rotation = (ImageProcessing.Rotation + 90) % 360;
         }
     }
 }
