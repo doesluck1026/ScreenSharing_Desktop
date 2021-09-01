@@ -57,4 +57,3 @@ D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Deskto
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Release\System.Runtime.CompilerServices.Unsafe.xml
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Release\System.Threading.Tasks.Extensions.xml
 D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\bin\Release\System.ValueTuple.xml
-D:\Projelerim\Github\ScreenSharingApp\ScreenSharing_Desktop\ScreenSharing_Desktop\ScreenSharing_Desktop\obj\Release\ScreenSharing_Desktop.csprojAssemblyReference.cache

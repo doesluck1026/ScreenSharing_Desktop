@@ -24,6 +24,8 @@ class ImageProcessing
     private static object Lck_ScreenImage = new object();
     private static Bitmap _screenImage;
     public static int Rotation = 0;
+
+    public static ImageFormat Image_Format = ImageFormat.Jpeg;
     public static void StartScreenCapturer()
     {
         ScreenCapturer.OnScreenUpdated += ScreenCapturer_OnScreenUpdated;
@@ -62,7 +64,6 @@ class ImageProcessing
     }
 
     #endregion
-    private static int ElapsedTime = 0;
     public static byte[] GetScreenBytes()
     {
         Stopwatch stp = Stopwatch.StartNew();
@@ -73,7 +74,6 @@ class ImageProcessing
         DrawPointToImage(ref img);
         byte[] imageBytes;
         imageBytes = ImageToByteArray(img);
-        ElapsedTime += (int)stp.ElapsedMilliseconds;
         return imageBytes;
     }
     private static void DrawPointToImage(ref Bitmap bitmap)
@@ -103,6 +103,12 @@ class ImageProcessing
         }
         return null;
     }
+
+    /// <summary>
+    /// Converts Bitmap Image to Byte array using given format
+    /// </summary>
+    /// <param name="img"></param>
+    /// <returns>Byte array that contains image bytes</returns>
     public static byte[] ImageToByteArray(Bitmap img)
     {
         if (img == null)
@@ -111,7 +117,7 @@ class ImageProcessing
         {
             using (var stream = new MemoryStream())
             {
-                img.Save(stream, ImageFormat.Jpeg);
+                img.Save(stream, Image_Format);
                 return stream.ToArray();
             }
         }
@@ -120,6 +126,11 @@ class ImageProcessing
             return null;
         }
     }
+    /// <summary>
+    /// Converts Given byte array that contains image bytes, to an image
+    /// </summary>
+    /// <param name="imageBytes"></param>
+    /// <returns></returns>
     public static Bitmap ImageFromByteArray(byte[] imageBytes)
     {
         Bitmap bmp;

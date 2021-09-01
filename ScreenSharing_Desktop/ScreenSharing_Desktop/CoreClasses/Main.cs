@@ -190,9 +190,9 @@ class Main
     #region MQ Variables
 
     private static MQPublisher Publisher;
-    private static MQPublisher TimeBasePublisher;
+    private static MQPublisher TimeBasePublisher;                   /// This Publisher will publish this devices current time once in every second. This will be used to measure ping
     private static MQSubscriber Subscriber;
-    private static MQSubscriber TimeBaseSubscriber;
+    private static MQSubscriber TimeBaseSubscriber;                 /// This Subscriber will be used to get publisher device's current time once in every second. This will be used to measure ping.
 
     private static string Topic = "Screen";
     private static string TimeBaseTopic = "Time";
@@ -206,8 +206,8 @@ class Main
     private static int TotalBytesReceived = 0;
     private static int FpsCounter = 0;
 
-    private static TimeSpan PublisherTimeBase;
-    private static TimeSpan SubscriberPreviousTime;
+    private static TimeSpan PublisherTimeBase;                      /// Last received current time of publisher device.
+    private static TimeSpan SubscriberPreviousTime;                 /// Previous measured time of subscriber device. This will be used to measure delta time since last update.
     private static int ScanCounter = 0;
     private static bool IsScanEnabled = false;
 
@@ -219,13 +219,15 @@ class Main
     }
 
     /// <summary>
-    /// Initializes a MQ Publisher with defined topic at given port
+    /// Initializes a MQ Publisher with defined topic at given port and starts publisher thread. Also Starts Screen Capturer
     /// </summary>
     public static void StartSharing()
     {
+        string hostname;
+        NetworkScanner.GetDeviceAddress(out MyIP, out hostname);
         CommunicationType = CommunicationTypes.Sender;
         CommunicationPeriod = 1.0 / CommunicationFrequency;
-        MyIP = Client.GetDeviceIP();
+        MyIP = NetworkScanner.MyIP;                                              
         Publisher = new MQPublisher(Topic, MyIP, Port);
         TimeBasePublisher = new MQPublisher(TimeBaseTopic, MyIP, TimeBasePort);
         ImageProcessing.StartScreenCapturer();
@@ -233,6 +235,10 @@ class Main
         SenderThread = new Thread(PublisherCoreFcn);
         SenderThread.Start();
     }
+
+    /// <summary>
+    /// Stops ScreenCapturer and publisher. and cleans everthing related.
+    /// </summary>
     public static void StopSharing()
     {
         try
@@ -250,6 +256,9 @@ class Main
             Debug.WriteLine("Failed to Stop Publisher");
         }
     }
+    /// <summary>
+    /// This will be used by publisher thread as long as it is activated. Data will be prepared and published here in this function.
+    /// </summary>
     private static void PublisherCoreFcn()
     {
  
@@ -374,7 +383,10 @@ class Main
             PublisherTimeBase = TimeSpan.Parse(timeString);
         }
     }
-
+    /// <summary>
+    /// This function will be called when a data is received by subscriber
+    /// </summary>
+    /// <param name="data"></param>
     private static void Subscriber_OnDataReceived(byte[] data)
     {
         if (data != null)
@@ -397,13 +409,15 @@ class Main
     }
     public static void StopReceiving()
     {
-        if(Subscriber!=null)
+        if (Subscriber!=null)
         {
+            Subscriber.OnDataReceived -= Subscriber_OnDataReceived;
             Subscriber.Stop();
             Subscriber = null;
         }
         if(TimeBaseSubscriber!=null)
         {
+            TimeBaseSubscriber.OnDataReceived -= TimeBaseSubscriber_OnDataReceived;
             TimeBaseSubscriber.Stop();
             TimeBaseSubscriber = null;
         }

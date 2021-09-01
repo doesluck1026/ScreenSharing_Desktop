@@ -241,7 +241,6 @@ class Client
                 localAddr = ip.ToString();
             }
         }
-        Debug.WriteLine("Server IP: " + localAddr);
         return localAddr;
     }
 }

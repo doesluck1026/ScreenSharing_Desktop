@@ -52,7 +52,9 @@ class NetworkScanner
     }
 
     private static int[] scanProgressArr;
-    public static string MyIP;
+    /// CDS Bot için bu satırı kullan diğerleri için alttakini
+    public static string MyIP = "192.168.3.103";
+    //private static string MyIP;
     public static string MyHostname;
     private static readonly int PublishPort = 4119;
     private static Server publisherServer;
@@ -179,7 +181,8 @@ class NetworkScanner
     }
     public static void PublishDevice()
     {
-        publisherServer = new Server(port: PublishPort);
+        GetDeviceAddress(out MyIP, out MyHostname);
+        publisherServer = new Server(port: PublishPort,ip: MyIP);
         publisherServer.SetupServer();
         publisherServer.StartListener();
         publisherServer.OnClientConnected += PublisherServer_OnClientConnected;
@@ -215,7 +218,10 @@ class NetworkScanner
                 localAddr = ip;
             }
         }
-        deviceIP = localAddr.ToString();
+        if (string.IsNullOrEmpty(MyIP))
+            deviceIP = localAddr.ToString();
+        else
+            deviceIP = MyIP;
         deviceHostname = host.HostName;
     }
     private static DeviceHandleTypeDef AnalyzeDeviceData(byte[] data)
